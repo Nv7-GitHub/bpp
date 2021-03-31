@@ -10,6 +10,7 @@ func setupFuncs() {
 	variableFuncs()
 	mathFunc()
 	conditionalFuncs()
+	arrayFuncs()
 }
 
 func parseVariable(text string) Variable {

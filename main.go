@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/Nv7-Github/Bpp/parser"
@@ -28,17 +29,17 @@ func main() {
 
 	script, err := ioutil.ReadFile(filename)
 	handle(err)
+	src := strings.TrimSpace(string(script))
 
 	start := time.Now()
-	executable, err := parser.Parse(string(script))
+	prog, err := parser.Parse(src)
 	handle(err)
 	fmt.Println("Parsed in", time.Since(start))
 
-	for _, val := range executable.Program {
-		ret, err := val.Exec(executable)
-		handle(err)
-		if ret.Type != parser.NULL {
-			fmt.Println(ret.Data)
-		}
-	}
+	start = time.Now()
+	out, err := prog.Run()
+	handle(err)
+	fmt.Println("Executed in", time.Since(start))
+
+	fmt.Println(strings.TrimSpace(out))
 }
