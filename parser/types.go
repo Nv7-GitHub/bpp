@@ -21,6 +21,6 @@ const (
 )
 
 type Executable struct {
-	Exec   func(*Program, []Variable) (Variable, error)
+	Exec   func(*Program, []Executable) (Variable, error)
 	Params []Type
 }

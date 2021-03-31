@@ -35,7 +35,7 @@ func main() {
 	fmt.Println("Parsed in", time.Since(start))
 
 	for _, val := range executable.Program {
-		ret, err := val.Exec(executable, make([]parser.Variable, 0))
+		ret, err := val.Exec(executable, make([]parser.Executable, 0))
 		handle(err)
 		fmt.Println(ret.Data)
 	}
