@@ -1,0 +1,2 @@
+[DEFINE helloworld "Hello World!"]
+[VAR helloworld]
