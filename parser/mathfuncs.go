@@ -19,7 +19,7 @@ func mathFuncs() {
 			if err != nil {
 				return Variable{}, err
 			}
-			if val.Type != FLOAT && val.Type != INT {
+			if !val.Type.IsEqual(FLOAT) && !val.Type.IsEqual(INT) {
 				return Variable{}, fmt.Errorf("line %d: input for FLOOR must be float or integer", line)
 			}
 			if val.Type.IsEqual(INT) {
@@ -52,7 +52,7 @@ func mathFuncs() {
 			if err != nil {
 				return Variable{}, err
 			}
-			if val.Type != FLOAT && val.Type != INT {
+			if !val.Type.IsEqual(FLOAT) && !val.Type.IsEqual(INT) {
 				return Variable{}, fmt.Errorf("line %d: input for FLOOR must be float or integer", line)
 			}
 			if val.Type.IsEqual(INT) {
@@ -85,7 +85,7 @@ func mathFuncs() {
 			if err != nil {
 				return Variable{}, err
 			}
-			if val.Type != FLOAT && val.Type != INT {
+			if !val.Type.IsEqual(FLOAT) && !val.Type.IsEqual(INT) {
 				return Variable{}, fmt.Errorf("line %d: input for FLOOR must be float or integer", line)
 			}
 			if val.Type.IsEqual(INT) {

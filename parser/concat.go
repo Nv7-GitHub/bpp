@@ -26,17 +26,24 @@ func concatFunc() {
 				}
 			}
 			var tp Type = -1
-			for _, val := range vals {
-				if (val.Type != STRING) && val.Type.IsEqual(STRING) {
+			for i, val := range vals {
+				if val.Type.IsEqual(FLOAT) || val.Type.IsEqual(INT) {
+					vals[i].Type = STRING
+					vals[i].Data = fmt.Sprintf("%v", val.Data)
+					val = vals[i]
+				}
+				if (!val.Type.IsEqual(STRING)) && val.Type.IsEqual(STRING) {
 					val.Type = STRING
 				}
-				if val.Type != tp && tp != -1 {
+				if !val.Type.IsEqual(tp) && tp != -1 {
 					return Variable{}, fmt.Errorf("line %d: all arguments to CONCAT must be all strings or all arrays", line)
-				} else if tp == -1 && val.Type != tp {
+				}
+				if tp == -1 && (val.Type.IsEqual(STRING) || val.Type.IsEqual(ARRAY)) {
 					tp = val.Type
 				}
 			}
 			if (tp != ARRAY) && (tp != STRING) {
+				fmt.Println(tp)
 				return Variable{}, fmt.Errorf("line %d: CONCAT only accepts array and string", line)
 			}
 			if tp == ARRAY {

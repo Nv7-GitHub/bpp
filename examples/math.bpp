@@ -1,0 +1,3 @@
+[DEFINE p " + "]
+[DEFINE e " = "]
+[CONCAT "**" [RANDINT 1 4] [VAR p] [RANDINT 1 4] [VAR e] [RANDINT 1 4] [VAR p] [RANDINT 1 4] [VAR e] [RANDINT 1 4] [VAR p] [RANDINT 1 4] [VAR e] " Ping Cohaki#2585 if the equation is correct"]

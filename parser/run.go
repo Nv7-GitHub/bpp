@@ -17,7 +17,7 @@ func (p *Program) Run() (string, error) {
 				ret.Data = `"` + ret.Data.(string) + `"`
 			}
 		}
-		if ret.Type != NULL {
+		if !ret.Type.IsEqual(NULL) {
 			if ret.Type.IsEqual(ARRAY) {
 				out += "[ARRAY"
 				for _, val := range ret.Data.([]Variable) {
