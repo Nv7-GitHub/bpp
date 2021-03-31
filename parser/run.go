@@ -7,11 +7,15 @@ func (p *Program) Run() (string, error) {
 	out := ""
 	for _, val := range p.Program {
 		ret, err := val.Exec(p)
-		if ret.Type == STRING {
-			ret.Data = `"` + ret.Data.(string) + `"`
-		}
 		if err != nil {
 			return out, err
+		}
+		if ret.Type == STRING {
+			if len(ret.Data.(string)) == 0 {
+				ret.Type = NULL
+			} else {
+				ret.Data = `"` + ret.Data.(string) + `"`
+			}
 		}
 		if ret.Type != NULL {
 			if ret.Type == ARRAY {
@@ -25,7 +29,7 @@ func (p *Program) Run() (string, error) {
 				out += "]\n"
 				continue
 			}
-			out += fmt.Sprintf("%v", ret.Data)
+			out += fmt.Sprintf("%v\n", ret.Data)
 		}
 	}
 	return out, nil
