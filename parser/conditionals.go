@@ -32,7 +32,7 @@ func conditionalFuncs() {
 			if err != nil {
 				return Variable{}, err
 			}
-			if (op.Type & STRING) != STRING {
+			if op.Type.IsEqual(STRING) {
 				return Variable{}, fmt.Errorf("line %d: parameter 2 of MATH must be string", line)
 			}
 			if op.Data.(string) == "=" {
@@ -48,12 +48,12 @@ func conditionalFuncs() {
 				}, nil
 			}
 			isFloat := false
-			if val1.Type == FLOAT || val2.Type == FLOAT {
+			if val1.Type.IsEqual(FLOAT) || val2.Type.IsEqual(FLOAT) {
 				isFloat = true
-				if val1.Type == INT {
+				if val1.Type.IsEqual(INT) {
 					val1.Data = float64(val1.Data.(int))
 				}
-				if val2.Type == INT {
+				if val2.Type.IsEqual(INT) {
 					val2.Data = float64(val2.Data.(int))
 				}
 			}
@@ -128,7 +128,7 @@ func conditionalFuncs() {
 			if err != nil {
 				return Variable{}, err
 			}
-			if (op.Type & BOOLEAN) != BOOLEAN {
+			if !op.Type.IsEqual(BOOLEAN) {
 				return Variable{}, fmt.Errorf("line %d: parameter 1 of IF must be a boolean", line)
 			}
 			if op.Data.(bool) {

@@ -22,11 +22,11 @@ func mathFuncs() {
 			if val.Type != FLOAT && val.Type != INT {
 				return Variable{}, fmt.Errorf("line %d: input for FLOOR must be float or integer", line)
 			}
-			if val.Type == INT {
+			if val.Type.IsEqual(INT) {
 				val.Data = float64(val.Data.(int))
 			}
 			num := math.Floor(val.Data.(float64))
-			if val.Type == FLOAT {
+			if val.Type.IsEqual(FLOAT) {
 				return Variable{
 					Type: FLOAT,
 					Data: num,

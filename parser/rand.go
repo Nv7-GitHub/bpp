@@ -27,10 +27,10 @@ func randFuncs() {
 			if err != nil {
 				return Variable{}, err
 			}
-			if (val1.Type & INT) != INT {
+			if !val1.Type.IsEqual(INT) {
 				return Variable{}, fmt.Errorf("line %d: parameter 1 of DEFINE must be integer", line)
 			}
-			if (val2.Type & INT) != INT {
+			if !val2.Type.IsEqual(INT) {
 				return Variable{}, fmt.Errorf("line %d: parameter 1 of DEFINE must be integer", line)
 			}
 			return Variable{
@@ -60,17 +60,17 @@ func randFuncs() {
 			if err != nil {
 				return Variable{}, err
 			}
-			if ((val1.Type & FLOAT) != FLOAT) && ((val1.Type & INT) != INT) {
+			if !val1.Type.IsEqual(FLOAT) && !val1.Type.IsEqual(INT) {
 				return Variable{}, fmt.Errorf("line %d: parameter 1 of RANDOM must be float or integer", line)
 			}
-			if ((val2.Type & FLOAT) != FLOAT) && ((val2.Type & INT) != INT) {
+			if !val2.Type.IsEqual(FLOAT) && !val2.Type.IsEqual(INT) {
 				return Variable{}, fmt.Errorf("line %d: parameter 2 of RANDOM must be float or integer", line)
 			}
-			if (val1.Type & INT) == INT {
+			if val1.Type.IsEqual(INT) {
 				val1.Type = FLOAT
 				val1.Data = float64(val1.Data.(int))
 			}
-			if (val2.Type & INT) == INT {
+			if val2.Type.IsEqual(INT) {
 				val2.Type = FLOAT
 				val2.Data = float64(val1.Data.(int))
 			}
@@ -82,4 +82,33 @@ func randFuncs() {
 			}, nil
 		}, nil
 	}
+
+	funcs["CHOOSE"] = func(args []string, line int) (Executable, error) {
+		if len(args) != 1 {
+			return nil, fmt.Errorf("line %d: invalid argument amount for function %s", line, "CHOOSE")
+		}
+		ex1, err := parseStmt(args[0], line)
+		if err != nil {
+			return nil, err
+		}
+		return func(p *Program) (Variable, error) {
+			arr, err := ex1(p)
+			if err != nil {
+				return Variable{}, err
+			}
+			if !arr.Type.IsEqual(ARRAY) && !arr.Type.IsEqual(STRING) {
+				return Variable{}, fmt.Errorf("line %d: parameter 1 of CHOOSE must be array or string", line)
+			}
+			if !arr.Type.IsEqual(STRING) {
+				index := rand.Intn(len(arr.Data.(string)))
+				return Variable{
+					Type: STRING,
+					Data: string(arr.Data.(string)[index]),
+				}, nil
+			}
+			index := rand.Intn(len(arr.Data.([]Variable)))
+			return arr.Data.([]Variable)[index], nil
+		}, nil
+	}
+	funcs["CHOOSECHAR"] = funcs["CHOOSE"]
 }

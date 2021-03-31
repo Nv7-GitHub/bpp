@@ -13,13 +13,13 @@ type Variable struct {
 type Type int
 
 const (
-	STRING     Type = 0
-	INT        Type = 1
-	FLOAT      Type = 2
-	ARRAY      Type = 3
-	BOOLEAN    Type = 4
-	IDENTIFIER Type = 5
-	NULL       Type = 6
+	STRING Type = 1 << iota
+	INT
+	FLOAT
+	ARRAY
+	BOOLEAN
+	IDENTIFIER
+	NULL
 )
 
 type Executable func(*Program) (Variable, error)

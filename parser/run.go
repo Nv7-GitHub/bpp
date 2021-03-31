@@ -10,7 +10,7 @@ func (p *Program) Run() (string, error) {
 		if err != nil {
 			return out, err
 		}
-		if ret.Type == STRING {
+		if ret.Type.IsEqual(STRING) {
 			if len(ret.Data.(string)) == 0 {
 				ret.Type = NULL
 			} else {
@@ -18,10 +18,10 @@ func (p *Program) Run() (string, error) {
 			}
 		}
 		if ret.Type != NULL {
-			if ret.Type == ARRAY {
+			if ret.Type.IsEqual(ARRAY) {
 				out += "[ARRAY"
 				for _, val := range ret.Data.([]Variable) {
-					if val.Type == STRING {
+					if val.Type.IsEqual(STRING) {
 						val.Data = `"` + val.Data.(string) + `"`
 					}
 					out += " " + fmt.Sprintf("%v", val.Data)

@@ -27,7 +27,7 @@ func concatFunc() {
 			}
 			var tp Type = -1
 			for _, val := range vals {
-				if (val.Type != STRING) && ((val.Type & STRING) == STRING) {
+				if (val.Type != STRING) && val.Type.IsEqual(STRING) {
 					val.Type = STRING
 				}
 				if val.Type != tp && tp != -1 {
