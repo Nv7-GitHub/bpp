@@ -18,9 +18,10 @@ const (
 	FLOAT      Type = 2
 	ARRAY      Type = 3
 	IDENTIFIER Type = 4
+	NULL       Type = 5
 )
 
 type Executable struct {
-	Exec   func(*Program, []Executable) (Variable, error)
+	Exec   func(*Program) (Variable, error)
 	Params []Type
 }

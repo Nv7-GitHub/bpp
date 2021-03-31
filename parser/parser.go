@@ -10,6 +10,7 @@ import (
 var lineRegex = regexp.MustCompile(`\[([A-Z]+?) (.+)\]`)
 
 func Parse(src string) (*Program, error) {
+	setupFuncs()
 	lines := strings.Split(src, "\n")
 	prg := &Program{
 		Memory:  make(map[string]Variable),
@@ -29,7 +30,7 @@ func parseStmt(src string, line int) (Executable, error) {
 	if src[0] != '[' && src[len(src)-1] != ']' {
 		vr := parseVariable(src)
 		return Executable{
-			Exec: func(*Program, []Executable) (Variable, error) {
+			Exec: func(*Program) (Variable, error) {
 				return vr, nil
 			},
 		}, nil

@@ -35,8 +35,10 @@ func main() {
 	fmt.Println("Parsed in", time.Since(start))
 
 	for _, val := range executable.Program {
-		ret, err := val.Exec(executable, make([]parser.Executable, 0))
+		ret, err := val.Exec(executable)
 		handle(err)
-		fmt.Println(ret.Data)
+		if ret.Type != parser.NULL {
+			fmt.Println(ret.Data)
+		}
 	}
 }
