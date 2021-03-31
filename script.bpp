@@ -1,2 +1,1 @@
-[DEFINE helloworld "Hello World!"]
-[VAR helloworld]
+[MATH 5 * 4]
