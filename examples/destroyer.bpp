@@ -1,0 +1,16 @@
+[DEFINE parity [RANDINT 0 2]]
+[DEFINE pairs [RANDINT 1 6]]
+[DEFINE empty ""]
+[DEFINE cv "AEIOUY"]
+[DEFINE cc "BCDFGHJKLMNPQRSTVWXZ"]
+[DEFINE uv "aeiouy"]
+[DEFINE uc "bcdfghjklmnpqrstvwxz"]
+[DEFINE p1 [IF [COMPARE [VAR parity] = 1] [CONCAT [CHOOSECHAR [VAR cv]] [CHOOSECHAR [VAR uc]]] [CONCAT [CHOOSECHAR [VAR cc]] [CHOOSECHAR [VAR uv]]]]]
+[DEFINE p2 [IF [COMPARE [VAR pairs] >= 1] [IF [COMPARE [VAR parity] = 1] [CONCAT [CHOOSECHAR [VAR uv]] [CHOOSECHAR [VAR uc]]] [CONCAT [CHOOSECHAR [VAR uc]] [CHOOSECHAR [VAR uv]]]] [VAR empty]]]
+[DEFINE p3 [IF [COMPARE [VAR pairs] >= 2] [IF [COMPARE [VAR parity] = 1] [CONCAT [CHOOSECHAR [VAR uv]] [CHOOSECHAR [VAR uc]]] [CONCAT [CHOOSECHAR [VAR uc]] [CHOOSECHAR [VAR uv]]]] [VAR empty]]]
+[DEFINE p4 [IF [COMPARE [VAR pairs] >= 3] [IF [COMPARE [VAR parity] = 1] [CONCAT [CHOOSECHAR [VAR uv]] [CHOOSECHAR [VAR uc]]] [CONCAT [CHOOSECHAR [VAR uc]] [CHOOSECHAR [VAR uv]]]] [VAR empty]]]
+[DEFINE p5 [IF [COMPARE [VAR pairs] >= 4] [IF [COMPARE [VAR parity] = 1] [CONCAT [CHOOSECHAR [VAR uv]] [CHOOSECHAR [VAR uc]]] [CONCAT [CHOOSECHAR [VAR uc]] [CHOOSECHAR [VAR uv]]]] [VAR empty]]]
+[DEFINE p6 [IF [COMPARE [VAR pairs] >= 5] [IF [COMPARE [VAR parity] = 1] [CONCAT [CHOOSECHAR [VAR uv]] [CHOOSECHAR [VAR uc]]] [CONCAT [CHOOSECHAR [VAR uc]] [CHOOSECHAR [VAR uv]]]] [VAR empty]]]
+[CONCAT "I have become **" [VAR p1] [VAR p2] [VAR p3] [VAR p4] [VAR p5] [VAR p6] "**, destroyer of worlds."]
+Let LegitSi#4444 know if you found anything cool!
+Credit to woooowoooo#1755 for optimizing my garbage code.
