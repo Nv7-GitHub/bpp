@@ -22,7 +22,4 @@ const (
 	NULL       Type = 6
 )
 
-type Executable struct {
-	Exec   func(*Program) (Variable, error)
-	Params []Type
-}
+type Executable func(*Program) (Variable, error)

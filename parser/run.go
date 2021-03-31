@@ -6,7 +6,7 @@ import "fmt"
 func (p *Program) Run() (string, error) {
 	out := ""
 	for _, val := range p.Program {
-		ret, err := val.Exec(p)
+		ret, err := val(p)
 		if err != nil {
 			return out, err
 		}

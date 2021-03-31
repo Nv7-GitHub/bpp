@@ -29,15 +29,13 @@ func Parse(src string) (*Program, error) {
 func parseStmt(src string, line int) (Executable, error) {
 	if src[0] != '[' && src[len(src)-1] != ']' {
 		vr := parseVariable(src)
-		return Executable{
-			Exec: func(*Program) (Variable, error) {
-				return vr, nil
-			},
+		return func(*Program) (Variable, error) {
+			return vr, nil
 		}, nil
 	}
 	matches := lineRegex.FindAllStringSubmatch(src, -1)
 	if len(matches) < 1 || len(matches[0]) < 3 {
-		return Executable{}, fmt.Errorf("line %d: unable to parse", line)
+		return nil, fmt.Errorf("line %d: unable to parse", line)
 	}
 	funcName := matches[0][1]
 	inpVals := strings.Split(matches[0][2], " ")
@@ -61,7 +59,7 @@ func parseStmt(src string, line int) (Executable, error) {
 
 	fn, exists := funcs[funcName]
 	if !exists {
-		return Executable{}, fmt.Errorf("line %d: no such function %s", line, funcName)
+		return nil, fmt.Errorf("line %d: no such function %s", line, funcName)
 	}
 	return fn(args, line)
 }

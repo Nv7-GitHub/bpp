@@ -13,6 +13,7 @@ func setupFuncs() {
 	arrayFuncs()
 	randFuncs()
 	mathFuncs()
+	concatFunc()
 }
 
 func parseVariable(text string) Variable {

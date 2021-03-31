@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"strings"
 	"time"
@@ -30,6 +31,7 @@ func main() {
 	script, err := ioutil.ReadFile(filename)
 	handle(err)
 	src := strings.TrimSpace(string(script))
+	rand.Seed(time.Now().UnixNano())
 
 	start := time.Now()
 	prog, err := parser.Parse(src)
