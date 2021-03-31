@@ -31,7 +31,7 @@ func concatFunc() {
 					val.Type = STRING
 				}
 				if val.Type != tp && tp != -1 {
-					return Variable{}, fmt.Errorf("line %d: all arguments to CONCAT must be of the same type", line)
+					return Variable{}, fmt.Errorf("line %d: all arguments to CONCAT must be all strings or all arrays", line)
 				} else if tp == -1 && val.Type != tp {
 					tp = val.Type
 				}
