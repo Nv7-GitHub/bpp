@@ -54,7 +54,7 @@ func arrayFuncs() {
 			if err != nil {
 				return Variable{}, err
 			}
-			if index.Type.IsEqual(INT) {
+			if !index.Type.IsEqual(INT) {
 				if index.Type.IsEqual(FLOAT) {
 					index.Type = INT
 					index.Data = int(index.Data.(float64))

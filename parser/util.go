@@ -48,5 +48,5 @@ func parseVariable(text string) Variable {
 
 // IsEqual compares types
 func (t Type) IsEqual(b Type) bool {
-	return (t & b) == t
+	return (t & b) != 0
 }

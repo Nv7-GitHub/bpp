@@ -32,7 +32,7 @@ func conditionalFuncs() {
 			if err != nil {
 				return Variable{}, err
 			}
-			if op.Type.IsEqual(STRING) {
+			if !op.Type.IsEqual(STRING) {
 				return Variable{}, fmt.Errorf("line %d: parameter 2 of MATH must be string", line)
 			}
 			if op.Data.(string) == "=" {

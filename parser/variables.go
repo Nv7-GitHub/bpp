@@ -49,7 +49,7 @@ func variableFuncs() {
 			if err != nil {
 				return Variable{}, err
 			}
-			if varName.Type.IsEqual(IDENTIFIER) {
+			if !varName.Type.IsEqual(IDENTIFIER) {
 				return Variable{}, fmt.Errorf("line %d: parameter 1 of VAR must be identifier", line)
 			}
 			return p.Memory[varName.Data.(string)], nil
