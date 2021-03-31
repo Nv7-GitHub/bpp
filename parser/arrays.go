@@ -50,15 +50,26 @@ func arrayFuncs() {
 				if err != nil {
 					return Variable{}, err
 				}
-				if (arr.Type & ARRAY) != ARRAY {
-					return Variable{}, fmt.Errorf("line %d: parameter 1 of INDEX must be array", line)
+				if ((arr.Type & ARRAY) != ARRAY) && ((arr.Type & STRING) != STRING) {
+					return Variable{}, fmt.Errorf("line %d: parameter 1 of INDEX must be array or string", line)
 				}
 				index, err := ex2.Exec(p)
 				if err != nil {
 					return Variable{}, err
 				}
 				if (index.Type & INT) != INT {
-					return Variable{}, fmt.Errorf("line %d: parameter 2 of INDEX must be integer", line)
+					if (index.Type & FLOAT) == FLOAT {
+						index.Type = INT
+						index.Data = int(index.Data.(float64))
+					} else {
+						return Variable{}, fmt.Errorf("line %d: parameter 2 of INDEX must be integer", line)
+					}
+				}
+				if (arr.Type & STRING) == STRING {
+					return Variable{
+						Type: STRING,
+						Data: string(arr.Data.(string)[index.Data.(int)]),
+					}, nil
 				}
 				return arr.Data.([]Variable)[index.Data.(int)], nil
 			},

@@ -1,6 +1,8 @@
 package parser
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func variableFuncs() {
 	funcs["DEFINE"] = func(args []string, line int) (Executable, error) {

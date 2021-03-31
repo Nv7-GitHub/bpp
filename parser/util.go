@@ -11,6 +11,8 @@ func setupFuncs() {
 	mathFunc()
 	conditionalFuncs()
 	arrayFuncs()
+	randFuncs()
+	mathFuncs()
 }
 
 func parseVariable(text string) Variable {
