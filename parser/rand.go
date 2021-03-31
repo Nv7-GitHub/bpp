@@ -99,7 +99,7 @@ func randFuncs() {
 			if !arr.Type.IsEqual(ARRAY) && !arr.Type.IsEqual(STRING) {
 				return Variable{}, fmt.Errorf("line %d: parameter 1 of CHOOSE must be array or string", line)
 			}
-			if !arr.Type.IsEqual(STRING) {
+			if arr.Type.IsEqual(STRING) {
 				index := rand.Intn(len(arr.Data.(string)))
 				return Variable{
 					Type: STRING,
