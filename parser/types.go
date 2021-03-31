@@ -17,8 +17,9 @@ const (
 	INT        Type = 1
 	FLOAT      Type = 2
 	ARRAY      Type = 3
-	IDENTIFIER Type = 4
-	NULL       Type = 5
+	BOOLEAN    Type = 4
+	IDENTIFIER Type = 5
+	NULL       Type = 6
 )
 
 type Executable struct {

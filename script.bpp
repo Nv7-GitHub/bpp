@@ -1,1 +1,3 @@
-[MATH 5 * 4]
+[DEFINE a [MATH 5 * 4]]
+[DEFINE b [MATH [MATH 5 + 3] * 4]]
+[IF [COMPARE [VAR a] > [VAR b]] "A is greater than b" "A is less than b"]

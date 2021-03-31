@@ -1,19 +1,22 @@
 package parser
 
-import "strconv"
+import (
+	"strconv"
+)
 
 var funcs = make(map[string]func([]string, int) (Executable, error))
 
 func setupFuncs() {
 	variableFuncs()
 	mathFunc()
+	conditionalFuncs()
 }
 
 func parseVariable(text string) Variable {
 	if text[0] == '"' && text[len(text)-1] == '"' {
 		return Variable{
 			Type: STRING,
-			Data: text[1 : len(text)-2],
+			Data: text[1 : len(text)-1],
 		}
 	}
 
