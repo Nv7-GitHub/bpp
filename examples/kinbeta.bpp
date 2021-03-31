@@ -1,0 +1,8 @@
+[DEFINE o [ARRAY "p" "b" "t" "d" "k" "c" "g" "gh" "ch" "j" "f" "ph" "v" "th" "s" "z" "sh" "h" "m" "n" "kn" "y" "w" "r" "l" "pl" "bl" "kl" "cl" "gl" "pr" "br" "tr" "dr" "cr" "gr" "tw" "dw" "qu" "fl" "sl" "fr" "thr" "shr" "wh" "sw" "thw" "sp" "st" "sk" "sch" "sm" "sn" "sph" "sth" "spl" "scl" "spr" "spr" "str" "scr" "squ" "sphr"]]
+[DEFINE v [ARRAY "a" "e" "i" "o" "u" "y"]]
+[DEFINE v2 [ARRAY "ae" "ai" "ao" "au" "aw" "ay" "ea" "ee" "ei" "eo" "eu" "ew" "ey" "ia" "ie" "io" "oa" "oe" "oi" "oo" "ou" "ow" "oy" "ua" "ue" "ui" "uy"]]
+[DEFINE c [ARRAY "p" "pe" "b" "be" "t" "te" "d" "de" "k" "ke" "c" "ce" "ck" "g" "ge" "gh" "ch" "che" "f" "ff" "fe" "ph" "ve" "th" "s" "se" "z" "ze" "sh" "m" "me" "n" "ne" "ng" "w" "l" "ll" "le" "lp" "lb" "ld" "lch" "lge" "lk" "lc" "lf" "lve" "lth" "lse" "lls" "lsh" "lm" "ln" "lpt" "lfth" "ltz" "lst" "r" "re" "rp" "rb" "rt" "rd" "rch" "rge" "rk" "rf" "rve" "rth" "rce" "rsh" "rm" "rn" "rl" "rmth" "rpt" "rse" "rtz" "rst" "rct" "mp" "mph" "mb" "mth" "mpt" "mpse" "nt" "nd" "nch" "nge" "nk" "nth" "nce" "nze" "ngth" "ndth" "nct" "ft" "sp" "st" "sk" "fth" "pt" "ct" "pth" "pse" "ghth" "tz" "dth" "dze" "x" "xth" "xt"]]
+[DEFINE s1 [CONCAT [IF [COMPARE [RANDINT 0 2] = 1] [CHOOSE [VAR o]] ""] [IF [COMPARE [RANDINT 0 2] = 1] [CHOOSE [VAR v2]] [CHOOSE [VAR v]]] [IF [COMPARE [RANDINT 0 2] = 1] [CHOOSE [VAR c]] ""]]]
+[DEFINE s2 [IF [COMPARE [RANDINT 0 2] = 1] [CONCAT [IF [COMPARE [RANDINT 0 2] = 1] [CHOOSE [VAR o]] ""] [IF [COMPARE [RANDINT 0 2] = 1] [CHOOSE [VAR v2]] [CHOOSE [VAR v]]] [IF [COMPARE [RANDINT 0 2] = 1] [CHOOSE [VAR c]] ""]] ""]]
+[CONCAT "I kin the word **" [VAR s1] [VAR s2] "**."]
+Ping woooowoooo if the result is a real word. There's no curve, but there's more accurate phonotactics.
