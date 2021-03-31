@@ -3,6 +3,7 @@ package parser
 type Program struct {
 	Memory  map[string]Variable
 	Program []Executable
+	Args    []string
 }
 
 type Variable struct {

@@ -43,7 +43,6 @@ func concatFunc() {
 				}
 			}
 			if (tp != ARRAY) && (tp != STRING) {
-				fmt.Println(tp)
 				return Variable{}, fmt.Errorf("line %d: CONCAT only accepts array and string", line)
 			}
 			if tp == ARRAY {

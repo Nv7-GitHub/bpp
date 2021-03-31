@@ -13,9 +13,11 @@ import (
 )
 
 var filename string
+var argDat string
 
 func init() {
 	flag.StringVar(&filename, "file", "", "File to execute using bpp.")
+	flag.StringVar(&argDat, "args", "", "Optionally, pass arguments to the program using comma-seperated values.")
 }
 
 func handle(err error) {
@@ -42,6 +44,9 @@ func main() {
 	prog, err := parser.Parse(src)
 	handle(err)
 	fmt.Println("Parsed in", time.Since(start))
+
+	args := strings.Split(argDat, ",")
+	prog.Args = args
 
 	start = time.Now()
 	out, err := prog.Run()
