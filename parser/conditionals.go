@@ -37,14 +37,14 @@ func conditionalFuncs() {
 			}
 			if op.Data.(string) == "=" {
 				return Variable{
-					Type: BOOLEAN,
-					Data: val1.Data == val2.Data,
+					Type: INT,
+					Data: bool2int(val1.Data == val2.Data),
 				}, nil
 			}
 			if op.Data.(string) == "!=" {
 				return Variable{
-					Type: BOOLEAN,
-					Data: val1.Data != val2.Data,
+					Type: INT,
+					Data: bool2int(val1.Data != val2.Data),
 				}, nil
 			}
 			isFloat := false
@@ -61,46 +61,46 @@ func conditionalFuncs() {
 			case ">":
 				if isFloat {
 					return Variable{
-						Type: BOOLEAN,
-						Data: val1.Data.(float64) > val2.Data.(float64),
+						Type: INT,
+						Data: bool2int(val1.Data.(float64) > val2.Data.(float64)),
 					}, nil
 				}
 				return Variable{
-					Type: BOOLEAN,
-					Data: val1.Data.(int) > val2.Data.(int),
+					Type: INT,
+					Data: bool2int(val1.Data.(int) > val2.Data.(int)),
 				}, nil
 			case "<":
 				if isFloat {
 					return Variable{
-						Type: BOOLEAN,
-						Data: val1.Data.(float64) < val2.Data.(float64),
+						Type: INT,
+						Data: bool2int(val1.Data.(float64) < val2.Data.(float64)),
 					}, nil
 				}
 				return Variable{
-					Type: BOOLEAN,
-					Data: val1.Data.(int) < val2.Data.(int),
+					Type: INT,
+					Data: bool2int(val1.Data.(int) < val2.Data.(int)),
 				}, nil
 			case ">=":
 				if isFloat {
 					return Variable{
-						Type: BOOLEAN,
-						Data: val1.Data.(float64) >= val2.Data.(float64),
+						Type: INT,
+						Data: bool2int(val1.Data.(float64) >= val2.Data.(float64)),
 					}, nil
 				}
 				return Variable{
-					Type: BOOLEAN,
-					Data: val1.Data.(int) >= val2.Data.(int),
+					Type: INT,
+					Data: bool2int(val1.Data.(int) >= val2.Data.(int)),
 				}, nil
 			case "<=":
 				if isFloat {
 					return Variable{
-						Type: BOOLEAN,
-						Data: val1.Data.(float64) <= val2.Data.(float64),
+						Type: INT,
+						Data: bool2int(val1.Data.(float64) <= val2.Data.(float64)),
 					}, nil
 				}
 				return Variable{
-					Type: BOOLEAN,
-					Data: val1.Data.(int) <= val2.Data.(int),
+					Type: INT,
+					Data: bool2int(val1.Data.(int) <= val2.Data.(int)),
 				}, nil
 			}
 			return Variable{}, fmt.Errorf("line %d: invalid operation", line)
@@ -128,13 +128,20 @@ func conditionalFuncs() {
 			if err != nil {
 				return Variable{}, err
 			}
-			if !op.Type.IsEqual(BOOLEAN) {
-				return Variable{}, fmt.Errorf("line %d: parameter 1 of IF must be a boolean", line)
+			if !op.Type.IsEqual(INT) {
+				return Variable{}, fmt.Errorf("line %d: parameter 1 of IF must be int", line)
 			}
-			if op.Data.(bool) {
+			if op.Data.(int) != 0 {
 				return ex1(p)
 			}
 			return ex2(p)
 		}, nil
 	}
+}
+
+func bool2int(a bool) int {
+	if a {
+		return 1
+	}
+	return 0
 }
