@@ -75,6 +75,22 @@ for _, instruction := range prog.Program {
 }
 ```
 
+For programs with a `GOTO` to work, a modification is needed. It looks like this:
+```go
+for i := 0; i < len(prog.Program); i++ {
+  instruction := prog.Program[i]
+  output, err := instruction(prog)
+  if err != nil {
+    panic(err)
+  }
+  if out.Type == parser.GOTO {
+    i = out.Data.(int)
+    continue
+  }
+}
+```
+You could also limit iterations by keeping track of the number of times a GOTO was called, to prevent forever loops.
+
 One of the most important modifications is the modification to printing `ARRAY`s. B++ prints arrays much differently from Go's `fmt.Println`. Let's look at the modification.
 ```go
 for _, instruction := range prog.Program {
