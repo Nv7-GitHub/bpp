@@ -13,20 +13,30 @@ func Parse(src string) (*Program, error) {
 	setupFuncs()
 	lines := strings.Split(src, "\n")
 	prg := &Program{
-		Memory:  make(map[string]Variable),
-		Program: make([]Executable, len(lines)),
+		Memory:   make(map[string]Variable),
+		Program:  make([]Executable, len(lines)),
+		Sections: make(map[string]int),
 	}
 	var err error
 	for i, line := range lines {
-		prg.Program[i], err = parseStmt(line, i+1)
-		if err != nil {
-			return prg, err
+		if len(strings.TrimSpace(line)) == 0 {
+			prg.Program[i] = func(*Program) (Variable, error) {
+				return Variable{
+					Type: NULL,
+					Data: "",
+				}, nil
+			}
+		} else {
+			prg.Program[i], err = parseStmt(line, i+1, prg)
+			if err != nil {
+				return prg, err
+			}
 		}
 	}
 	return prg, nil
 }
 
-func parseStmt(src string, line int) (Executable, error) {
+func parseStmt(src string, line int, prg ...*Program) (Executable, error) {
 	if src[0] != '[' && src[len(src)-1] != ']' {
 		vr := parseVariable(src)
 		return func(*Program) (Variable, error) {
@@ -54,6 +64,24 @@ func parseStmt(src string, line int) (Executable, error) {
 			openQuotations = 0
 		} else {
 			arg += val + " "
+		}
+	}
+
+	if funcName == "SECTION" && len(prg) == 1 {
+		if len(args) != 1 {
+			return nil, fmt.Errorf("line %d: invalid argument count to directive SECTION", line)
+		}
+		vr := parseVariable(args[0])
+		if vr.Type.IsEqual(IDENTIFIER) {
+			prg[0].Sections[vr.Data.(string)] = line - 1
+			return func(*Program) (Variable, error) {
+				return Variable{
+					Type: NULL,
+					Data: "",
+				}, nil
+			}, nil
+		} else {
+			return nil, fmt.Errorf("line %d: invalid argument to directive SECTION", line)
 		}
 	}
 

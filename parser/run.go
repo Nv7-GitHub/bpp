@@ -5,10 +5,15 @@ import "fmt"
 // Run is a basic runner based on the original B++ interpreter
 func (p *Program) Run() (string, error) {
 	out := ""
-	for _, val := range p.Program {
+	for i := 0; i < len(p.Program); i++ {
+		val := p.Program[i]
 		ret, err := val(p)
 		if err != nil {
 			return out, err
+		}
+		if ret.Type.IsEqual(GOTO) {
+			i = ret.Data.(int)
+			continue
 		}
 		if ret.Type.IsEqual(STRING) {
 			if len(ret.Data.(string)) == 0 {
