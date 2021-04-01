@@ -104,6 +104,17 @@ func mathFunc() {
 					Type: INT,
 					Data: intPow(val1.Data.(int), val2.Data.(int)),
 				}, nil
+			case "%":
+				if isFloat {
+					return Variable{
+						Type: FLOAT,
+						Data: math.Mod(val1.Data.(float64), val2.Data.(float64)),
+					}, nil
+				}
+				return Variable{
+					Type: INT,
+					Data: val1.Data.(int) % val2.Data.(int),
+				}, nil
 			}
 			return Variable{}, fmt.Errorf("line %d: invalid operation", line)
 		}, nil

@@ -18,6 +18,12 @@ func setupFuncs() {
 }
 
 func parseVariable(text string) Variable {
+	if len(text) < 1 {
+		return Variable{
+			Type: NULL,
+			Data: "",
+		}
+	}
 	if text[0] == '"' && text[len(text)-1] == '"' {
 		return Variable{
 			Type: STRING,
