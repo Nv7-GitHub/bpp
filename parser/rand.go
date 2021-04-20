@@ -35,7 +35,7 @@ func randFuncs() {
 			}
 			return Variable{
 				Type: INT,
-				Data: rand.Intn(val2.Data.(int)+val1.Data.(int)) - val1.Data.(int),
+				Data: rand.Intn(val2.Data.(int)-val1.Data.(int)) + val1.Data.(int),
 			}, nil
 		}, nil
 	}
