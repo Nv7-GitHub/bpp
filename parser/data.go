@@ -1,11 +1,13 @@
 package parser
 
-import "strconv"
+import (
+	"strconv"
+)
 
 type DataType int
 
 func (a DataType) IsEqual(b DataType) bool {
-	return (a & b) != 0
+	return (a&b) != 0 || (a&b) == a
 }
 
 const (
@@ -15,6 +17,7 @@ const (
 	ARRAY                                                 // []Data
 	IDENTIFIER                                            // string
 	NULL                                                  // nil
+	VARIADIC                                              // Multiple args
 	ANY        = STRING | INT | FLOAT | ARRAY             // interface{}
 )
 

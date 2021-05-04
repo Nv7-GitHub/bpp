@@ -59,11 +59,7 @@ func ParseStmt(line string, num int, topLevel ...bool) (Statement, error) {
 			case ']':
 				openedBrackets--
 			case '"':
-				if openQuotation {
-					openQuotation = true
-				} else {
-					openQuotation = false
-				}
+				openQuotation = !openQuotation
 			}
 
 			if (char == ' ' || i == len(argTxt)-1) && openedBrackets == 0 && !openQuotation {

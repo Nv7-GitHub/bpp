@@ -15,6 +15,15 @@ func ParseArgs(args []string, line int) ([]Statement, error) {
 }
 
 func MatchTypes(data []Statement, line int, types []DataType) error {
+	if len(types) == 2 && types[1] == VARIADIC {
+		for i, arg := range data {
+			if !arg.Type().IsEqual(types[0]) {
+				return fmt.Errorf("line %d: argument %d is of wrong type", line, i+1)
+			}
+		}
+		return nil
+	}
+
 	if len(data) != len(types) {
 		return fmt.Errorf("line %d: argument count doesn't match expected (expected %d, got %d)", line, len(types), len(data))
 	}
