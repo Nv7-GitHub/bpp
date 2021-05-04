@@ -25,7 +25,7 @@ func Parse(code string) (Statement, error) {
 
 	var err error
 	for i, val := range lns {
-		out[i], err = ParseStmt(val, i+1, i+1)
+		out[i], err = ParseStmt(val, i+1, true)
 		if err != nil {
 			return nil, err
 		}
@@ -35,7 +35,7 @@ func Parse(code string) (Statement, error) {
 	}, nil
 }
 
-func ParseStmt(line string, num int, topLevel ...int) (Statement, error) {
+func ParseStmt(line string, num int, topLevel ...bool) (Statement, error) {
 	line = strings.TrimSpace(line)
 	if line[0] == '[' && line[len(line)-1] == ']' {
 		funcName := strings.SplitN(line[1:], " ", 2)[0]
@@ -73,6 +73,10 @@ func ParseStmt(line string, num int, topLevel ...int) (Statement, error) {
 					openQuotation = false
 				}
 			}
+		}
+
+		if funcName == "SECTION" && len(topLevel) != 1 {
+			return nil, fmt.Errorf("line %d: SECTION must be a top-level statement", num)
 		}
 
 		// Type checking
