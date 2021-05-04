@@ -51,14 +51,6 @@ func ParseStmt(line string, num int, topLevel ...bool) (Statement, error) {
 		arg := ""
 
 		for i, char := range argTxt {
-			if (char == ' ' || i == len(argTxt)-1) && openedBrackets == 0 && !openQuotation {
-				if i == len(argTxt)-1 {
-					arg += string(argTxt[len(argTxt)-1])
-				}
-				args = append(args, arg)
-				arg = ""
-				continue
-			}
 			arg += string(char)
 
 			switch char {
@@ -72,6 +64,12 @@ func ParseStmt(line string, num int, topLevel ...bool) (Statement, error) {
 				} else {
 					openQuotation = false
 				}
+			}
+
+			if (char == ' ' || i == len(argTxt)-1) && openedBrackets == 0 && !openQuotation {
+				args = append(args, arg)
+				arg = ""
+				continue
 			}
 		}
 

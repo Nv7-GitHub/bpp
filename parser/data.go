@@ -9,12 +9,13 @@ func (a DataType) IsEqual(b DataType) bool {
 }
 
 const (
-	STRING     DataType = 1 << iota // string
-	INT                             // int
-	FLOAT                           // float64
-	ARRAY                           // []Data
-	IDENTIFIER                      // string
-	NULL                            // nil
+	STRING     DataType                       = 1 << iota // string
+	INT                                                   // int
+	FLOAT                                                 // float64
+	ARRAY                                                 // []Data
+	IDENTIFIER                                            // string
+	NULL                                                  // nil
+	ANY        = STRING | INT | FLOAT | ARRAY             // interface{}
 )
 
 type Data struct {
