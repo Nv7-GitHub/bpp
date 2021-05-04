@@ -1,27 +1,7 @@
 package parser
 
-type Program struct {
-	Memory   map[string]Variable
-	Program  []Executable
-	Args     []string
-	Sections map[string]int
+type Statement interface {
+	Line() int
 }
 
-type Variable struct {
-	Data interface{}
-	Type Type
-}
-
-type Type int
-
-const (
-	STRING Type = 1 << iota
-	INT
-	FLOAT
-	ARRAY
-	IDENTIFIER
-	NULL
-	GOTO
-)
-
-type Executable func(*Program) (Variable, error)
+type StatementParser func(stmt string, line int) (Statement, error)
