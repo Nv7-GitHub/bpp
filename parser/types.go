@@ -54,6 +54,7 @@ const (
 	IDENTIFIER                                            // string
 	NULL                                                  // nil
 	VARIADIC                                              // Multiple args
+	NUMBER     = INT | FLOAT                              // interface{}
 	ANY        = STRING | INT | FLOAT | ARRAY             // interface{}
 )
 

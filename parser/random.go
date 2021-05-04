@@ -52,7 +52,7 @@ func SetupRandoms() {
 				Upper:          args[1],
 			}, nil
 		},
-		Signature: []DataType{FLOAT, FLOAT},
+		Signature: []DataType{NUMBER, NUMBER},
 	}
 
 	parsers["CHOOSE"] = StatementParser{
