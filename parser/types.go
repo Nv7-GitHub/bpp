@@ -10,4 +10,4 @@ type StatementParser struct {
 	Signature []DataType
 }
 
-var parsers map[string]StatementParser
+var parsers map[string]StatementParser = make(map[string]StatementParser)

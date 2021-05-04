@@ -14,7 +14,7 @@ func ParseArgs(args []string, line int) ([]Statement, error) {
 	return out, nil
 }
 
-func MatchTypes(data []Statement, line int, types ...DataType) error {
+func MatchTypes(data []Statement, line int, types []DataType) error {
 	if len(data) != len(types) {
 		return fmt.Errorf("line %d: argument count doesn't match expected (expected %d, got %d)", line, len(types), len(data))
 	}
