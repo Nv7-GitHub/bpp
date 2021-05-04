@@ -80,7 +80,6 @@ func ParseStmt(line string, num int, topLevel ...bool) (Statement, error) {
 		}
 		err = MatchTypes(argDat, num, parser.Signature)
 		if err != nil {
-			fmt.Println(funcName)
 			return nil, err
 		}
 

@@ -49,6 +49,8 @@ func main() {
 	handle(err)
 	fmt.Println("Built in", time.Since(start))
 
+	built.Args = []string{"2"}
+
 	start = time.Now()
 	i := 0
 	for !(i == len(built.Instructions)) {
@@ -58,10 +60,13 @@ func main() {
 			i = val.Value.(int)
 			continue
 		}
-		fmt.Println(val.Value)
 		if val.Type != parser.NULL {
-			fmt.Println(val.Value)
+			txt := fmt.Sprintf("%v", val.Value)
+			if len(txt) > 0 {
+				fmt.Println(txt)
+			}
 		}
+		i++
 	}
 	fmt.Println("Executed in", time.Since(start))
 }
