@@ -6,5 +6,6 @@ func init() {
 	SetupArrays()
 	SetupRandoms()
 	SetupComparisons()
+	SetupMath()
 	SetupOthers()
 }

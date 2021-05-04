@@ -2,18 +2,7 @@ package parser
 
 import "fmt"
 
-type Operator int
-
-const (
-	EQUAL        Operator = iota // =
-	NOTEQUAL                     // !=
-	GREATER                      // >
-	LESS                         // <
-	GREATEREQUAL                 // >=
-	LESSEQUAL                    // <=
-)
-
-var opMap = map[string]Operator{
+var comparisonMap = map[string]Operator{
 	"=":  EQUAL,
 	"!=": NOTEQUAL,
 	">":  GREATER,
@@ -69,7 +58,7 @@ func SetupComparisons() {
 			if !ok {
 				return nil, fmt.Errorf("line %d: argument 2 to COMPARE must be an operator", line)
 			}
-			op, exists := opMap[opTxt]
+			op, exists := comparisonMap[opTxt]
 			if !exists {
 				return nil, fmt.Errorf("line %d: unknown comparison operator '%s'", line, opTxt)
 			}
