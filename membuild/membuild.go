@@ -12,6 +12,7 @@ type Program struct {
 	Instructions []Instruction
 	Memory       map[string]Data
 	Sections     map[string]int
+	Args         []string
 }
 
 type Data struct {

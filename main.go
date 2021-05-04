@@ -11,7 +11,6 @@ import (
 
 	"github.com/Nv7-Github/Bpp/membuild"
 	"github.com/Nv7-Github/Bpp/parser"
-	"github.com/davecgh/go-spew/spew"
 )
 
 var filename string
@@ -50,5 +49,19 @@ func main() {
 	handle(err)
 	fmt.Println("Built in", time.Since(start))
 
-	spew.Dump(built)
+	start = time.Now()
+	i := 0
+	for !(i == len(built.Instructions)) {
+		val, err := built.Instructions[i](built)
+		handle(err)
+		if val.Type == membuild.GOTO {
+			i = val.Value.(int)
+			continue
+		}
+		fmt.Println(val.Value)
+		if val.Type != parser.NULL {
+			fmt.Println(val.Value)
+		}
+	}
+	fmt.Println("Executed in", time.Since(start))
 }

@@ -34,15 +34,21 @@ func CompareStmt(p *Program, stm *parser.ComparisonStmt) (Instruction, error) {
 			l = fmt.Sprintf("%v", right.Value)
 			r = fmt.Sprintf("%v", left.Value)
 		} else if right.Type.IsEqual(parser.ARRAY) || left.Type.IsEqual(parser.ARRAY) {
-			ld := left.Value.([]*parser.Data)
-			rd := right.Value.([]*parser.Data)
+			ld, err := convArray(p, left.Value.([]parser.Statement))
+			if err != nil {
+				return NewBlankData(), err
+			}
+			rd, err := convArray(p, right.Value.([]parser.Statement))
+			if err != nil {
+				return NewBlankData(), err
+			}
 			ldv := make([]interface{}, len(ld))
 			rdv := make([]interface{}, len(rd))
 			for i, val := range ld {
-				ldv[i] = val.Data
+				ldv[i] = val.Value
 			}
 			for i, val := range rd {
-				rdv[i] = val.Data
+				rdv[i] = val.Value
 			}
 			l = ldv
 			r = rdv
@@ -105,4 +111,20 @@ func getBoolVal(cond bool) Data {
 		Type:  parser.INT,
 		Value: out,
 	}
+}
+
+func convArray(p *Program, arr []parser.Statement) ([]Data, error) {
+	out := make([]Data, len(arr))
+	for i, val := range arr {
+		v, err := BuildStmt(p, val)
+		if err != nil {
+			return out, err
+		}
+		d, err := v(p)
+		if err != nil {
+			return out, err
+		}
+		out[i] = d
+	}
+	return out, nil
 }

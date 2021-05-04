@@ -38,6 +38,15 @@ func BuildStmt(p *Program, stmt parser.Statement, instructionum ...int) (Instruc
 	case *parser.ConcatStmt:
 		return ConcatStmt(p, s)
 
+	case *parser.IndexStmt:
+		return IndexStmt(p, s)
+
+	case *parser.ArgsStmt:
+		return ArgsStmt(p, s)
+
+	case *parser.RandintStmt:
+		return RandintStmt(p, s)
+
 	default:
 		return nil, fmt.Errorf("line %d: unknown type %s", stmt.Line(), reflect.TypeOf(stmt).String())
 	}
