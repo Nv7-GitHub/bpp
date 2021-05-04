@@ -10,4 +10,12 @@ type StatementParser struct {
 	Signature []DataType
 }
 
+type BasicStatement struct {
+	line int
+}
+
+func (b *BasicStatement) Line() int {
+	return b.line
+}
+
 var parsers map[string]StatementParser = make(map[string]StatementParser)

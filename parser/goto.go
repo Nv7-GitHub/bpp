@@ -2,40 +2,30 @@ package parser
 
 // GotoStmt is the equivalent of [GOTO stmt.Label]
 type GotoStmt struct {
+	*BasicStatement
 	Label Statement
-
-	line int
 }
 
 func (g *GotoStmt) Type() DataType {
 	return NULL
 }
 
-func (g *GotoStmt) Line() int {
-	return g.line
-}
-
 // SectionStmt is the equivalent of [SECTION stmt.Label]
 type SectionStmt struct {
+	*BasicStatement
 	Label Statement
-
-	line int
 }
 
 func (s *SectionStmt) Type() DataType {
 	return NULL
 }
 
-func (s *SectionStmt) Line() int {
-	return s.line
-}
-
 func SetupGotos() {
 	parsers["GOTO"] = StatementParser{
 		Parse: func(args []Statement, line int) (Statement, error) {
 			return &GotoStmt{
-				Label: args[0],
-				line:  line,
+				Label:          args[0],
+				BasicStatement: &BasicStatement{line: line},
 			}, nil
 		},
 		Signature: []DataType{STRING},
@@ -44,8 +34,8 @@ func SetupGotos() {
 	parsers["SECTION"] = StatementParser{
 		Parse: func(args []Statement, line int) (Statement, error) {
 			return &GotoStmt{
-				Label: args[0],
-				line:  line,
+				Label:          args[0],
+				BasicStatement: &BasicStatement{line: line},
 			}, nil
 		},
 		Signature: []DataType{STRING},
