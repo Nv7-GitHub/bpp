@@ -44,5 +44,7 @@ func main() {
 	handle(err)
 	fmt.Println("Parsed in", time.Since(start))
 
-	spew.Dump(prog)
+	out, err := os.Create("ast.txt")
+	handle(err)
+	spew.Fdump(out, prog)
 }
