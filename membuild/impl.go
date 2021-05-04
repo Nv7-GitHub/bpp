@@ -2,7 +2,6 @@ package membuild
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/Nv7-Github/Bpp/parser"
 )
@@ -86,84 +85,5 @@ func IfStmt(p *Program, stm *parser.IfStmt) (Instruction, error) {
 			return body(p)
 		}
 		return el(p)
-	}, nil
-}
-
-func ConcatStmt(p *Program, stm *parser.ConcatStmt) (Instruction, error) {
-	argDat := make([]Instruction, len(stm.Strings))
-	var err error
-	for i, str := range stm.Strings {
-		argDat[i], err = BuildStmt(p, str)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return func(p *Program) (Data, error) {
-		args := make([]string, len(argDat))
-		for i, arg := range argDat {
-			v, err := arg(p)
-			if err != nil {
-				return NewBlankData(), err
-			}
-			args[i] = fmt.Sprintf("%v", v.Value)
-		}
-		return Data{
-			Type:  parser.STRING,
-			Value: strings.Join(args, ""),
-		}, nil
-	}, nil
-}
-
-func IndexStmt(p *Program, stm *parser.IndexStmt) (Instruction, error) {
-	val, err := BuildStmt(p, stm.Value)
-	if err != nil {
-		return nil, err
-	}
-	ind, err := BuildStmt(p, stm.Index)
-	if err != nil {
-		return nil, err
-	}
-	return func(p *Program) (Data, error) {
-		v, err := val(p)
-		if err != nil {
-			return NewBlankData(), err
-		}
-		i, err := ind(p)
-		if err != nil {
-			return NewBlankData(), err
-		}
-
-		str, ok := v.Value.(string)
-		if ok {
-			return Data{
-				Type:  parser.STRING,
-				Value: string(str[i.Value.(int)]),
-			}, nil
-		}
-
-		arr, ok := v.Value.([]parser.Statement)
-		if ok {
-			d, err := convArray(p, arr)
-			if err != nil {
-				return NewBlankData(), err
-			}
-			return d[i.Value.(int)], nil
-		}
-		return NewBlankData(), fmt.Errorf("line %d: parameter to INDEX must be STRING or ARRAY", stm.Line())
-	}, nil
-}
-
-func ArgsStmt(p *Program, stm *parser.ArgsStmt) (Instruction, error) {
-	ind, err := BuildStmt(p, stm.Index)
-	if err != nil {
-		return nil, err
-	}
-	return func(p *Program) (Data, error) {
-		i, err := ind(p)
-		if err != nil {
-			return NewBlankData(), err
-		}
-		d := parser.ParseData(p.Args[i.Value.(int)], stm.Line())
-		return ParserDataToData(d), nil
 	}, nil
 }

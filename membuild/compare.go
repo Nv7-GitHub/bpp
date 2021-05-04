@@ -34,14 +34,8 @@ func CompareStmt(p *Program, stm *parser.ComparisonStmt) (Instruction, error) {
 			l = fmt.Sprintf("%v", right.Value)
 			r = fmt.Sprintf("%v", left.Value)
 		} else if right.Type.IsEqual(parser.ARRAY) || left.Type.IsEqual(parser.ARRAY) {
-			ld, err := convArray(p, left.Value.([]parser.Statement))
-			if err != nil {
-				return NewBlankData(), err
-			}
-			rd, err := convArray(p, right.Value.([]parser.Statement))
-			if err != nil {
-				return NewBlankData(), err
-			}
+			ld := left.Value.([]Data)
+			rd := right.Value.([]Data)
 			ldv := make([]interface{}, len(ld))
 			rdv := make([]interface{}, len(rd))
 			for i, val := range ld {
@@ -50,8 +44,16 @@ func CompareStmt(p *Program, stm *parser.ComparisonStmt) (Instruction, error) {
 			for i, val := range rd {
 				rdv[i] = val.Value
 			}
-			l = ldv
-			r = rdv
+			eq := true
+			for i, val := range ld {
+				if rd[i] != val {
+					eq = false
+				}
+			}
+			if stm.Operation == parser.EQUAL {
+				return getBoolVal(eq), nil
+			}
+			return getBoolVal(!eq), nil
 		} else if right.Type.IsEqual(parser.FLOAT) || left.Type.IsEqual(parser.FLOAT) {
 			l, err = getFloat(left.Value, stm.Line())
 			if err != nil {
@@ -111,20 +113,4 @@ func getBoolVal(cond bool) Data {
 		Type:  parser.INT,
 		Value: out,
 	}
-}
-
-func convArray(p *Program, arr []parser.Statement) ([]Data, error) {
-	out := make([]Data, len(arr))
-	for i, val := range arr {
-		v, err := BuildStmt(p, val)
-		if err != nil {
-			return out, err
-		}
-		d, err := v(p)
-		if err != nil {
-			return out, err
-		}
-		out[i] = d
-	}
-	return out, nil
 }
