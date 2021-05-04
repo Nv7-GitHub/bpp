@@ -5,5 +5,6 @@ func init() {
 	SetupVariables()
 	SetupArrays()
 	SetupRandoms()
+	SetupComparisons()
 	SetupOthers()
 }
