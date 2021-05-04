@@ -2,6 +2,12 @@ package parser
 
 type Statement interface {
 	Line() int
+	Type() DataType
 }
 
-type StatementParser func(stmt string, line int) (Statement, error)
+type StatementParser struct {
+	Parse     func(args []Statement, line int) (Statement, error)
+	Signature []DataType
+}
+
+var parsers map[string]StatementParser

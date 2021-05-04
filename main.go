@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/Nv7-Github/Bpp/parser"
+	"github.com/davecgh/go-spew/spew"
 )
 
 var filename string
@@ -43,5 +44,5 @@ func main() {
 	handle(err)
 	fmt.Println("Parsed in", time.Since(start))
 
-	fmt.Println(prog)
+	spew.Dump(prog)
 }
