@@ -32,6 +32,9 @@ func BuildStmt(p *Program, stmt parser.Statement, instructionum ...int) (Instruc
 	case *parser.ComparisonStmt:
 		return CompareStmt(p, s)
 
+	case *parser.MathStmt:
+		return MathStmt(p, s)
+
 	default:
 		return nil, fmt.Errorf("line %d: unknown type %s", stmt.Line(), reflect.TypeOf(stmt).String())
 	}
