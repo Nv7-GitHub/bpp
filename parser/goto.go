@@ -1,5 +1,7 @@
 package parser
 
+import "fmt"
+
 // GotoStmt is the equivalent of [GOTO stmt.Label]
 type GotoStmt struct {
 	*BasicStatement
@@ -13,7 +15,7 @@ func (g *GotoStmt) Type() DataType {
 // SectionStmt is the equivalent of [SECTION stmt.Label]
 type SectionStmt struct {
 	*BasicStatement
-	Label Statement
+	Label string
 }
 
 func (s *SectionStmt) Type() DataType {
@@ -33,11 +35,19 @@ func SetupGotos() {
 
 	parsers["SECTION"] = StatementParser{
 		Parse: func(args []Statement, line int) (Statement, error) {
-			return &GotoStmt{
-				Label:          args[0],
+			data, ok := args[0].(*Data)
+			if !ok {
+				return nil, fmt.Errorf("line %d: parameter to SECTION must be static", line)
+			}
+			label, ok := data.Data.(string)
+			if !ok {
+				return nil, fmt.Errorf("line %d: parameter to SECTION must be of type string", line)
+			}
+			return &SectionStmt{
+				Label:          label,
 				BasicStatement: &BasicStatement{line: line},
 			}, nil
 		},
-		Signature: []DataType{STRING},
+		Signature: []DataType{IDENTIFIER},
 	}
 }

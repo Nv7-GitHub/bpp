@@ -18,7 +18,7 @@ func (p *Program) Line() int {
 	return 1
 }
 
-func Parse(code string) (Statement, error) {
+func Parse(code string) (*Program, error) {
 	code = strings.ReplaceAll(code, "\n\n", "\n") // Get rid of blank lines
 	lns := strings.Split(code, "\n")
 	out := make([]Statement, len(lns))

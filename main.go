@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Nv7-Github/Bpp/membuild"
 	"github.com/Nv7-Github/Bpp/parser"
 	"github.com/davecgh/go-spew/spew"
 )
@@ -44,7 +45,10 @@ func main() {
 	handle(err)
 	fmt.Println("Parsed in", time.Since(start))
 
-	out, err := os.Create("ast.txt")
+	start = time.Now()
+	built, err := membuild.Build(prog)
 	handle(err)
-	spew.Fdump(out, prog)
+	fmt.Println("Built in", time.Since(start))
+
+	spew.Dump(built)
 }
