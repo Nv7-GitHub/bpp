@@ -2,6 +2,7 @@ package membuild
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/Nv7-Github/Bpp/parser"
 )
@@ -85,5 +86,30 @@ func IfStmt(p *Program, stm *parser.IfStmt) (Instruction, error) {
 			return body(p)
 		}
 		return el(p)
+	}, nil
+}
+
+func ConcatStmt(p *Program, stm *parser.ConcatStmt) (Instruction, error) {
+	argDat := make([]Instruction, len(stm.Strings))
+	var err error
+	for i, str := range stm.Strings {
+		argDat[i], err = BuildStmt(p, str)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return func(p *Program) (Data, error) {
+		args := make([]string, len(argDat))
+		for i, arg := range argDat {
+			v, err := arg(p)
+			if err != nil {
+				return NewBlankData(), err
+			}
+			args[i] = fmt.Sprintf("%v", v.Value)
+		}
+		return Data{
+			Type:  parser.STRING,
+			Value: strings.Join(args, ""),
+		}, nil
 	}, nil
 }
