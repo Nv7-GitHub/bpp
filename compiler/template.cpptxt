@@ -1,4 +1,3 @@
-#define LEN(x)  (sizeof(x) / sizeof((x)[0]))
 #include <iostream>
 #include <cstring>
 #include <random>
