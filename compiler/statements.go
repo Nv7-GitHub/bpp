@@ -56,6 +56,12 @@ func compileStmtRaw(stmt parser.Statement) (string, parser.DataType, error) {
 
 	case *parser.ArgsStmt:
 		return CompileArgs(stm)
+
+	case *parser.RepeatStmt:
+		return CompileRepeat(stm)
+
+	case *parser.ChooseStmt:
+		return CompileChoose(stm)
 	}
 	return "", parser.NULL, fmt.Errorf("line %d: unknown type %s", stmt.Line(), reflect.TypeOf(stmt))
 }

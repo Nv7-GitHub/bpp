@@ -72,6 +72,6 @@ func SetupRandoms() {
 				Data:           args[0],
 			}, nil
 		},
-		Signature: []DataType{ARRAY},
+		Signature: []DataType{STRING},
 	}
 }

@@ -42,3 +42,23 @@ func BuildVarMap() string {
 	}
 	return out
 }
+
+func CompileRepeat(val *parser.RepeatStmt) (string, parser.DataType, error) {
+	ind, _, err := compileStmtRaw(val.Count)
+	if err != nil {
+		return "", parser.NULL, err
+	}
+	v, _, err := compileStmtRaw(val.Val)
+	if err != nil {
+		return "", parser.NULL, err
+	}
+	return fmt.Sprintf("repeat(%s, (int)%s)", v, ind), parser.STRING, nil
+}
+
+func CompileChoose(val *parser.ChooseStmt) (string, parser.DataType, error) {
+	v, _, err := compileStmtRaw(val.Data)
+	if err != nil {
+		return "", parser.NULL, err
+	}
+	return fmt.Sprintf("choose(%s)", v), parser.STRING, nil
+}
