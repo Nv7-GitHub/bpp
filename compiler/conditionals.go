@@ -51,7 +51,6 @@ func CompileComparison(val *parser.ComparisonStmt) (string, parser.DataType, err
 		return "", parser.NULL, err
 	}
 	if (ldt == parser.INT || rdt == parser.INT) && (ldt == parser.STRING || rdt == parser.STRING) { // Use atoi
-		fmt.Println(ldt, rdt, parser.STRING)
 		if ldt == parser.STRING {
 			left = fmt.Sprintf("stoi(%s, &strsz)", left)
 		}
@@ -59,7 +58,7 @@ func CompileComparison(val *parser.ComparisonStmt) (string, parser.DataType, err
 			right = fmt.Sprintf("stoi(%s, &strsz)", right)
 		}
 	}
-	return fmt.Sprintf("(bool)((%s) %s (%s))", left, compMap[val.Operation], right), parser.NULL, nil
+	return fmt.Sprintf("(int)((%s) %s (%s))", left, compMap[val.Operation], right), parser.NULL, nil
 }
 
 var compMap = map[parser.Operator]string{

@@ -32,7 +32,7 @@ func CompileArgs(val *parser.ArgsStmt) (string, parser.DataType, error) {
 	if err != nil {
 		return "", parser.NULL, err
 	}
-	return fmt.Sprintf("argv[(int)%s]", ind), parser.STRING, nil
+	return fmt.Sprintf("argv[((int)%s)+1]", ind), parser.STRING, nil
 }
 
 func BuildVarMap() string {
