@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Nv7-Github/Bpp/membuild"
+	"github.com/Nv7-Github/Bpp/compiler"
 	"github.com/Nv7-Github/Bpp/parser"
 )
 
@@ -44,7 +44,14 @@ func main() {
 	handle(err)
 	fmt.Println("Parsed in", time.Since(start))
 
-	start = time.Now()
+	code, err := compiler.Compile(prog)
+	handle(err)
+	fmt.Println("Built in", time.Since(start))
+
+	err = os.WriteFile("main.c", []byte(code), os.ModePerm)
+	handle(err)
+
+	/*start = time.Now()
 	built, err := membuild.Build(prog)
 	handle(err)
 	fmt.Println("Built in", time.Since(start))
@@ -68,5 +75,5 @@ func main() {
 		}
 		i++
 	}
-	fmt.Println("Executed in", time.Since(start))
+	fmt.Println("Executed in", time.Since(start))*/
 }

@@ -1,0 +1,15 @@
+#define LEN(x)  (sizeof(x) / sizeof((x)[0]))
+#include <stdio.h>
+#include <strings.h>
+
+// Is ctxt because you can't have C files in a folder with cgo
+
+void printarray(int length, char *val[]) {
+  for (int i = 0; i < length; i++) {
+    printf("");
+  }
+}
+
+int main(int argc, char *argv[]) {
+content: ;
+}

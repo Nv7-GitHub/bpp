@@ -17,3 +17,7 @@
 # Testing Script
 script.bpp
 ast.txt
+test.bpp
+main.c
+run.sh
+.vscode/*
