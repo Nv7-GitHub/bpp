@@ -8,6 +8,7 @@ B++ is a programming language initially developed by the developers for The Brai
 - [Basic Functions](#basic-functions)
 - [Comparison](#comparison)
 - [GOTO Statements](#goto-statements)
+- [Builtin Functions](#builtin-functions)
 
 ## Introduction
 In B++, everything is a tag. A tag is made of square brackets, with a function call in them! You can also provide tags as input to another tag. Arguments to a tag are seperated by spaces. For example:
@@ -172,3 +173,16 @@ We can also make loops using this. For example, let's make a loop that will prin
 [IF [COMPARE [VAR i] < 10] [GOTO loop] ""] # Loop back to the start
 ```
 In this program, it goes to a previous section until a requirement is satisfied.
+
+## Builtin Functions
+B++ has many builtin functions, which are listed below.
+
+| Function Signature | Description |
+| --- | --- |
+| `[CHOOSE val]` | Gets a random index of `val`, which can be an array or a string. |
+| `[REPEAT val n]` | Repeats the contents of a string or array `val`, `n` times. |
+| `[RANDINT lower upper]` | Gets a random integer within the range `lower`, `upper`. |
+| `[RANDOM lower upper]` | Gets a random float in the range `lower`, `upper`. |
+| `[FLOOR val]` | Gets the floor, or rounds down float `val`. |
+| `[CEIL val]` | Gets the ceiling, or rounds up float `val`. |
+| `[ROUND val]` | Rounds float `val` to the nearest integer, or whole number. |
