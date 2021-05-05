@@ -23,7 +23,8 @@ func (c *ConcatStmt) Type() DataType {
 // RepeatStmt is the equivalent of [REPEAT stmt.Val]
 type RepeatStmt struct {
 	*BasicStatement
-	Val Statement
+	Val   Statement
+	Count Statement
 }
 
 func (r *RepeatStmt) Type() DataType {
@@ -55,9 +56,10 @@ func SetupOthers() {
 		Parse: func(args []Statement, line int) (Statement, error) {
 			return &RepeatStmt{
 				Val:            args[0],
+				Count:          args[1],
 				BasicStatement: &BasicStatement{line: line},
 			}, nil
 		},
-		Signature: []DataType{STRING},
+		Signature: []DataType{STRING, INT},
 	}
 }

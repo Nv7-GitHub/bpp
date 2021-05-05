@@ -2,6 +2,7 @@ package membuild
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/Nv7-Github/Bpp/parser"
 )
@@ -55,11 +56,11 @@ func CompareStmt(p *Program, stm *parser.ComparisonStmt) (Instruction, error) {
 			}
 			return getBoolVal(!eq), nil
 		} else if right.Type.IsEqual(parser.FLOAT) || left.Type.IsEqual(parser.FLOAT) {
-			l, err = getFloat(left.Value, stm.Line())
+			l, err = getFloat(left.Value, stm.Line(), "COMPARE")
 			if err != nil {
 				return NewBlankData(), err
 			}
-			r, err = getFloat(right.Value, stm.Line())
+			r, err = getFloat(right.Value, stm.Line(), "COMPARE")
 			if err != nil {
 				return NewBlankData(), err
 			}
@@ -92,7 +93,7 @@ func CompareStmt(p *Program, stm *parser.ComparisonStmt) (Instruction, error) {
 	}, nil
 }
 
-func getFloat(val interface{}, line int) (float64, error) {
+func getFloat(val interface{}, line int, funcName string) (float64, error) {
 	v, ok := val.(float64)
 	if ok {
 		return v, nil
@@ -101,7 +102,7 @@ func getFloat(val interface{}, line int) (float64, error) {
 	if ok {
 		return float64(a), nil
 	}
-	return 0, fmt.Errorf("line %d: unknown type in COMPARE", line)
+	return 0, fmt.Errorf("line %d: unknown type %s in %s", line, reflect.TypeOf(val), funcName)
 }
 
 func getBoolVal(cond bool) Data {

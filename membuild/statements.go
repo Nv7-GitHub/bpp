@@ -50,6 +50,24 @@ func BuildStmt(p *Program, stmt parser.Statement, instructionum ...int) (Instruc
 	case *parser.ArrayStmt:
 		return ArrayStmt(p, s)
 
+	case *parser.ChooseStmt:
+		return ChooseStmt(p, s)
+
+	case *parser.RepeatStmt:
+		return RepeatStmt(p, s)
+
+	case *parser.RandomStmt:
+		return RandomStmt(p, s)
+
+	case *parser.FloorStmt:
+		return FloorStmt(p, s)
+
+	case *parser.CeilStmt:
+		return CeilStmt(p, s)
+
+	case *parser.RoundStmt:
+		return RoundStmt(p, s)
+
 	default:
 		return nil, fmt.Errorf("line %d: unknown type %s", stmt.Line(), reflect.TypeOf(stmt).String())
 	}

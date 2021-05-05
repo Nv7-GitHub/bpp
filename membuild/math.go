@@ -29,11 +29,11 @@ func MathStmt(p *Program, stm *parser.MathStmt) (Instruction, error) {
 		var r float64 = 7
 
 		if right.Type.IsEqual(parser.FLOAT) || left.Type.IsEqual(parser.FLOAT) {
-			l, err = getFloat(left.Value, stm.Line())
+			l, err = getFloat(left.Value, stm.Line(), "MATH")
 			if err != nil {
 				return NewBlankData(), err
 			}
-			r, err = getFloat(right.Value, stm.Line())
+			r, err = getFloat(right.Value, stm.Line(), "MATH")
 			if err != nil {
 				return NewBlankData(), err
 			}

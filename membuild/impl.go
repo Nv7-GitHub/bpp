@@ -2,6 +2,7 @@ package membuild
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/Nv7-Github/Bpp/parser"
 )
@@ -85,5 +86,56 @@ func IfStmt(p *Program, stm *parser.IfStmt) (Instruction, error) {
 			return body(p)
 		}
 		return el(p)
+	}, nil
+}
+
+func FloorStmt(p *Program, stm *parser.FloorStmt) (Instruction, error) {
+	val, err := BuildStmt(p, stm.Val)
+	if err != nil {
+		return nil, err
+	}
+	return func(p *Program) (Data, error) {
+		v, err := val(p)
+		if err != nil {
+			return NewBlankData(), err
+		}
+		return Data{
+			Type:  parser.INT,
+			Value: int(math.Floor(v.Value.(float64))),
+		}, nil
+	}, nil
+}
+
+func CeilStmt(p *Program, stm *parser.CeilStmt) (Instruction, error) {
+	val, err := BuildStmt(p, stm.Val)
+	if err != nil {
+		return nil, err
+	}
+	return func(p *Program) (Data, error) {
+		v, err := val(p)
+		if err != nil {
+			return NewBlankData(), err
+		}
+		return Data{
+			Type:  parser.INT,
+			Value: int(math.Ceil(v.Value.(float64))),
+		}, nil
+	}, nil
+}
+
+func RoundStmt(p *Program, stm *parser.RoundStmt) (Instruction, error) {
+	val, err := BuildStmt(p, stm.Val)
+	if err != nil {
+		return nil, err
+	}
+	return func(p *Program) (Data, error) {
+		v, err := val(p)
+		if err != nil {
+			return NewBlankData(), err
+		}
+		return Data{
+			Type:  parser.INT,
+			Value: int(math.Round(v.Value.(float64))),
+		}, nil
 	}, nil
 }
