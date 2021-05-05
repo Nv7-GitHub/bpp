@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/Nv7-Github/Bpp/membuild"
@@ -19,6 +20,8 @@ func RunCmd(args Args, prog *parser.Program) {
 	if args.Time {
 		fmt.Println("Built in", time.Since(start))
 	}
+
+	p.Args = strings.Split(args.Run.Args, ",")
 
 	if args.Time {
 		start = time.Now()

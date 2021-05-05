@@ -26,8 +26,8 @@ type Build struct {
 }
 
 type Run struct {
-	Args []string `help:"arguments for program"`
-	File string   `arg:"positional,-i,--input" help:"input B++ program"`
+	Args string `help:"arguments for program, comma-seperated"`
+	File string `arg:"positional,-i,--input" help:"input B++ program"`
 }
 
 type Args struct {
