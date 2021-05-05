@@ -2,6 +2,8 @@
 #include <iostream>
 #include <cstring>
 #include <random>
+#include <cstdlib>
+#include <ctime>
 
 // Is ctxt because you can't have C files in a folder with cgo
 

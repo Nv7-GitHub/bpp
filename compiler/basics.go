@@ -59,7 +59,7 @@ func CompileIndex(val *parser.IndexStmt) (string, parser.DataType, error) {
 	if err != nil {
 		return "", parser.NULL, err
 	}
-	return fmt.Sprintf("&(%s[(int)%s])", dat, ind), parser.STRING, nil
+	return fmt.Sprintf("std::string(1, %s[(int)%s])", dat, ind), parser.STRING, nil
 }
 
 func CompileRandom(val *parser.RandomStmt) (string, parser.DataType, error) {
@@ -71,7 +71,7 @@ func CompileRandom(val *parser.RandomStmt) (string, parser.DataType, error) {
 	if err != nil {
 		return "", parser.NULL, err
 	}
-	return fmt.Sprintf("frand() * ((float)%s - (float)%s)", lower, upper), parser.STRING, nil
+	return fmt.Sprintf("frand() * ((float)%s - (float)%s)", lower, upper), parser.FLOAT, nil
 }
 
 func CompileConcat(val *parser.ConcatStmt) (string, parser.DataType, error) {
