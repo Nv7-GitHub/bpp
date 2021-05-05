@@ -166,8 +166,9 @@ We can also make loops using this. For example, let's make a loop that will prin
 
 [SECTION loop]
 
-[VAR i]
+[VAR i] # Print the number
 
-[DEFINE i [MATH [VAR i] + 1]]
-[IF [COMPARE [VAR i] < 10] [GOTO tmp0] ""]
+[DEFINE i [MATH [VAR i] + 1]] # Increase the number by 1
+[IF [COMPARE [VAR i] < 10] [GOTO loop] ""] # Loop back to the start
 ```
+In this program, it goes to a previous section until a requirement is satisfied.
