@@ -19,6 +19,10 @@ func (b *BasicStatement) Line() int {
 	return b.line
 }
 
+func (b *BasicStatement) Type() DataType {
+	return NULL
+}
+
 // Parsers
 var parsers map[string]StatementParser = make(map[string]StatementParser)
 
