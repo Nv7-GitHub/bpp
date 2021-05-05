@@ -20,7 +20,24 @@ B++ programs support arguments. To pass arguments, use --args with comma-seperat
 ```bash
 bpp run --args arg1,arg2,arg3 <filename>
 ```
+You can time how long it takes to run a B++ program, using --time or -t. For example:
+```
+bpp run -t <filename>
+```
 
 ## Compiling Programs
-Bpp also supports compiling B++ programs!
-> :warning: **Arrays are not supported!**
+Bpp also supports compiling B++ programs into a native, extremely high-performance executable! You can use --time or -t with this too.
+> :warning: Arrays are not supported!
+
+To compile a program, just do 
+```
+bpp build <filename>
+```
+You can also use -o or --output to specify the output file. For example, to compile the `kin` example, do:
+```
+bpp build -o kin examples/kin.bpp
+```
+You can also use --preserve or -p to keep the translated C++!
+```
+bpp build -p <filename>
+```
