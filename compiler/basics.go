@@ -37,3 +37,63 @@ func CompileVar(val *parser.VarStmt) (string, parser.DataType, error) {
 	label := val.Label.(*parser.Data).Data.(string)
 	return label, variableTypes[label], nil
 }
+
+func CompileRandint(val *parser.RandintStmt) (string, parser.DataType, error) {
+	lower, _, err := compileStmtRaw(val.Lower)
+	if err != nil {
+		return "", parser.NULL, err
+	}
+	upper, _, err := compileStmtRaw(val.Upper)
+	if err != nil {
+		return "", parser.NULL, err
+	}
+	return fmt.Sprintf("(rand() %% ((int)%s - (int)%s)) + (int)%s", upper, lower, lower), parser.INT, nil
+}
+
+func CompileIndex(val *parser.IndexStmt) (string, parser.DataType, error) {
+	ind, _, err := compileStmtRaw(val.Index)
+	if err != nil {
+		return "", parser.NULL, err
+	}
+	dat, _, err := compileStmtRaw(val.Value)
+	if err != nil {
+		return "", parser.NULL, err
+	}
+	return fmt.Sprintf("&(%s[(int)%s])", dat, ind), parser.STRING, nil
+}
+
+func CompileRandom(val *parser.RandomStmt) (string, parser.DataType, error) {
+	lower, _, err := compileStmtRaw(val.Lower)
+	if err != nil {
+		return "", parser.NULL, err
+	}
+	upper, _, err := compileStmtRaw(val.Upper)
+	if err != nil {
+		return "", parser.NULL, err
+	}
+	return fmt.Sprintf("frand() * ((float)%s - (float)%s)", lower, upper), parser.STRING, nil
+}
+
+func CompileConcat(val *parser.ConcatStmt) (string, parser.DataType, error) {
+	if len(val.Strings) == 2 {
+		one, _, err := compileStmtRaw(val.Strings[0])
+		if err != nil {
+			return "", parser.NULL, err
+		}
+		two, _, err := compileStmtRaw(val.Strings[1])
+		if err != nil {
+			return "", parser.NULL, err
+		}
+		return fmt.Sprintf("strcat(%s, %s)", one, two), parser.STRING, nil
+	}
+	first, _, err := compileStmtRaw(val.Strings[0])
+	if err != nil {
+		return "", parser.NULL, err
+	}
+	val.Strings = val.Strings[1:]
+	rest, _, err := CompileConcat(val)
+	if err != nil {
+		return "", parser.NULL, err
+	}
+	return fmt.Sprintf("strcat(%s, %s)", first, rest), parser.STRING, nil
+}

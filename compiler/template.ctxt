@@ -1,15 +1,46 @@
 #define LEN(x)  (sizeof(x) / sizeof((x)[0]))
 #include <stdio.h>
 #include <strings.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
+#include <stdbool.h>
 
 // Is ctxt because you can't have C files in a folder with cgo
 
-void printarray(int length, char *val[]) {
-  for (int i = 0; i < length; i++) {
-    printf("");
+int ipow(int base, int exp)
+{
+  int result = 1;
+  for (;;)
+  {
+      if (exp & 1)
+          result *= base;
+      exp >>= 1;
+      if (!exp)
+          break;
+      base *= base;
   }
+
+  return result;
+}
+
+float frand() {
+  return (float)rand()/(float)(RAND_MAX);
+}
+
+int bool2int(bool val) {
+  return val;
+}
+
+char strindex(char *val, int index) {
+  char *str = malloc(strlen(val) + 1);
+  strcpy(str, val);
+  char out = str[index];
+  free(str);
+  return out;
 }
 
 int main(int argc, char *argv[]) {
+  srand(time(NULL));
 content: ;
 }

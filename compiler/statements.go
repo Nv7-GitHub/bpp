@@ -17,6 +17,36 @@ func compileStmtRaw(stmt parser.Statement) (string, parser.DataType, error) {
 
 	case *parser.VarStmt:
 		return CompileVar(stm)
+
+	case *parser.RandintStmt:
+		return CompileRandint(stm)
+
+	case *parser.MathStmt:
+		return CompileMath(stm)
+
+	case *parser.IndexStmt:
+		return CompileIndex(stm)
+
+	case *parser.FloorStmt:
+		return CompileFloor(stm)
+
+	case *parser.CeilStmt:
+		return CompileCeil(stm)
+
+	case *parser.RoundStmt:
+		return CompileRound(stm)
+
+	case *parser.RandomStmt:
+		return CompileRandom(stm)
+
+	case *parser.IfStmt:
+		return CompileIf(stm)
+
+	case *parser.ComparisonStmt:
+		return CompileComparison(stm)
+
+	case *parser.ConcatStmt:
+		return CompileConcat(stm)
 	}
 	return "", parser.NULL, fmt.Errorf("line %d: unknown type %s", stmt.Line(), reflect.TypeOf(stmt))
 }
