@@ -37,6 +37,14 @@ func Parse(code string) (*Program, error) {
 }
 
 func ParseStmt(line string, num int, topLevel ...bool) (Statement, error) {
+	if strings.ContainsRune(line, '#') {
+		line = line[:strings.IndexRune(line, '#')]
+		if len(line) == 0 {
+			return &BasicStatement{
+				line: num,
+			}, nil
+		}
+	}
 	line = strings.TrimSpace(line)
 	if line[0] == '[' && line[len(line)-1] == ']' {
 		funcName := strings.SplitN(line[1:], " ", 2)[0]

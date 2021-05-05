@@ -68,6 +68,9 @@ func BuildStmt(p *Program, stmt parser.Statement, instructionum ...int) (Instruc
 	case *parser.RoundStmt:
 		return RoundStmt(p, s)
 
+	case *parser.BasicStatement:
+		return NewBlankInstruction(), nil
+
 	default:
 		return nil, fmt.Errorf("line %d: unknown type %s", stmt.Line(), reflect.TypeOf(stmt).String())
 	}

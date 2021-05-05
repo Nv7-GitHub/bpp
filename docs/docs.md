@@ -16,6 +16,10 @@ In B++, everything is a tag. A tag is made of square brackets, with a function c
 [CONCAT "hello w" "orld"]
 [IF [COMPARE 6 != 4] "6 is not 4" "6 is 4"]
 ```
+You can also do comments using a "#". For example:
+```bpp
+# This is a comment.
+```
 
 ## Hello, World!
 In B++, the return value of a tag is automatically printed. That means that, to make a hello, world!, you just need to do:
@@ -125,3 +129,45 @@ If statements are ternary. Simply just do:
 To make an if statement. To have more than one instruction in an IF statement, check out [GOTOs](#goto-statements).
 
 ## GOTO Statements
+GOTO Statements allow branches and loops.
+
+### Basic GOTO
+```bpp
+[GOTO a]
+"This line will be skipped :("
+
+[SECTION a]
+"Hi!"
+```
+When you run this, you will notice that it only prints "Hi!". This is because the GOTO statement moved to the line with the section named "a".
+
+### Fancy If Statements
+Using this, we can execute multiple lines of code in an IF statement.
+For example:
+```bpp
+[IF [COMPARE 1 = 1] [GOTO tmp1] [GOTO tmp2]]
+
+[SECTION true]
+"Yay! 1 is equal to 1!"
+[GOTO endif]
+
+[SECTION false]
+"1 isn't equal to one?"
+[GOTO endif]
+
+[SECTION endif]
+```
+Let's go through this program. When 1 is equal to 1, it goes to the section called "true". In there, it has a print statement. Then, it goes to the section called "endif". This allows it to skip over the else part.
+
+### Loops
+We can also make loops using this. For example, let's make a loop that will print all the numbers up to 10:
+```bpp
+[DEFINE i 1]
+
+[SECTION loop]
+
+[VAR i]
+
+[DEFINE i [MATH [VAR i] + 1]]
+[IF [COMPARE [VAR i] < 10] [GOTO tmp0] ""]
+```
