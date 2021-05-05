@@ -84,7 +84,7 @@ func CompileConcat(val *parser.ConcatStmt) (string, parser.DataType, error) {
 		if err != nil {
 			return "", parser.NULL, err
 		}
-		return fmt.Sprintf("strcat(%s, %s)", one, two), parser.STRING, nil
+		return fmt.Sprintf("%s + %s", one, two), parser.STRING, nil
 	}
 	first, _, err := compileStmtRaw(val.Strings[0])
 	if err != nil {
@@ -95,5 +95,5 @@ func CompileConcat(val *parser.ConcatStmt) (string, parser.DataType, error) {
 	if err != nil {
 		return "", parser.NULL, err
 	}
-	return fmt.Sprintf("strcat(%s, %s)", first, rest), parser.STRING, nil
+	return fmt.Sprintf("%s + %s", first, rest), parser.STRING, nil
 }

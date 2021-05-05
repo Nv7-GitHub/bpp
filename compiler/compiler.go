@@ -8,7 +8,7 @@ import (
 	"github.com/Nv7-Github/Bpp/parser"
 )
 
-//go:embed template.ctxt
+//go:embed template.cpptxt
 var template string
 
 func Compile(prog *parser.Program) (string, error) {
@@ -34,9 +34,7 @@ func compileStmt(stmt parser.Statement) (string, parser.DataType, error) {
 
 func formatVal(val string, kind parser.DataType) string {
 	if kind != parser.NULL {
-		formatter := printfMap[kind]
-		formatter = strings.ReplaceAll(formatter, "val", val)
-		return formatter
+		return fmt.Sprintf("std::cout << %s << std::endl;", val)
 	}
 	return val
 }
@@ -79,14 +77,8 @@ func processData(d *parser.Data) Data {
 	}
 }
 
-var printfMap = map[parser.DataType]string{
-	parser.STRING: `printf("%s\n", val);`,
-	parser.FLOAT:  `printf("%f\n", val);`,
-	parser.INT:    `printf("%d\n", val);`,
-}
-
 var typeMap = map[parser.DataType]string{
-	parser.STRING: "char *",
+	parser.STRING: "std::string ",
 	parser.FLOAT:  "float ",
 	parser.INT:    "int ",
 }

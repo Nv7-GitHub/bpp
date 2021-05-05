@@ -1,10 +1,7 @@
 #define LEN(x)  (sizeof(x) / sizeof((x)[0]))
-#include <stdio.h>
-#include <strings.h>
-#include <stdlib.h>
-#include <time.h>
-#include <math.h>
-#include <stdbool.h>
+#include <iostream>
+#include <cstring>
+#include <random>
 
 // Is ctxt because you can't have C files in a folder with cgo
 
@@ -30,14 +27,6 @@ float frand() {
 
 int bool2int(bool val) {
   return val;
-}
-
-char strindex(char *val, int index) {
-  char *str = malloc(strlen(val) + 1);
-  strcpy(str, val);
-  char out = str[index];
-  free(str);
-  return out;
 }
 
 int main(int argc, char *argv[]) {

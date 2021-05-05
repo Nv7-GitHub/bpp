@@ -48,7 +48,7 @@ func main() {
 	handle(err)
 	fmt.Println("Built in", time.Since(start))
 
-	err = os.WriteFile("main.c", []byte(code), os.ModePerm)
+	err = os.WriteFile("main.cpp", []byte(code), os.ModePerm)
 	handle(err)
 
 	/*start = time.Now()
