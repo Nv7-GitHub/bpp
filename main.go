@@ -1,79 +1,71 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"io/ioutil"
 	"math/rand"
 	"os"
-	"strings"
 	"time"
 
-	"github.com/Nv7-Github/Bpp/compiler"
 	"github.com/Nv7-Github/Bpp/parser"
+	arg "github.com/alexflint/go-arg"
 )
 
-var filename string
-
-func init() {
-	flag.StringVar(&filename, "file", "", "File to execute using bpp.")
-}
+var p *arg.Parser
 
 func handle(err error) {
 	if err != nil {
-		fmt.Println("Error! " + err.Error())
-		os.Exit(0)
+		p.Fail(err.Error())
 	}
 }
 
+type Build struct {
+	Output   string `help:"output file for executable" arg:"-o"`
+	CC       string `default:"cc" help:"C++ compiler"`
+	Preserve bool   `help:"preserve C++ source code" arg:"-p"`
+	File     string `arg:"positional,-i,--input" help:"input B++ program"`
+}
+
+type Run struct {
+	Args []string `help:"arguments for program"`
+	File string   `arg:"positional,-i,--input" help:"input B++ program"`
+}
+
+type Args struct {
+	Build *Build `arg:"subcommand:build"`
+	Run   *Run   `arg:"subcommand:run"`
+	Time  bool   `help:"print timing for each stage" arg:"-t"`
+}
+
 func main() {
-	flag.Parse()
-
-	if filename == "" {
-		flag.Usage()
-		return
-	}
-
-	script, err := ioutil.ReadFile(filename)
-	handle(err)
-	src := strings.TrimSpace(string(script))
 	rand.Seed(time.Now().UnixNano())
+	var args Args
+	p = arg.MustParse(&args)
 
-	start := time.Now()
-	prog, err := parser.Parse(src)
-	handle(err)
-	fmt.Println("Parsed in", time.Since(start))
-
-	code, err := compiler.Compile(prog)
-	handle(err)
-	fmt.Println("Built in", time.Since(start))
-
-	err = os.WriteFile("main.cpp", []byte(code), os.ModePerm)
-	handle(err)
-
-	/*start = time.Now()
-	built, err := membuild.Build(prog)
-	handle(err)
-	fmt.Println("Built in", time.Since(start))
-
-	built.Args = []string{"2"}
-
-	start = time.Now()
-	i := 0
-	for !(i == len(built.Instructions)) {
-		val, err := built.Instructions[i](built)
-		handle(err)
-		if val.Type == membuild.GOTO {
-			i = val.Value.(int)
-			continue
-		}
-		if val.Type != parser.NULL {
-			txt := fmt.Sprintf("%v", val.Value)
-			if len(txt) > 0 {
-				fmt.Println(txt)
-			}
-		}
-		i++
+	switch {
+	case args.Build != nil:
+		prog := ParseProg(args.Time, args.Build.File)
+		CompileCmd(args, prog)
+	case args.Run != nil:
+		prog := ParseProg(args.Time, args.Run.File)
+		RunCmd(args, prog)
+	default:
+		p.WriteUsage(os.Stdout)
 	}
-	fmt.Println("Executed in", time.Since(start))*/
+}
+
+func ParseProg(isTiming bool, filename string) *parser.Program {
+	src, err := os.ReadFile(filename)
+	handle(err)
+
+	var start time.Time
+	if isTiming {
+		start = time.Now()
+	}
+	prog, err := parser.Parse(string(src))
+	handle(err)
+	if isTiming {
+		fmt.Println("Parsed program in", time.Since(start))
+	}
+
+	return prog
 }
