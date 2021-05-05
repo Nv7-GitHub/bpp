@@ -22,15 +22,8 @@ int ipow(int base, int exp)
   return result;
 }
 
-float frand() {
-  return (float)rand()/(float)(RAND_MAX);
-}
-
-int bool2int(bool val) {
-  return val;
-}
-
 int main(int argc, char *argv[]) {
+  std::string::size_type strsz;
   srand(time(NULL));
 content: ;
 }

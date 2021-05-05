@@ -42,15 +42,24 @@ func CompileIf(val *parser.IfStmt) (string, parser.DataType, error) {
 }
 
 func CompileComparison(val *parser.ComparisonStmt) (string, parser.DataType, error) {
-	left, _, err := compileStmtRaw(val.Left)
+	left, ldt, err := compileStmtRaw(val.Left)
 	if err != nil {
 		return "", parser.NULL, err
 	}
-	right, _, err := compileStmtRaw(val.Right)
+	right, rdt, err := compileStmtRaw(val.Right)
 	if err != nil {
 		return "", parser.NULL, err
 	}
-	return fmt.Sprintf("bool2int((%s) %s (%s))", left, compMap[val.Operation], right), parser.NULL, nil
+	if (ldt == parser.INT || rdt == parser.INT) && (ldt == parser.STRING || rdt == parser.STRING) { // Use atoi
+		fmt.Println(ldt, rdt, parser.STRING)
+		if ldt == parser.STRING {
+			left = fmt.Sprintf("stoi(%s, &strsz)", left)
+		}
+		if rdt == parser.STRING {
+			right = fmt.Sprintf("stoi(%s, &strsz)", right)
+		}
+	}
+	return fmt.Sprintf("(bool)((%s) %s (%s))", left, compMap[val.Operation], right), parser.NULL, nil
 }
 
 var compMap = map[parser.Operator]string{

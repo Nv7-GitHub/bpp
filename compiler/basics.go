@@ -30,7 +30,7 @@ func CompileDefine(val *parser.DefineStmt) (string, parser.DataType, error) {
 		return "", parser.NULL, err
 	}
 	variableTypes[label] = dt
-	return fmt.Sprintf("%s%s = %s;", typeMap[dt], label, v), parser.NULL, nil
+	return fmt.Sprintf("%s = %s;", label, v), parser.NULL, nil
 }
 
 func CompileVar(val *parser.VarStmt) (string, parser.DataType, error) {
@@ -71,7 +71,7 @@ func CompileRandom(val *parser.RandomStmt) (string, parser.DataType, error) {
 	if err != nil {
 		return "", parser.NULL, err
 	}
-	return fmt.Sprintf("frand() * ((float)%s - (float)%s)", lower, upper), parser.FLOAT, nil
+	return fmt.Sprintf("((float)rand()/(float)(RAND_MAX)) * ((float)%s - (float)%s)", lower, upper), parser.FLOAT, nil
 }
 
 func CompileConcat(val *parser.ConcatStmt) (string, parser.DataType, error) {

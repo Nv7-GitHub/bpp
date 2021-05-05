@@ -8,6 +8,8 @@ import (
 	"github.com/Nv7-Github/Bpp/parser"
 )
 
+var tmpUsed = 0
+
 //go:embed template.cpptxt
 var template string
 
@@ -21,7 +23,7 @@ func Compile(prog *parser.Program) (string, error) {
 		}
 		out += newV + "\n"
 	}
-	return strings.Replace(template, "content: ;", out, 1), nil
+	return strings.Replace(template, "content: ;", BuildVarMap()+out, 1), nil
 }
 
 func compileStmt(stmt parser.Statement) (string, parser.DataType, error) {
