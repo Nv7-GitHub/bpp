@@ -1,2 +1,127 @@
-# Coming soon!
-For now, check out [these B++ docs](https://pastebin.com/HAC1Va8j)
+# B++ Documentation
+B++ is a programming language initially developed by the developers for The Brain of TWOW Central. Check out the source code at [their GitHub repository](https://github.com/AeroAstroid/TheBrainOfTWOWCentral)! 
+
+## Table of contents
+- [Introduction](#introduction)
+- [Hello, World!](#hello-world!)
+- [Variables](#variables)
+- [Basic Functions](#basic-functions)
+- [Comparison](#comparison)
+- [GOTO Statements](#goto-statements)
+
+## Introduction
+In B++, everything is a tag. A tag is made of square brackets, with a function call in them! You can also provide tags as input to another tag. Arguments to a tag are seperated by spaces. For example:
+```bpp
+[MATH 5 * 7]
+[CONCAT "hello w" "orld"]
+[IF [COMPARE 6 != 4] "6 is not 4" "6 is 4"]
+```
+
+## Hello, World!
+In B++, the return value of a tag is automatically printed. That means that, to make a hello, world!, you just need to do:
+```bpp
+"Hello, World!"
+```
+
+## Variables
+Variables are made using the DEFINE and VAR statements. To define a variable, use:
+```bpp
+[DEFINE helloworld "Hello, World!"]
+```
+You can also use DEFINE to change a variable. 
+
+To get the value of a variable, use 
+```bpp
+[VAR helloworld]
+```
+We can make a hello world program using variables by doing:
+```bpp
+[DEFINE helloworld "Hello, World!"]
+[VAR helloworld]
+```
+
+## Data Types
+B++ is a type-safe language. There are 4 types in B++:
+- Strings (words/letters)
+- Integers (whole numbers)
+- Floats (decimals)
+- Arrays (lists)
+
+### Strings
+Strings can be defined like any other variable. You can get a letter of a string using the INDEX function. For example:
+```bpp
+[INDEX "Hi!" 0]
+```
+This gets the first letter of the string "Hi!", or "H". Note that the first letter has an index of 0.
+
+### Floats and Integers
+You can do math on floats an integers, using [the MATH function](#math). 
+Integers are defined by doing:
+```bpp
+[DEFINE a 7]
+```
+Floats are defined by doing:
+```bpp
+[DEFINE b 0.21]
+```
+
+### Arrays
+Arrays can have any type as values. You can even store an array in an array! Define arrays using the ARRAY function. For example, the following program makes an array with the values 1, 2, 3 and 4:
+```bpp
+[ARRAY 1 2 3 4]
+```
+You can get a value at an index using.
+```bpp
+[INDEX [ARRAY 1 2 3 4] 0]
+```
+This gets the first element in the array. Note that the first element has an index of 0.
+
+## Basic Functions
+There are a few basic functions which you will most likely ue a lot. They are explained below.
+
+### Math
+The first one is math. To do math, simply use the MATH tag with a value, operator, and another value. For example:
+```bpp
+[MATH 100 + 100]
+```
+Supported operators are:
+
+| Operator | Math Function|
+| --- | --- |
+| `+` | Addition |
+| `-` | Subtraction |
+| `*` | Multiplication |
+| `/` | Division |
+| `^` | Power |
+
+### String Formatting
+To format a string, you would use the CONCAT function. This accepts any number of strings and concatenates them. For example:
+```bpp
+[CONCAT "Hello" ", " "World" "!"]
+```
+Prints "Hello, World!".
+
+## Comparison
+To compare values, you use the COMPARE function. For example:
+```bpp
+[COMPARE 6 = 4]
+``` 
+In B++, there aren't booleans. COMPARE just returns 1 if true, and 0 if false. 
+
+B++ Supports many comparison operators:
+| Operator | What it Does |
+| --- | --- |
+| `=` | Equals |
+| `!=` | Not Equal |
+| `>` | Greater Than |
+| `<` | Less Than |
+| `>=` | Greater Than or Equal To |
+| `<=` | Less Than or Equal To |
+
+If statements are ternary. Simply just do:
+```bpp
+[IF [COMPARE 6 != 4] "6 is not 4" "6 is 4"]
+```
+To make an if statement. To have more than one instruction in an IF statement, check out [GOTOs](#goto-statements).
+
+## GOTO Statements
