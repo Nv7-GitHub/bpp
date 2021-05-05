@@ -35,10 +35,10 @@ func CompileMath(val *parser.MathStmt) (string, parser.DataType, error) {
 	}
 	if type_ == parser.INT && (ldt == parser.STRING || rdt == parser.STRING) {
 		if ldt == parser.STRING {
-			left = fmt.Sprintf("stoi(%s, &strsz)", left)
+			left = fmt.Sprintf("std::stoi(%s, &strsz)", left)
 		}
 		if rdt == parser.STRING {
-			right = fmt.Sprintf("stoi(%s, &strsz)", right)
+			right = fmt.Sprintf("std::stoi(%s, &strsz)", right)
 		}
 	}
 	return fmt.Sprintf("(%s)%s %s (%s)%s", kind, left, opMap[val.Operation], kind, right), type_, nil
