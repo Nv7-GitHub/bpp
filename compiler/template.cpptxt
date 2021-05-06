@@ -1,0 +1,40 @@
+#include <iostream>
+#include <cstring>
+#include <random>
+#include <cstdlib>
+#include <ctime>
+
+// Is ctxt because you can't have C files in a folder with cgo
+
+int ipow(int base, int exp) {
+  int result = 1;
+  for (;;) {
+    if (exp & 1) {
+      result *= base;
+    }
+    exp >>= 1;
+    if (!exp) {
+      break;
+    }
+    base *= base;
+  }
+  return result;
+}
+
+std::string repeat(std::string s, int n) {
+  std::string s1 = s;
+  for (int i=1; i<n;i++) {
+    s += s1;
+  }
+  return s;
+}
+
+std::string choose(std::string s) {
+  return std::string(1, s[rand() & s.length()]);
+}
+
+int main(int argc, char *argv[]) {
+  std::string::size_type strsz;
+  srand(time(NULL));
+content: ;
+}

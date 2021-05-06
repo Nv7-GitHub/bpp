@@ -1,57 +1,71 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"io/ioutil"
 	"math/rand"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/Nv7-Github/Bpp/parser"
+	arg "github.com/alexflint/go-arg"
 )
 
-var filename string
-var argDat string
-
-func init() {
-	flag.StringVar(&filename, "file", "", "File to execute using bpp.")
-	flag.StringVar(&argDat, "args", "", "Optionally, pass arguments to the program using comma-seperated values.")
-}
+var p *arg.Parser
 
 func handle(err error) {
 	if err != nil {
-		fmt.Println("Error! " + err.Error())
-		os.Exit(0)
+		p.Fail(err.Error())
 	}
 }
 
-func main() {
-	flag.Parse()
+type Build struct {
+	Output   string `help:"output file for executable" arg:"-o"`
+	CC       string `default:"cc" help:"C++ compiler"`
+	Preserve bool   `help:"preserve C++ source code" arg:"-p"`
+	File     string `arg:"positional,-i,--input" help:"input B++ program"`
+}
 
-	if filename == "" {
-		flag.Usage()
-		return
+type Run struct {
+	Args string `help:"arguments for program, comma-seperated"`
+	File string `arg:"positional,-i,--input" help:"input B++ program"`
+}
+
+type Args struct {
+	Build *Build `arg:"subcommand:build"`
+	Run   *Run   `arg:"subcommand:run"`
+	Time  bool   `help:"print timing for each stage" arg:"-t"`
+}
+
+func main() {
+	rand.Seed(time.Now().UnixNano())
+	var args Args
+	p = arg.MustParse(&args)
+
+	switch {
+	case args.Build != nil:
+		prog := ParseProg(args.Time, args.Build.File)
+		CompileCmd(args, prog)
+	case args.Run != nil:
+		prog := ParseProg(args.Time, args.Run.File)
+		RunCmd(args, prog)
+	default:
+		p.WriteUsage(os.Stdout)
+	}
+}
+
+func ParseProg(isTiming bool, filename string) *parser.Program {
+	src, err := os.ReadFile(filename)
+	handle(err)
+
+	var start time.Time
+	if isTiming {
+		start = time.Now()
+	}
+	prog, err := parser.Parse(string(src))
+	handle(err)
+	if isTiming {
+		fmt.Println("Parsed program in", time.Since(start))
 	}
 
-	script, err := ioutil.ReadFile(filename)
-	handle(err)
-	src := strings.TrimSpace(string(script))
-	rand.Seed(time.Now().UnixNano())
-
-	start := time.Now()
-	prog, err := parser.Parse(src)
-	handle(err)
-	fmt.Println("Parsed in", time.Since(start))
-
-	args := strings.Split(argDat, ",")
-	prog.Args = args
-
-	start = time.Now()
-	out, err := prog.Run()
-	handle(err)
-	fmt.Println("Executed in", time.Since(start))
-
-	fmt.Println(strings.TrimSpace(out))
+	return prog
 }

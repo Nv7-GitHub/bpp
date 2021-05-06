@@ -1,27 +1,73 @@
 package parser
 
-type Program struct {
-	Memory   map[string]Variable
-	Program  []Executable
-	Args     []string
-	Sections map[string]int
+// Statements
+type Statement interface {
+	Line() int
+	Type() DataType
 }
 
-type Variable struct {
-	Data interface{}
-	Type Type
+type StatementParser struct {
+	Parse     func(args []Statement, line int) (Statement, error)
+	Signature []DataType
 }
 
-type Type int
+type BasicStatement struct {
+	line int
+}
+
+func (b *BasicStatement) Line() int {
+	return b.line
+}
+
+func (b *BasicStatement) Type() DataType {
+	return NULL
+}
+
+// Parsers
+var parsers map[string]StatementParser = make(map[string]StatementParser)
+
+// Operators
+type Operator int
 
 const (
-	STRING Type = 1 << iota
-	INT
-	FLOAT
-	ARRAY
-	IDENTIFIER
-	NULL
-	GOTO
+	EQUAL          Operator = iota // =
+	NOTEQUAL                       // !=
+	GREATER                        // >
+	LESS                           // <
+	GREATEREQUAL                   // >=
+	LESSEQUAL                      // <=
+	ADDITION                       // +
+	SUBTRACTION                    // -
+	MULTIPLICATION                 // *
+	DIVISION                       // /
+	POWER                          // ^
 )
 
-type Executable func(*Program) (Variable, error)
+// Data Types
+type DataType int
+
+func (a DataType) IsEqual(b DataType) bool {
+	return (a&b) != 0 || (a&b) == a
+}
+
+const (
+	STRING     DataType                       = 1 << iota // string
+	INT                                                   // int
+	FLOAT                                                 // float64
+	ARRAY                                                 // []Data
+	IDENTIFIER                                            // string
+	NULL                                                  // nil
+	VARIADIC                                              // Multiple args
+	NUMBER     = INT | FLOAT                              // interface{}
+	ANY        = STRING | INT | FLOAT | ARRAY             // interface{}
+)
+
+type Data struct {
+	*BasicStatement
+	kind DataType
+	Data interface{}
+}
+
+func (d *Data) Type() DataType {
+	return d.kind
+}

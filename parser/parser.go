@@ -2,92 +2,97 @@ package parser
 
 import (
 	"fmt"
-	"math"
-	"regexp"
 	"strings"
 )
 
-var lineRegex = regexp.MustCompile(`\[([A-Z]+?) (.+)\]`)
-
-func Parse(src string) (*Program, error) {
-	setupFuncs()
-	lines := strings.Split(src, "\n")
-	prg := &Program{
-		Memory:   make(map[string]Variable),
-		Program:  make([]Executable, len(lines)),
-		Sections: make(map[string]int),
-	}
-	var err error
-	for i, line := range lines {
-		if len(strings.TrimSpace(line)) == 0 {
-			prg.Program[i] = func(*Program) (Variable, error) {
-				return Variable{
-					Type: NULL,
-					Data: "",
-				}, nil
-			}
-		} else {
-			prg.Program[i], err = parseStmt(line, i+1, prg)
-			if err != nil {
-				return prg, err
-			}
-		}
-	}
-	return prg, nil
+// Program is the main program, containing the source AST
+type Program struct {
+	Statements []Statement
 }
 
-func parseStmt(src string, line int, prg ...*Program) (Executable, error) {
-	if src[0] != '[' && src[len(src)-1] != ']' {
-		vr := parseVariable(src)
-		return func(*Program) (Variable, error) {
-			return vr, nil
-		}, nil
-	}
-	matches := lineRegex.FindAllStringSubmatch(src, -1)
-	if len(matches) < 1 || len(matches[0]) < 3 {
-		return nil, fmt.Errorf("line %d: unable to parse", line)
-	}
-	funcName := matches[0][1]
-	inpVals := strings.Split(matches[0][2], " ")
-	args := make([]string, 0)
-	openBrackets := 0
-	openQuotations := 0
-	arg := ""
-	for _, val := range inpVals {
-		openBrackets += strings.Count(val, "[")
-		openBrackets -= strings.Count(val, "]")
-		openQuotations += strings.Count(val, `"`)
-		if (math.Round(float64(openQuotations)/2) == float64(openQuotations/2)) && (openBrackets == 0) {
-			args = append(args, arg+val)
-			arg = ""
-			openBrackets = 0
-			openQuotations = 0
-		} else {
-			arg += val + " "
-		}
-	}
+func (p *Program) Type() DataType {
+	return NULL
+}
 
-	if funcName == "SECTION" && len(prg) == 1 {
-		if len(args) != 1 {
-			return nil, fmt.Errorf("line %d: invalid argument count to directive SECTION", line)
+func (p *Program) Line() int {
+	return 1
+}
+
+func Parse(code string) (*Program, error) {
+	code = strings.ReplaceAll(code, "\n\n", "\n") // Get rid of blank lines
+	code = strings.TrimSpace(code)                // Remove blank spaces
+	lns := strings.Split(code, "\n")
+	out := make([]Statement, len(lns))
+
+	var err error
+	for i, val := range lns {
+		out[i], err = ParseStmt(val, i+1, true)
+		if err != nil {
+			return nil, err
 		}
-		vr := parseVariable(args[0])
-		if vr.Type.IsEqual(IDENTIFIER) {
-			prg[0].Sections[vr.Data.(string)] = line - 1
-			return func(*Program) (Variable, error) {
-				return Variable{
-					Type: NULL,
-					Data: "",
-				}, nil
+	}
+	return &Program{
+		Statements: out,
+	}, nil
+}
+
+func ParseStmt(line string, num int, topLevel ...bool) (Statement, error) {
+	if strings.ContainsRune(line, '#') {
+		line = line[:strings.IndexRune(line, '#')]
+		if len(line) == 0 {
+			return &BasicStatement{
+				line: num,
 			}, nil
-		} else {
-			return nil, fmt.Errorf("line %d: invalid argument to directive SECTION", line)
 		}
 	}
+	line = strings.TrimSpace(line)
+	if line[0] == '[' && line[len(line)-1] == ']' {
+		funcName := strings.SplitN(line[1:], " ", 2)[0]
+		parser, exists := parsers[funcName]
+		if !exists {
+			return nil, fmt.Errorf("line %d: No such function '%s'", num, funcName)
+		}
 
-	fn, exists := funcs[funcName]
-	if !exists {
-		return nil, fmt.Errorf("line %d: no such function %s", line, funcName)
+		args := make([]string, 0)
+		openedBrackets := 0
+		openQuotation := false
+		argTxt := strings.TrimSpace(line[len(funcName)+1 : len(line)-1])
+		arg := ""
+
+		for i, char := range argTxt {
+			arg += string(char)
+
+			switch char {
+			case '[':
+				openedBrackets++
+			case ']':
+				openedBrackets--
+			case '"':
+				openQuotation = !openQuotation
+			}
+
+			if (char == ' ' || i == len(argTxt)-1) && openedBrackets == 0 && !openQuotation {
+				args = append(args, arg)
+				arg = ""
+				continue
+			}
+		}
+
+		if funcName == "SECTION" && len(topLevel) != 1 {
+			return nil, fmt.Errorf("line %d: SECTION must be a top-level statement", num)
+		}
+
+		// Type checking
+		argDat, err := ParseArgs(args, num)
+		if err != nil {
+			return nil, err
+		}
+		err = MatchTypes(argDat, num, parser.Signature)
+		if err != nil {
+			return nil, err
+		}
+
+		return parser.Parse(argDat, num)
 	}
-	return fn(args, line)
+	return ParseData(line, num), nil
 }
