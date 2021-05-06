@@ -91,7 +91,7 @@ The first one is math. To do math, simply use the MATH tag with a value, operato
 ```
 Supported operators are:
 
-| Operator | Math Function|
+| Operator | Math Function |
 | --- | --- |
 | `+` | Addition |
 | `-` | Subtraction |
