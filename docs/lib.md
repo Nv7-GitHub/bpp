@@ -83,6 +83,7 @@ parsers["ARRAY"] = StatementParser{
 ```
 Note that the signature for `ARRAY` has `VARIADIC`. When a signature is 2 values long, and has `VARIADIC` as the second value, a function will accept any number of values with the type of the first value. `ARRAY`s can store any type, so the first value in this case is `ANY`.
 
+You can check out the Go Reference for more information on each type of statement.
 
 ## Membuild
 Info on how to use `membuild` coming soon!
