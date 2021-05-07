@@ -1,5 +1,5 @@
 # B++
-A B++ interpreter written in Go! Check docs/docs.md for more information on the B++ language, and docs/programming.md on how to use this as a library, with your code!
+A B++ interpreter written in Go! Check [the docs](docs/docs.md) for more information on the B++ language and how it works, and [the programming guide](docs/lib.md) on how to import and use this library, with your code!
 
 ## Installation
 To install or update B++, do

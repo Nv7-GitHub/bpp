@@ -1,6 +1,6 @@
 package parser
 
-// Statements
+// Statement stores the data for everything in B++
 type Statement interface {
 	Line() int
 	Type() DataType
