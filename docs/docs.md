@@ -180,6 +180,7 @@ B++ has many builtin functions, which are listed below.
 | Function Signature | Description |
 | --- | --- |
 | `[CHOOSE val]` | Gets a random index of `val`, which can be an array or a string. |
+| `[CHOOSECHAR val]` | Gets a random character of `val`, which must be a string. |
 | `[REPEAT val n]` | Repeats the contents of a string or array `val`, `n` times. |
 | `[RANDINT lower upper]` | Gets a random integer within the range `lower`, `upper`. |
 | `[RANDOM lower upper]` | Gets a random float in the range `lower`, `upper`. |
