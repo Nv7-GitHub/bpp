@@ -1,6 +1,7 @@
 package membuild
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/Nv7-Github/Bpp/parser"
@@ -23,6 +24,10 @@ func MathStmt(p *Program, stm *parser.MathStmt) (Instruction, error) {
 		left, err := left(p)
 		if err != nil {
 			return NewBlankData(), err
+		}
+
+		if left.Type.IsEqual(parser.NULL) {
+			return NewBlankData(), fmt.Errorf("line %d: parameters to MATH must not be null", stm.Line())
 		}
 
 		var l float64 = -7

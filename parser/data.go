@@ -2,9 +2,19 @@ package parser
 
 import (
 	"strconv"
+	"strings"
 )
 
 func ParseData(src string, line int) *Data {
+	src = strings.TrimSpace(src)
+	if len(src) == 0 {
+		return &Data{
+			kind:           NULL,
+			Data:           nil,
+			BasicStatement: &BasicStatement{line: line},
+		}
+	}
+
 	if src[0] == '"' && src[len(src)-1] == '"' {
 		return &Data{
 			kind:           STRING,

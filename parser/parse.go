@@ -30,6 +30,7 @@ func Parse(code string) (*Program, error) {
 	if !ok {
 		return nil, fmt.Errorf("unterminated block: %s", reflect.TypeOf(pScope.Block))
 	}
+	scopes.FinishScope("", make([]Statement, 0))
 	return p, nil
 }
 

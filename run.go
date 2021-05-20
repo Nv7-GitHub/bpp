@@ -21,7 +21,11 @@ func RunCmd(args Args, prog *parser.Program) {
 		fmt.Println("Built in", time.Since(start))
 	}
 
-	p.Args = strings.Split(args.Run.Args, ",")
+	if len(args.Run.Args) > 0 {
+		p.Args = strings.Split(args.Run.Args, ",")
+	} else {
+		p.Args = make([]string, 0)
+	}
 
 	if args.Time {
 		start = time.Now()
