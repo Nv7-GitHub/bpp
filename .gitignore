@@ -15,9 +15,8 @@
 # vendor/
 
 # Testing Script
-script.bpp
+*.bpp
 ast.txt
-test.bpp
 main.c
 run.sh
 .vscode/*
