@@ -43,7 +43,12 @@ func ParseStmt(line string, num int, scope ...*ScopeStack) (Statement, error) {
 		return nil, nil
 	}
 	if line[0] == '[' && line[len(line)-1] == ']' {
-		funcName := strings.SplitN(line[1:], " ", 2)[0]
+		split := strings.SplitN(line[1:], " ", 2)
+		funcName := split[0]
+		if len(split) == 1 {
+			funcName = funcName[:len(funcName)-1]
+		}
+
 		parser, hasParser := parsers[funcName]
 		var block Block
 		var bParser BlockParser
@@ -57,9 +62,10 @@ func ParseStmt(line string, num int, scope ...*ScopeStack) (Statement, error) {
 					bparser, exists := blocks[funcName]
 					if exists {
 						isBParser = true
+						bParser = bparser
+					} else {
+						return nil, fmt.Errorf("line %d: No such function '%s'", num, funcName)
 					}
-					bParser = bparser
-					return nil, fmt.Errorf("line %d: No such function '%s'", num, funcName)
 				} else {
 					block = s.Block
 				}

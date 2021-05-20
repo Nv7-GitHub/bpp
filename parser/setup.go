@@ -1,6 +1,7 @@
 package parser
 
 func init() {
+	// Statements
 	SetupGotos()
 	SetupVariables()
 	SetupArrays()
@@ -8,4 +9,7 @@ func init() {
 	SetupComparisons()
 	SetupMath()
 	SetupOthers()
+
+	// Blocks
+	SetupTestBlocks()
 }

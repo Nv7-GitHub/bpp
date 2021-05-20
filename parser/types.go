@@ -10,6 +10,7 @@ type Statement interface {
 type Block interface {
 	Line() int
 	Type() DataType
+
 	Keywords() []string
 	EndSignature() []DataType
 	End(keyword string, arguments []Statement, statements []Statement) bool // Returns whether closed or not
