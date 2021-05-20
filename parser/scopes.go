@@ -44,6 +44,9 @@ func (s *ScopeStack) AddScope(scope *Scope) {
 func (s *ScopeStack) FinishScope(keyword string, arguments []Statement) {
 	remove := s.scopes[0].Block.End(keyword, arguments, s.scopes[0].Statements)
 	if remove {
+		if len(s.scopes) > 1 {
+			s.scopes[1].Statements = append(s.scopes[1].Statements, s.scopes[0].Block)
+		}
 		s.scopes = s.scopes[1:]
 	}
 }
