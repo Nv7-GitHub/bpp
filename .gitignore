@@ -20,3 +20,4 @@ ast.txt
 main.c
 run.sh
 .vscode/*
+!examples/*

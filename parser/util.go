@@ -10,6 +10,11 @@ func ParseArgs(args []string, line int) ([]Statement, error) {
 		if err != nil {
 			return []Statement{}, err
 		}
+		if out[i] == nil {
+			out[i] = &BasicStatement{
+				line: line,
+			}
+		}
 	}
 	return out, nil
 }

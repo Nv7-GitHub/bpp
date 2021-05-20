@@ -6,8 +6,22 @@ type Statement interface {
 	Type() DataType
 }
 
+// Block is a statement that supports being multiple types
+type Block interface {
+	Line() int
+	Type() DataType
+	Keywords() []string
+	EndSignature() []DataType
+	End(keyword string, arguments []Statement, statements []Statement) bool // Returns whether closed or not
+}
+
 type StatementParser struct {
 	Parse     func(args []Statement, line int) (Statement, error)
+	Signature []DataType
+}
+
+type BlockParser struct {
+	Parse     func(args []Statement, line int) (Block, error)
 	Signature []DataType
 }
 
@@ -24,7 +38,8 @@ func (b *BasicStatement) Type() DataType {
 }
 
 // Parsers
-var parsers map[string]StatementParser = make(map[string]StatementParser)
+var parsers = make(map[string]StatementParser)
+var blocks = make(map[string]BlockParser)
 
 // Operators
 type Operator int
