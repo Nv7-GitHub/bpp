@@ -1,29 +1,15 @@
 package membuild
 
-import (
-	"fmt"
-	"io"
-
-	"github.com/Nv7-Github/Bpp/parser"
-)
-
-func RunProgram(prog *Program, out io.Writer) error {
-	i := 0
-	for !(i == len(prog.Instructions)) {
-		val, err := prog.Instructions[i](prog)
+func (p *Program) Run() error {
+	for _, instruction := range p.Instructions {
+		val, err := instruction(p)
 		if err != nil {
 			return err
 		}
-		if val.Type != parser.NULL {
-			txt := fmt.Sprintf("%v", val.Value)
-			if len(txt) > 0 {
-				_, err := out.Write([]byte(txt + "\n"))
-				if err != nil {
-					return err
-				}
-			}
+		err = p.Runner(val)
+		if err != nil {
+			return err
 		}
-		i++
 	}
 	return nil
 }

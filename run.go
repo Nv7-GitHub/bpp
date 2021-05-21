@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
@@ -30,7 +29,16 @@ func RunCmd(args Args, prog *parser.Program) {
 	if args.Time {
 		start = time.Now()
 	}
-	err = membuild.RunProgram(p, os.Stdout)
+
+	p.Runner = func(d membuild.Data) error {
+		if !d.Type.IsEqual(parser.NULL) && d.Value != "" {
+			_, err := fmt.Println(d.Value)
+			return err
+		}
+		return nil
+	}
+
+	err = p.Run()
 	handle(err)
 	if args.Time {
 		fmt.Println("Ran in", time.Since(start))
