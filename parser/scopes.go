@@ -48,6 +48,8 @@ func (s *ScopeStack) FinishScope(keyword string, arguments []Statement) {
 			s.scopes[1].Statements = append(s.scopes[1].Statements, s.scopes[0].Block)
 		}
 		s.scopes = s.scopes[1:]
+	} else {
+		s.scopes[0].Statements = make([]Statement, 0)
 	}
 }
 

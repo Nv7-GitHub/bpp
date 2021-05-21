@@ -11,5 +11,5 @@ func init() {
 	SetupOthers()
 
 	// Blocks
-	SetupTestBlocks()
+	SetupBlocks()
 }
