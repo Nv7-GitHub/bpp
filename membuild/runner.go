@@ -14,10 +14,6 @@ func RunProgram(prog *Program, out io.Writer) error {
 		if err != nil {
 			return err
 		}
-		if val.Type == GOTO {
-			i = val.Value.(int)
-			continue
-		}
 		if val.Type != parser.NULL {
 			txt := fmt.Sprintf("%v", val.Value)
 			if len(txt) > 0 {

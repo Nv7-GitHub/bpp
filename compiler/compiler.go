@@ -8,8 +8,6 @@ import (
 	"github.com/Nv7-Github/Bpp/parser"
 )
 
-var tmpUsed = 0
-
 //go:embed template.cpptxt
 var template string
 

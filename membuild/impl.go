@@ -1,32 +1,10 @@
 package membuild
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/Nv7-Github/Bpp/parser"
 )
-
-func GotoStmt(p *Program, stm *parser.GotoStmt) (Instruction, error) {
-	label, err := BuildStmt(p, stm.Label)
-	if err != nil {
-		return nil, err
-	}
-	return func(p *Program) (Data, error) {
-		lTxt, err := label(p)
-		if err != nil {
-			return NewBlankData(), err
-		}
-		pos, exists := p.Sections[lTxt.Value.(string)]
-		if !exists {
-			return NewBlankData(), fmt.Errorf("line %d: unknown section %s", stm.Line(), lTxt.Value.(string))
-		}
-		return Data{
-			Type:  GOTO,
-			Value: pos,
-		}, nil
-	}, nil
-}
 
 func DefineStmt(p *Program, stm *parser.DefineStmt) (Instruction, error) {
 	label, err := BuildStmt(p, stm.Label)

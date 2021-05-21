@@ -48,12 +48,6 @@ func compileStmtRaw(stmt parser.Statement) (string, parser.DataType, error) {
 	case *parser.ConcatStmt:
 		return CompileConcat(stm)
 
-	case *parser.GotoStmt:
-		return CompileGoto(stm)
-
-	case *parser.SectionStmt:
-		return CompileSection(stm)
-
 	case *parser.ArgsStmt:
 		return CompileArgs(stm)
 

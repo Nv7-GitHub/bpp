@@ -11,7 +11,6 @@ type Instruction func(p *Program) (Data, error)
 type Program struct {
 	Instructions []Instruction
 	Memory       map[string]Data
-	Sections     map[string]int
 	Args         []string
 }
 
@@ -24,7 +23,6 @@ func Build(prog *parser.Program) (*Program, error) {
 	p := &Program{
 		Instructions: make([]Instruction, len(prog.Statements)),
 		Memory:       make(map[string]Data),
-		Sections:     make(map[string]int),
 	}
 	var err error
 	for i, stmt := range prog.Statements {
@@ -35,10 +33,6 @@ func Build(prog *parser.Program) (*Program, error) {
 	}
 	return p, nil
 }
-
-const (
-	GOTO parser.DataType = -1
-)
 
 func NewBlankData() Data {
 	return Data{Type: parser.NULL}

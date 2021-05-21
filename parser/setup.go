@@ -2,7 +2,6 @@ package parser
 
 func init() {
 	// Statements
-	SetupGotos()
 	SetupVariables()
 	SetupArrays()
 	SetupRandoms()
