@@ -45,6 +45,15 @@ var opMap = map[token.Token]string{
 	token.REM: "%",
 }
 
+var compMap = map[token.Token]string{
+	token.EQL: "=",
+	token.NEQ: "!=",
+	token.GTR: ">",
+	token.LSS: "<",
+	token.GEQ: ">=",
+	token.LEQ: "<=",
+}
+
 func BinaryExpr(expr *ast.BinaryExpr) (string, error) {
 	x, err := ConvertExpr(expr.X)
 	if err != nil {
@@ -56,7 +65,15 @@ func BinaryExpr(expr *ast.BinaryExpr) (string, error) {
 		return "", err
 	}
 
-	return fmt.Sprintf("[MATH %s %s %s]", x, opMap[expr.Op], y), nil
+	fnName := "MATH"
+
+	op, exists := opMap[expr.Op]
+	if !exists {
+		fnName = "COMPARE"
+		op = compMap[expr.Op]
+	}
+
+	return fmt.Sprintf("[%s %s %s %s]", fnName, x, op, y), nil
 }
 
 func Ident(expr *ast.Ident) string {

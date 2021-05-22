@@ -17,6 +17,9 @@ func ConvertStmt(stmt ast.Stmt, fn string) (string, error) {
 	case *ast.ReturnStmt:
 		return ReturnStmt(s, fn)
 
+	case *ast.IfStmt:
+		return IfStmt(s, fn)
+
 	default:
 		return "", fmt.Errorf("unknown statement type %s", reflect.TypeOf(s))
 	}

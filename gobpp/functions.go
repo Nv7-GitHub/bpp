@@ -42,18 +42,29 @@ func ConvertFunc(fn *ast.FuncDecl) (string, error) {
 	name := strings.ToUpper(fn.Name.Name)
 
 	out := fmt.Sprintf("[FUNCTION %s%s]\n", name, args)
-	for _, stmt := range fn.Body.List {
+
+	blk, err := ConvertBlock(fn.Body.List, name)
+	if err != nil {
+		return "", err
+	}
+	out += blk
+
+	_, exists := hasReturn[name]
+	if !exists {
+		out += "[RETURN \"\"]\n"
+	}
+	return out, nil
+}
+
+func ConvertBlock(args []ast.Stmt, name string) (string, error) {
+	out := ""
+	for _, stmt := range args {
 		conved, err := ConvertStmt(stmt, name)
 		if err != nil {
 			return "", err
 		}
 
 		out += conved + "\n"
-	}
-
-	_, exists := hasReturn[name]
-	if !exists {
-		out += "[RETURN \"\"]\n"
 	}
 	return out, nil
 }
