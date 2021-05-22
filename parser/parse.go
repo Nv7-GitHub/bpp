@@ -11,6 +11,8 @@ func Parse(code string) (*Program, error) {
 	code = strings.TrimSpace(code)                // Remove blank spaces
 	lns := strings.Split(code, "\n")
 
+	functionTypes = make(map[string]FunctionType)
+
 	prog := &Program{}
 	scopes := NewScopeStack()
 	scopes.AddScope(NewScope(prog))
@@ -52,25 +54,34 @@ func ParseStmt(line string, num int, scope ...*ScopeStack) (Statement, error) {
 		parser, hasParser := parsers[funcName]
 		var block Block
 		var bParser BlockParser
-		isBParser := false
+		var fnType FunctionType
+		isBParser := 0
+
 		if !hasParser {
-			// No parser, is it a block end?
-			if len(scope) > 0 {
-				s := scope[0].GetScope()
-				if !s.HasKeyword(funcName) {
-					// Not a block end, is it a block start?
-					bparser, exists := blocks[funcName]
-					if exists {
-						isBParser = true
-						bParser = bparser
+			// Is it a custom function
+			var exists bool
+			fnType, exists = functionTypes[funcName]
+			if !exists {
+				// No parser, is it a block end?
+				if len(scope) > 0 {
+					s := scope[0].GetScope()
+					if !s.HasKeyword(funcName) {
+						// Not a block end, is it a block start?
+						bparser, exists := blocks[funcName]
+						if exists {
+							isBParser = 1
+							bParser = bparser
+						} else {
+							return nil, fmt.Errorf("line %d: No such function '%s'", num, funcName)
+						}
 					} else {
-						return nil, fmt.Errorf("line %d: No such function '%s'", num, funcName)
+						block = s.Block
 					}
 				} else {
-					block = s.Block
+					return nil, fmt.Errorf("line %d: No such function '%s'", num, funcName)
 				}
 			} else {
-				return nil, fmt.Errorf("line %d: No such function '%s'", num, funcName)
+				isBParser = 2
 			}
 		}
 
@@ -113,7 +124,18 @@ func ParseStmt(line string, num int, scope ...*ScopeStack) (Statement, error) {
 
 			return parser.Parse(argDat, num)
 		} else {
-			if isBParser {
+			if isBParser == 2 {
+				err = MatchTypes(argDat, num, fnType.Signature)
+				if err != nil {
+					return nil, err
+				}
+
+				return &FunctionCallStmt{
+					BasicStatement: &BasicStatement{line: num},
+					ReturnType:     fnType.ReturnType,
+					Args:           argDat,
+				}, nil
+			} else if isBParser == 1 {
 				err = MatchTypes(argDat, num, bParser.Signature)
 				if err != nil {
 					return nil, err

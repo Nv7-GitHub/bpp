@@ -3,7 +3,6 @@ package parser
 // IfBlock is the equivalent of [IFB stmt.Condition] stmt.Body [ELSE] stmt.Else [ENDIF], the stmt.Else may be nil
 type IfBlock struct {
 	*BasicStatement
-	Statements []Statement
 
 	Condition Statement
 	Body      []Statement
@@ -61,7 +60,6 @@ func SetupBlocks() {
 // WhileBlock is the equivalent of [WHILE stmt.Condition]  [ENDWHILE]
 type WhileBlock struct {
 	*BasicStatement
-	Statements []Statement
 
 	Condition Statement
 	Body      []Statement

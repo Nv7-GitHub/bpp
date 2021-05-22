@@ -12,4 +12,5 @@ func init() {
 
 	// Blocks
 	SetupBlocks()
+	SetupFunctions()
 }

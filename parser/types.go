@@ -74,6 +74,7 @@ const (
 	IDENTIFIER                                            // string
 	NULL                                                  // nil
 	VARIADIC                                              // Multiple args
+	PARAMETER                                             // For PARAM statements
 	NUMBER     = INT | FLOAT                              // interface{}
 	ANY        = STRING | INT | FLOAT | ARRAY             // interface{}
 )

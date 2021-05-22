@@ -45,7 +45,7 @@ func SetupTypes() {
 		Signature: []DataType{STRING | INT},
 	}
 
-	parsers["ARRAY"] = StatementParser{
+	parsers["LIST"] = StatementParser{
 		Parse: func(args []Statement, line int) (Statement, error) {
 			return &TypeCastStmt{
 				BasicStatement: &BasicStatement{line: line},
