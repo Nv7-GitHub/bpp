@@ -11,6 +11,7 @@ type Instruction func(p *Program) (Data, error)
 type Program struct {
 	Instructions []Instruction
 	Memory       map[string]Data
+	Functions    map[string]Function
 	Args         []string
 	Runner       func(Data) error
 }
@@ -24,6 +25,7 @@ func Build(prog *parser.Program) (*Program, error) {
 	p := &Program{
 		Instructions: make([]Instruction, len(prog.Statements)),
 		Memory:       make(map[string]Data),
+		Functions:    make(map[string]Function),
 		Runner:       func(_ Data) error { return nil },
 	}
 	var err error

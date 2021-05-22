@@ -133,6 +133,7 @@ func ParseStmt(line string, num int, scope ...*ScopeStack) (Statement, error) {
 				return &FunctionCallStmt{
 					BasicStatement: &BasicStatement{line: num},
 					ReturnType:     fnType.ReturnType,
+					Name:           funcName,
 					Args:           argDat,
 				}, nil
 			} else if isBParser == 1 {
