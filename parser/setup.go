@@ -8,6 +8,7 @@ func init() {
 	SetupComparisons()
 	SetupMath()
 	SetupOthers()
+	SetupTypes()
 
 	// Blocks
 	SetupBlocks()

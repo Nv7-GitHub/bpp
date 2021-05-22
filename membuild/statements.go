@@ -64,6 +64,9 @@ func BuildStmt(p *Program, stmt parser.Statement, instructionum ...int) (Instruc
 	case *parser.IfBlock:
 		return IfBlock(p, s)
 
+	case *parser.TypeCastStmt:
+		return TypeCastStmt(p, s)
+
 	default:
 		return nil, fmt.Errorf("line %d: unknown type %s", stmt.Line(), reflect.TypeOf(stmt).String())
 	}
