@@ -58,3 +58,7 @@ func BinaryExpr(expr *ast.BinaryExpr) (string, error) {
 
 	return fmt.Sprintf("[MATH %s %s %s]", x, opMap[expr.Op], y), nil
 }
+
+func Ident(expr *ast.Ident) string {
+	return fmt.Sprintf("[VAR %s]", expr.Name)
+}
