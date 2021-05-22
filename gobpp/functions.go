@@ -3,6 +3,7 @@ package gobpp
 import (
 	"fmt"
 	"go/ast"
+	"reflect"
 	"strings"
 )
 
@@ -17,13 +18,25 @@ var typeMap = map[string]string{
 	"int32":   "INT",
 	"int64":   "INT",
 	"int":     "INT",
-	"[]any":   "ARRAY", // use []any for types
 }
 
 func ConvertFunc(fn *ast.FuncDecl) (string, error) {
 	args := ""
 	for _, arg := range fn.Type.Params.List {
-		args += fmt.Sprintf(" [PARAM %s %s]", arg.Names[0].Name, typeMap[arg.Type.(*ast.Ident).Name])
+		var kind string
+
+		switch v := arg.Type.(type) {
+		case *ast.Ident:
+			kind = typeMap[v.Name]
+
+		case *ast.ArrayType:
+			kind = "ARRAY"
+
+		default:
+			return "", fmt.Errorf("unknown function parameter type: %s", reflect.TypeOf(arg.Type))
+		}
+
+		args += fmt.Sprintf(" [PARAM %s %s]", arg.Names[0].Name, kind)
 	}
 
 	name := strings.ToUpper(fn.Name.Name)

@@ -23,6 +23,9 @@ func ConvertExpr(expr ast.Expr) (string, error) {
 	case *ast.IndexExpr:
 		return IndexExpr(e)
 
+	case *ast.CompositeLit:
+		return CompositeLit(e)
+
 	default:
 		return "", fmt.Errorf("unknown expression type: %s", reflect.TypeOf(e))
 	}

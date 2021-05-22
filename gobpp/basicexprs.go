@@ -76,3 +76,17 @@ func IndexExpr(expr *ast.IndexExpr) (string, error) {
 
 	return fmt.Sprintf("[INDEX %s %s]", x, ind), nil
 }
+
+func CompositeLit(expr *ast.CompositeLit) (string, error) {
+	pars := ""
+	for _, elt := range expr.Elts {
+		e, err := ConvertExpr(elt)
+		if err != nil {
+			return "", err
+		}
+
+		pars += " " + e
+	}
+
+	return fmt.Sprintf("[ARRAY%s]", pars), nil
+}
