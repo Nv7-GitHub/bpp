@@ -45,6 +45,7 @@ func (f *FunctionBlock) EndSignature() []DataType {
 
 func (f *FunctionBlock) End(_ string, args []Statement, statements []Statement) bool {
 	f.Return = args[0]
+	f.Body = statements
 	f.Signature.ReturnType = f.Return.Type()
 	functionTypes[f.Name] = f.Signature
 	return true
@@ -100,11 +101,15 @@ func SetupFunctions() {
 				sig.Names[i] = par.Name
 			}
 
-			return &FunctionBlock{
+			fn := &FunctionBlock{
 				BasicStatement: &BasicStatement{line: line},
 				Signature:      sig,
 				Name:           args[0].(*Data).Data.(string),
-			}, nil
+			}
+
+			functionTypes[fn.Name] = fn.Signature
+
+			return fn, nil
 		},
 		Signature: []DataType{IDENTIFIER, PARAMETER, VARIADIC},
 	}

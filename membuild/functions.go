@@ -68,7 +68,10 @@ func FunctionCallStmt(p *Program, stm *parser.FunctionCallStmt) (Instruction, er
 				return NewBlankData(), err
 			}
 
-			stack.Runner(out)
+			err = stack.Runner(out)
+			if err != nil {
+				return NewBlankData(), err
+			}
 		}
 
 		return fn.Return(stack)
