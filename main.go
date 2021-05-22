@@ -30,10 +30,16 @@ type Run struct {
 	File string `arg:"positional,-i,--input" help:"input B++ program"`
 }
 
+type Convert struct {
+	Output string `help:"output B++ program" arg:"-o"`
+	File   string `arg:"positional,-i,--input" help:"input Go program"`
+}
+
 type Args struct {
-	Build *Build `arg:"subcommand:build"`
-	Run   *Run   `arg:"subcommand:run"`
-	Time  bool   `help:"print timing for each stage" arg:"-t"`
+	Build   *Build   `arg:"subcommand:build" help:"compile a B++ program"`
+	Run     *Run     `arg:"subcommand:run" help:"run a B++ program"`
+	Convert *Convert `arg:"subcommand:convert" help:"convert a go program to a B++ program"`
+	Time    bool     `help:"print timing for each stage" arg:"-t"`
 }
 
 func main() {
@@ -48,6 +54,8 @@ func main() {
 	case args.Run != nil:
 		prog := ParseProg(args.Time, args.Run.File)
 		RunCmd(args, prog)
+	case args.Convert != nil:
+		ConvertCmd(args)
 	default:
 		p.WriteUsage(os.Stdout)
 	}
