@@ -83,6 +83,7 @@ func createStack(p *Program) *Program {
 		Instructions: p.Instructions,
 		Memory:       make(map[string]Data), // Don't copy memory, functions aren't allowed to access global memory
 		Functions:    make(map[string]Function),
+		Args:         p.Args,
 		Runner:       p.Runner,
 	}
 

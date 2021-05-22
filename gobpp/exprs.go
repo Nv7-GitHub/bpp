@@ -26,6 +26,12 @@ func ConvertExpr(expr ast.Expr) (string, error) {
 	case *ast.CompositeLit:
 		return CompositeLit(e)
 
+	case *ast.UnaryExpr:
+		return ConvertExpr(e.X)
+
+	case *ast.ParenExpr:
+		return ConvertExpr(e.X)
+
 	default:
 		return "", fmt.Errorf("unknown expression type: %s", reflect.TypeOf(e))
 	}
