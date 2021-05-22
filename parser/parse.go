@@ -7,8 +7,6 @@ import (
 )
 
 func Parse(code string) (*Program, error) {
-	code = strings.ReplaceAll(code, "\n\n", "\n") // Get rid of blank lines
-	code = strings.TrimSpace(code)                // Remove blank spaces
 	lns := strings.Split(code, "\n")
 
 	functionTypes = make(map[string]FunctionType)
