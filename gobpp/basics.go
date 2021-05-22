@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
-	"reflect"
 	"strings"
 )
 
@@ -30,10 +29,32 @@ func CallExpr(stm *ast.CallExpr) (string, error) {
 
 func BasicLit(arg *ast.BasicLit) (string, error) {
 	switch arg.Kind {
-	case token.STRING:
+	case token.STRING, token.INT, token.FLOAT:
 		return arg.Value, nil
 
 	default:
-		return "", fmt.Errorf("unknown data type: %s", reflect.TypeOf(arg.Kind))
+		return "", fmt.Errorf("unknown data type: %s", arg.Kind.String())
 	}
+}
+
+var opMap = map[token.Token]string{
+	token.ADD: "+",
+	token.SUB: "-",
+	token.MUL: "*",
+	token.QUO: "/",
+	token.REM: "%",
+}
+
+func BinaryExpr(expr *ast.BinaryExpr) (string, error) {
+	x, err := ConvertExpr(expr.X)
+	if err != nil {
+		return "", err
+	}
+
+	y, err := ConvertExpr(expr.Y)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("[MATH %s %s %s]", x, opMap[expr.Op], y), nil
 }

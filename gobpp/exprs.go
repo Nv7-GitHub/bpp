@@ -11,6 +11,9 @@ func ConvertExpr(expr ast.Expr) (string, error) {
 	case *ast.BasicLit:
 		return BasicLit(e)
 
+	case *ast.BinaryExpr:
+		return BinaryExpr(e)
+
 	default:
 		return "", fmt.Errorf("unknown expression type: %s", reflect.TypeOf(e))
 	}
