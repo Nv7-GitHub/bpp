@@ -46,4 +46,40 @@ func SetupBlocks() {
 		},
 		Signature: []DataType{INT},
 	}
+
+	blocks["WHILE"] = BlockParser{
+		Parse: func(args []Statement, line int) (Block, error) {
+			return &WhileBlock{
+				BasicStatement: &BasicStatement{line: line},
+				Condition:      args[0],
+			}, nil
+		},
+		Signature: []DataType{INT},
+	}
+}
+
+// WhileBlock is the equivalent of [WHILE stmt.Condition]  [ENDWHILE]
+type WhileBlock struct {
+	*BasicStatement
+	Statements []Statement
+
+	Condition Statement
+	Body      []Statement
+}
+
+func (w *WhileBlock) Type() DataType {
+	return NULL
+}
+
+func (w *WhileBlock) Keywords() []string {
+	return []string{"ENDWHILE"}
+}
+
+func (w *WhileBlock) EndSignature() []DataType {
+	return []DataType{}
+}
+
+func (w *WhileBlock) End(kind string, _ []Statement, statements []Statement) bool {
+	w.Body = statements
+	return true
 }
