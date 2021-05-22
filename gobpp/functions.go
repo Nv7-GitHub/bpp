@@ -3,6 +3,7 @@ package gobpp
 import (
 	"fmt"
 	"go/ast"
+	"strings"
 )
 
 var typeMap = map[string]string{
@@ -17,14 +18,11 @@ var typeMap = map[string]string{
 
 func ConvertFunc(fn *ast.FuncDecl) (string, error) {
 	args := ""
-	for i, arg := range fn.Type.Params.List {
-		args += fmt.Sprintf("[PARAM %s %s]", arg.Names[0].Name, typeMap[arg.Type.(*ast.Ident).Name])
-		if i != len(fn.Type.Params.List)-1 {
-			args += " "
-		}
+	for _, arg := range fn.Type.Params.List {
+		args += fmt.Sprintf(" [PARAM %s %s]", arg.Names[0].Name, typeMap[arg.Type.(*ast.Ident).Name])
 	}
 
-	out := fmt.Sprintf("[FUNCTION %s %s]", fn.Name, args)
+	out := fmt.Sprintf("[FUNCTION %s%s]\n", strings.ToUpper(fn.Name.Name), args)
 	for _, stmt := range fn.Body.List {
 		conved, err := ConvertStmt(stmt)
 		if err != nil {
@@ -33,5 +31,7 @@ func ConvertFunc(fn *ast.FuncDecl) (string, error) {
 
 		out += conved + "\n"
 	}
+
+	out += "[RETURN \"\"]\n"
 	return out, nil
 }
