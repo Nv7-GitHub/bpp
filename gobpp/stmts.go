@@ -20,6 +20,12 @@ func ConvertStmt(stmt ast.Stmt, fn string) (string, error) {
 	case *ast.IfStmt:
 		return IfStmt(s, fn)
 
+	case *ast.IncDecStmt:
+		return IncDecStmt(s)
+
+	case *ast.ForStmt:
+		return ForStmt(s, fn)
+
 	default:
 		return "", fmt.Errorf("unknown statement type %s", reflect.TypeOf(s))
 	}
