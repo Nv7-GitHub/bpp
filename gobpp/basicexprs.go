@@ -62,3 +62,17 @@ func BinaryExpr(expr *ast.BinaryExpr) (string, error) {
 func Ident(expr *ast.Ident) string {
 	return fmt.Sprintf("[VAR %s]", expr.Name)
 }
+
+func IndexExpr(expr *ast.IndexExpr) (string, error) {
+	x, err := ConvertExpr(expr.X)
+	if err != nil {
+		return "", err
+	}
+
+	ind, err := ConvertExpr(expr.Index)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("[INDEX %s %s]", x, ind), nil
+}

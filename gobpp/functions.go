@@ -6,6 +6,10 @@ import (
 	"strings"
 )
 
+type empty struct{}
+
+var hasReturn map[string]empty
+
 var typeMap = map[string]string{
 	"string":  "STRING",
 	"float64": "FLOAT",
@@ -22,9 +26,11 @@ func ConvertFunc(fn *ast.FuncDecl) (string, error) {
 		args += fmt.Sprintf(" [PARAM %s %s]", arg.Names[0].Name, typeMap[arg.Type.(*ast.Ident).Name])
 	}
 
-	out := fmt.Sprintf("[FUNCTION %s%s]\n", strings.ToUpper(fn.Name.Name), args)
+	name := strings.ToUpper(fn.Name.Name)
+
+	out := fmt.Sprintf("[FUNCTION %s%s]\n", name, args)
 	for _, stmt := range fn.Body.List {
-		conved, err := ConvertStmt(stmt)
+		conved, err := ConvertStmt(stmt, name)
 		if err != nil {
 			return "", err
 		}
@@ -32,6 +38,20 @@ func ConvertFunc(fn *ast.FuncDecl) (string, error) {
 		out += conved + "\n"
 	}
 
-	out += "[RETURN \"\"]\n"
+	_, exists := hasReturn[name]
+	if !exists {
+		out += "[RETURN \"\"]\n"
+	}
 	return out, nil
+}
+
+func ReturnStmt(s *ast.ReturnStmt, fn string) (string, error) {
+	res, err := ConvertExpr(s.Results[0])
+	if err != nil {
+		return "", err
+	}
+
+	hasReturn[fn] = empty{}
+
+	return fmt.Sprintf("[RETURN %s]", res), nil
 }

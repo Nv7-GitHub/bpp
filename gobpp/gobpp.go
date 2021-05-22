@@ -7,6 +7,8 @@ import (
 )
 
 func Convert(f *ast.File) (string, error) {
+	hasReturn = make(map[string]empty)
+
 	out := ""
 	for _, fn := range f.Decls {
 		dat, err := ConvertDecl(fn)
