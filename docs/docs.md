@@ -7,7 +7,7 @@ B++ is a programming language initially developed by the developers for The Brai
 - [Variables](#variables)
 - [Basic Functions](#basic-functions)
 - [Comparison](#comparison)
-- [GOTO Statements](#goto-statements)
+- [Blocks](#blocks)
 - [Builtin Functions](#builtin-functions)
 
 ## Introduction
@@ -129,50 +129,78 @@ If statements are ternary. Simply just do:
 ```
 To make an if statement. To have more than one instruction in an IF statement, check out [GOTOs](#goto-statements).
 
-## GOTO Statements
-GOTO Statements allow branches and loops.
+## Blocks
+Blocks allow block if statements, loops, and functions!
 
-### Basic GOTO
+### Block If Statements
+What if you need to have multiple lines of code in an if statement? Use a block if statement!
 ```bpp
-[GOTO a]
-"This line will be skipped :("
-
-[SECTION a]
-"Hi!"
+[IFB [COMPARE 1 == 1]]
+  "Awesome!"
+  "Everything works!"
+[ELSE]
+  "Is 1 not equal to 1?"
+  "Thats not good..."
+[ENDIF]
 ```
-When you run this, you will notice that it only prints "Hi!". This is because the GOTO statement moved to the line with the section named "a".
-
-### Fancy If Statements
-Using this, we can execute multiple lines of code in an IF statement.
-For example:
-```bpp
-[IF [COMPARE 1 = 1] [GOTO tmp1] [GOTO tmp2]]
-
-[SECTION true]
-"Yay! 1 is equal to 1!"
-[GOTO endif]
-
-[SECTION false]
-"1 isn't equal to one?"
-[GOTO endif]
-
-[SECTION endif]
-```
-Let's go through this program. When 1 is equal to 1, it goes to the section called "true". In there, it has a print statement. Then, it goes to the section called "endif". This allows it to skip over the else part.
+> Note: You don't need to indent the contents of block statements, but it makes it cleaner and easier to read.
 
 ### Loops
-We can also make loops using this. For example, let's make a loop that will print all the numbers up to 10:
+B++ supports loops, in the form of `WHILE` loops! For example, to print the numbers 1-100:
 ```bpp
+# Define i, which we will be using to control the number of iterations
 [DEFINE i 1]
 
-[SECTION loop]
+# While i is less than 100, do something
+[WHILE [COMPARE [VAR i] <= 100]]
+  # Print i
+  [VAR i]
 
-[VAR i] # Print the number
-
-[DEFINE i [MATH [VAR i] + 1]] # Increase the number by 1
-[IF [COMPARE [VAR i] < 10] [GOTO loop] ""] # Loop back to the start
+  # Increase i by 1
+  [DEFINE i [MATH [VAR i] + 1]]
+[ENDWHILE]
 ```
-In this program, it goes to a previous section until a requirement is satisfied.
+
+### Functions
+Functions allow code to be put in blocks and run in a safe environment, for example, to add 2 numbers:
+```bpp
+# Define add, which accepts a, which is an integer, and b, which is also an integer
+[FUNCTION ADD [PARAM a INT] [PARAM b INT]]
+# Add the two numbers
+[DEFINE result [MATH [VAR a] + [VAR b]]]
+# Return the value
+[RETURN [VAR result]]
+```
+Now, to add 1 and 2, using this function, you would just do
+```bpp
+[ADD 1 2]
+```
+> :warning: You can't access global variables, only variables defined in the function and the parameters.
+
+B++ supports recursion too! For example, to make a factorial function:
+```bpp
+# Define factorial function
+[FUNCTION FACTORIAL [PARAM inp INT]]
+
+# If the number is over 1, then take the factorial of 1 less than the number and multiply that with the number
+[IFB [COMPARE [VAR inp] >= 1]]
+  # Take factorial of 1 less than number
+  [DEFINE mul [FACTORIAL [MATH [VAR inp] - 1]]]
+  # Return the number multiplied by the input
+  [DEFINE result [MATH [VAR mul] * [VAR inp]]]
+[ELSE] 
+  # Otherwise, return 1
+  [DEFINE result 1]
+[ENDIF]
+
+# Return the result
+[RETURN [VAR result]]
+```
+Now, just use
+```bpp
+[FACTORIAL 10]
+```
+To get 10 factorial, or `3628800`!
 
 ## Builtin Functions
 B++ has many builtin functions, which are listed below.
