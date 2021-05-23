@@ -25,6 +25,36 @@ You can time how long it takes to run a B++ program, using --time or -t. For exa
 bpp run -t <filename>
 ```
 
+## Converting Go Programs
+It can be hard to write B++ code, so you can convert Go code to B++!
+Lets say you have a file called `factorial.go`:
+```go
+package main
+
+func factorial(num int) {
+  result := 1
+  if num >= 1 {
+    result = factorial(num - 1) * num
+  }
+  return result
+}
+
+func main() {
+  print(factorial(10))
+}
+```
+Well, you can just do 
+```bash
+bpp convert factorial.go
+```
+To convert it to B++ code, saved in the file `factorial.bpp`!
+
+You can also use the `-o` parameter to specify the output file, like:
+```bash
+bpp convert factorial.go -o coolprogram.bpp
+```
+To save the B++ code to a file called `coolprogram.bpp`!
+
 ## Compiling Programs
 Bpp also supports compiling B++ programs into a native, extremely high-performance executable! You can use --time or -t with this too.
 > :warning: Arrays are not supported!
