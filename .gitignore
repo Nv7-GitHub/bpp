@@ -22,3 +22,5 @@ run.sh
 .vscode/*
 !examples/*
 *.gotxt
+*.s
+*.ll

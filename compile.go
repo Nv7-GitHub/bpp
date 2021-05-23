@@ -27,35 +27,57 @@ func CompileCmd(args Args, prog *parser.Program) {
 	if args.Time {
 		fmt.Println("Built in", time.Since(start))
 	}
-	cppname := name + ".cpp"
-	err = os.WriteFile(cppname, []byte(compiled), os.ModePerm)
+	llname := name + ".ll"
+	err = os.WriteFile(llname, []byte(compiled), os.ModePerm)
 	handle(err)
 
 	if args.Time {
 		start = time.Now()
 	}
-	outFile := args.Build.Output
-	if outFile == "" {
-		outFile = name
-		if runtime.GOOS == "windows" {
-			outFile += ".exe"
+
+	if args.Build.CC != "" {
+		outFile := args.Build.Output
+		if outFile == "" {
+			outFile = name
+			if runtime.GOOS == "windows" {
+				outFile += ".exe"
+			}
+		}
+		cmd := exec.Command(args.Build.CC, "-o", outFile, "-O3", llname)
+
+		stderr := bytes.NewBuffer(make([]byte, 0))
+		cmd.Stderr = stderr
+
+		err = cmd.Run()
+		if err != nil {
+			handle(errors.New(stderr.String()))
+		}
+		if args.Time {
+			fmt.Println("Compiled in", time.Since(start))
+		}
+	} else if args.Build.Asm != "" {
+		outFile := args.Build.Output
+		if outFile == "" {
+			outFile = name
+		}
+		outFile += ".s"
+
+		cmd := exec.Command(args.Build.Asm, "-o", outFile, "-O3", llname)
+
+		stderr := bytes.NewBuffer(make([]byte, 0))
+		cmd.Stderr = stderr
+
+		err = cmd.Run()
+		if err != nil {
+			handle(errors.New(stderr.String()))
+		}
+		if args.Time {
+			fmt.Println("Created assembly in", time.Since(start))
 		}
 	}
-	cmd := exec.Command(args.Build.CC, "-lstdc++", "-o", outFile, "-O3", cppname)
 
-	stderr := bytes.NewBuffer(make([]byte, 0))
-	cmd.Stderr = stderr
-
-	err = cmd.Run()
-	if err != nil {
-		handle(errors.New(stderr.String()))
-	}
-	if args.Time {
-		fmt.Println("Compiled in", time.Since(start))
-	}
-
-	if !args.Build.Preserve {
-		err = os.Remove(cppname)
+	if args.Build.CC != "" || args.Build.Asm != "" {
+		err = os.Remove(llname)
 		handle(err)
 	}
 }

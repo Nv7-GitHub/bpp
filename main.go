@@ -19,10 +19,10 @@ func handle(err error) {
 }
 
 type Build struct {
-	Output   string `help:"output file for executable" arg:"-o"`
-	CC       string `default:"cc" help:"C++ compiler"`
-	Preserve bool   `help:"preserve C++ source code" arg:"-p"`
-	File     string `arg:"positional,-i,--input" help:"input B++ program"`
+	Output string `help:"output file for executable" arg:"-o"`
+	CC     string `help:"LLVM compiler (optional)"`
+	Asm    string `help:"LLC compiler (optional)"`
+	File   string `arg:"positional,-i,--input" help:"input B++ program"`
 }
 
 type Run struct {
