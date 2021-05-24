@@ -89,37 +89,3 @@ func CompileConcat(stm *parser.ConcatStmt, block *ir.Block) (value.Value, *ir.Bl
 
 	return empty, block, nil
 }
-
-func CompileIndex(stm *parser.IndexStmt, block *ir.Block) (value.Value, *ir.Block, error) {
-	var v value.Value
-	var err error
-	v, block, err = CompileStmt(stm.Value, block)
-	if err != nil {
-		return nil, block, err
-	}
-
-	var ind value.Value
-	ind, block, err = CompileStmt(stm.Index, block)
-	if err != nil {
-		return nil, block, err
-	}
-
-	// Convert to localmem
-	ptr := getStrPtr(v, block)
-
-	// Get index, and convert to char
-	charptr := block.NewGetElementPtr(types.I8, ptr, ind)
-	char := block.NewLoad(types.I8, charptr)
-
-	// Make output (char[2])
-	out := block.NewAlloca(types.NewArray(2, types.I8))
-	outptr := block.NewGetElementPtr(out.ElemType, out, constant.NewInt(types.I64, 0), constant.NewInt(types.I64, 0)) // convert char[2] to char*
-
-	// Store []char{char, 0} in it
-	block.NewStore(char, outptr)
-	second := block.NewGetElementPtr(types.I8, outptr, constant.NewInt(types.I64, 1))
-	block.NewStore(constant.NewInt(types.I8, 0), second)
-
-	//block.NewLoad(v.Type(), ptr)
-	return out, block, nil
-}
