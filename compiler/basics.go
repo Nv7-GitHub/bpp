@@ -10,18 +10,12 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
-func addLine(block *ir.Block, val value.Value, kind parser.DataType) {
-	switch {
-	case kind.IsEqual(parser.STRING):
-		block.NewCall(printf, getStrPtr(strFmt, block), getStrPtr(val.(*ir.Global), block))
-
-	case kind.IsEqual(parser.FLOAT):
-		block.NewCall(printf, getStrPtr(fltFmt, block), val)
-
-	case kind.IsEqual(parser.INT):
-		block.NewCall(printf, getStrPtr(intFmt, block), val)
-	}
+type Variable struct {
+	Val  value.Value
+	Type types.Type
 }
+
+var variables map[string]Variable
 
 func CompileData(stm *parser.Data, block *ir.Block) (value.Value, *ir.Block, error) {
 	t := stm.Type()
@@ -38,4 +32,28 @@ func CompileData(stm *parser.Data, block *ir.Block) (value.Value, *ir.Block, err
 	default:
 		return nil, block, fmt.Errorf("line %d: unknown print type", stm.Line())
 	}
+}
+
+func CompileDefine(stm *parser.DefineStmt, block *ir.Block) (value.Value, *ir.Block, error) {
+	var v value.Value
+	var err error
+	v, block, err = CompileStmt(stm.Value, block)
+	if err != nil {
+		return nil, block, err
+	}
+
+	va := block.NewAlloca(v.Type())
+	block.NewStore(v, va)
+	variables[stm.Label.(*parser.Data).Data.(string)] = Variable{
+		Val:  va,
+		Type: va.Typ.ElemType,
+	}
+
+	return nil, block, nil
+}
+
+func CompileVar(stm *parser.VarStmt, block *ir.Block) (value.Value, *ir.Block, error) {
+	va := variables[stm.Label.(*parser.Data).Data.(string)]
+	loaded := block.NewLoad(va.Type, va.Val)
+	return loaded, block, nil
 }

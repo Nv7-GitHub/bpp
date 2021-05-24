@@ -14,6 +14,12 @@ func CompileStmt(stm parser.Statement, b *ir.Block) (value.Value, *ir.Block, err
 	case *parser.Data:
 		return CompileData(s, b)
 
+	case *parser.DefineStmt:
+		return CompileDefine(s, b)
+
+	case *parser.VarStmt:
+		return CompileVar(s, b)
+
 	default:
 		return nil, b, fmt.Errorf("line %d: unknown type %s", s.Line(), reflect.TypeOf(s))
 	}

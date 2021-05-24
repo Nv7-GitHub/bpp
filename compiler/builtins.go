@@ -35,8 +35,12 @@ func generateBuiltins() {
 	fltFmt = m.NewGlobalDef("fltfmt", constant.NewCharArrayFromString("%f\n"+string(rune(0))))
 }
 
-func getStrPtr(val *ir.Global, block *ir.Block) value.Value {
-	return block.NewGetElementPtr(val.ContentType, val, constant.NewInt(types.I64, 0), constant.NewInt(types.I64, 0))
+func getStrPtr(val value.Value, block *ir.Block) value.Value {
+	glob, ok := val.(*ir.Global)
+	if ok {
+		return block.NewGetElementPtr(glob.ContentType, val, constant.NewInt(types.I64, 0), constant.NewInt(types.I64, 0))
+	}
+	return val
 }
 
 var tmpUsed int
