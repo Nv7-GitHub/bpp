@@ -26,6 +26,9 @@ func CompileStmt(stm parser.Statement, b *ir.Block) (value.Value, *ir.Block, err
 	case *parser.ComparisonStmt:
 		return CompileCompare(s, b)
 
+	case *parser.IfStmt:
+		return CompileIf(s, b)
+
 	default:
 		return nil, b, fmt.Errorf("line %d: unknown type %s", s.Line(), reflect.TypeOf(s))
 	}
