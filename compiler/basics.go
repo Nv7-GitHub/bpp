@@ -57,3 +57,23 @@ func CompileVar(stm *parser.VarStmt, block *ir.Block) (value.Value, *ir.Block, e
 	loaded := block.NewLoad(va.Type, va.Val)
 	return loaded, block, nil
 }
+
+func CompileConcat(stm *parser.ConcatStmt, block *ir.Block) (value.Value, *ir.Block, error) {
+	// Build vals
+	vals := make([]value.Value, len(stm.Strings))
+	var err error
+	for i, s := range stm.Strings {
+		vals[i], block, err = CompileStmt(s, block)
+		if err != nil {
+			return nil, block, err
+		}
+	}
+
+	empty := block.NewAlloca(types.NewArray(0, types.I8))
+	ptr := block.NewBitCast(empty, types.I8Ptr)
+	for _, val := range vals {
+		block.NewCall(strcat, ptr, getStrPtr(val, block))
+	}
+
+	return empty, block, nil
+}
