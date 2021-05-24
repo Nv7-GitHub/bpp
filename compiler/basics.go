@@ -42,11 +42,23 @@ func CompileDefine(stm *parser.DefineStmt, block *ir.Block) (value.Value, *ir.Bl
 		return nil, block, err
 	}
 
-	va := block.NewAlloca(v.Type())
+	name := stm.Label.(*parser.Data).Data.(string)
+
+	_, exists := variables[name]
+	var va value.Value
+	if !exists {
+		va = block.NewAlloca(v.Type())
+	} else {
+		va = variables[name].Val
+	}
+
 	block.NewStore(v, va)
-	variables[stm.Label.(*parser.Data).Data.(string)] = Variable{
-		Val:  va,
-		Type: va.Typ.ElemType,
+
+	if !exists {
+		variables[name] = Variable{
+			Val:  va,
+			Type: va.Type(),
+		}
 	}
 
 	return nil, block, nil
@@ -54,7 +66,7 @@ func CompileDefine(stm *parser.DefineStmt, block *ir.Block) (value.Value, *ir.Bl
 
 func CompileVar(stm *parser.VarStmt, block *ir.Block) (value.Value, *ir.Block, error) {
 	va := variables[stm.Label.(*parser.Data).Data.(string)]
-	loaded := block.NewLoad(va.Type, va.Val)
+	loaded := block.NewLoad(va.Type.(*types.PointerType).ElemType, va.Val)
 	return loaded, block, nil
 }
 

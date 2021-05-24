@@ -41,8 +41,71 @@ func CompileIf(stm *parser.IfStmt, block *ir.Block) (value.Value, *ir.Block, err
 	}
 	addLine(iffalse, iff)
 
-	iffalse.NewBr(end)
 	iftrue.NewBr(end)
+	iffalse.NewBr(end)
+
+	return nil, end, nil
+}
+
+func CompileIfBlock(stm *parser.IfBlock, block *ir.Block) (value.Value, *ir.Block, error) {
+	var err error
+	var v value.Value
+	v, block, err = CompileStmt(stm.Condition, block)
+	if err != nil {
+		return nil, block, err
+	}
+
+	cond := block.NewICmp(enum.IPredEQ, v, constant.NewInt(types.I32, 1))
+
+	iftrue := block.Parent.NewBlock(getTmp())
+	iffalse := block.Parent.NewBlock(getTmp())
+	end := block.Parent.NewBlock(getTmp())
+
+	block.NewCondBr(cond, iftrue, iffalse)
+
+	iftrue, err = CompileBlock(stm.Body, iftrue)
+	if err != nil {
+		return nil, block, err
+	}
+
+	if stm.Else != nil {
+		iffalse, err = CompileBlock(stm.Else, iffalse)
+		if err != nil {
+			return nil, block, err
+		}
+	}
+
+	iftrue.NewBr(end)
+	iffalse.NewBr(end)
+
+	return nil, end, nil
+}
+
+func CompileWhileBlock(stm *parser.WhileBlock, block *ir.Block) (value.Value, *ir.Block, error) {
+	compBlk := block.Parent.NewBlock(getTmp())
+	block.NewBr(compBlk)
+	block = compBlk
+
+	var err error
+	var v value.Value
+	v, block, err = CompileStmt(stm.Condition, block)
+	if err != nil {
+		return nil, block, err
+	}
+
+	cond := block.NewICmp(enum.IPredEQ, v, constant.NewInt(types.I32, 1))
+
+	body := block.Parent.NewBlock(getTmp())
+	end := block.Parent.NewBlock(getTmp())
+
+	block.NewCondBr(cond, body, end)
+
+	body, err = CompileBlock(stm.Body, body)
+	if err != nil {
+		return nil, block, err
+	}
+
+	body.NewBr(block)
 
 	return nil, end, nil
 }

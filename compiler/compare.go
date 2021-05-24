@@ -86,3 +86,70 @@ func CompileCompare(stm *parser.ComparisonStmt, block *ir.Block) (value.Value, *
 	val := block.NewZExt(cmp, types.I64)
 	return val, block, nil
 }
+
+func CompileMath(stm *parser.MathStmt, block *ir.Block) (value.Value, *ir.Block, error) {
+	var lhs value.Value
+	var rhs value.Value
+	var err error
+	lhs, block, err = CompileStmt(stm.Left, block)
+	if err != nil {
+		return nil, block, err
+	}
+
+	rhs, block, err = CompileStmt(stm.Right, block)
+	if err != nil {
+		return nil, block, err
+	}
+
+	kind := lhs.Type()
+	_, ok := kind.(*types.PointerType)
+	if ok {
+		kind = kind.(*types.PointerType).ElemType
+	}
+
+	var res value.Value
+
+	switch kind.(type) {
+	case *types.FloatType:
+		switch stm.Operation {
+		case parser.ADDITION:
+			res = block.NewFAdd(lhs, rhs)
+
+		case parser.SUBTRACTION:
+			res = block.NewFSub(lhs, rhs)
+
+		case parser.MULTIPLICATION:
+			res = block.NewFMul(lhs, rhs)
+
+		case parser.DIVISION:
+			res = block.NewFDiv(lhs, rhs)
+
+		case parser.POWER:
+			res = block.NewCall(pow, lhs, rhs)
+		}
+
+	case *types.IntType:
+		switch stm.Operation {
+		case parser.ADDITION:
+			res = block.NewAdd(lhs, rhs)
+
+		case parser.SUBTRACTION:
+			res = block.NewSub(lhs, rhs)
+
+		case parser.MULTIPLICATION:
+			res = block.NewMul(lhs, rhs)
+
+		case parser.DIVISION:
+			res = block.NewSDiv(lhs, rhs)
+
+		case parser.POWER:
+			dv1 := block.NewSIToFP(lhs, types.Double)
+			dv2 := block.NewSIToFP(rhs, types.Double)
+			dv3 := block.NewCall(pow, dv1, dv2)
+			ival := block.NewAdd(dv3, constant.NewFloat(types.Double, 0.5))
+			res = block.NewFPToSI(ival, types.I64)
+		}
+	}
+
+	return res, block, nil
+}
