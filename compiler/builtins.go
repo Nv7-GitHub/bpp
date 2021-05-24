@@ -17,10 +17,13 @@ var strcmp *ir.Func
 var sprintf *ir.Func
 var gcvt *ir.Func
 var pow *ir.Func
+var strtol *ir.Func
+var strtod *ir.Func
 
 var intFmt *ir.Global
 var strFmt *ir.Global
 var fltFmt *ir.Global
+var intCastFmt *ir.Global
 
 func generateBuiltins() {
 	printf = m.NewFunc("printf", types.I32, ir.NewParam("format", types.I8Ptr))
@@ -32,10 +35,13 @@ func generateBuiltins() {
 	sprintf.Sig.Variadic = true
 	gcvt = m.NewFunc("gcvt", types.I8Ptr, ir.NewParam("input", types.Double), ir.NewParam("length", types.I32), ir.NewParam("out", types.I8Ptr))
 	pow = m.NewFunc("pow", types.Double, ir.NewParam("input", types.Double), ir.NewParam("power", types.Double))
+	strtol = m.NewFunc("strtol", types.I64, ir.NewParam("input", types.I8Ptr), ir.NewParam("remaining", types.NewPointer(types.I8Ptr)), ir.NewParam("base", types.I32))
+	strtod = m.NewFunc("strtod", types.Double, ir.NewParam("input", types.I8Ptr), ir.NewParam("remaining", types.NewPointer(types.I8Ptr)))
 
 	intFmt = m.NewGlobalDef("intfmt", constant.NewCharArrayFromString("%ld\n"+string(rune(0))))
 	strFmt = m.NewGlobalDef("strfmt", constant.NewCharArrayFromString("%s\n"+string(rune(0))))
 	fltFmt = m.NewGlobalDef("fltfmt", constant.NewCharArrayFromString("%f\n"+string(rune(0))))
+	intCastFmt = m.NewGlobalDef("intcastfmt", constant.NewCharArrayFromString("%ld"+string(rune(0))))
 }
 
 func getStrPtr(val value.Value, block *ir.Block) value.Value {
