@@ -33,7 +33,7 @@ func generateBuiltins() {
 	gcvt = m.NewFunc("gcvt", types.I8Ptr, ir.NewParam("input", types.Double), ir.NewParam("length", types.I32), ir.NewParam("out", types.I8Ptr))
 	pow = m.NewFunc("pow", types.Double, ir.NewParam("input", types.Double), ir.NewParam("power", types.Double))
 
-	intFmt = m.NewGlobalDef("intfmt", constant.NewCharArrayFromString("%d\n"+string(rune(0))))
+	intFmt = m.NewGlobalDef("intfmt", constant.NewCharArrayFromString("%ld\n"+string(rune(0))))
 	strFmt = m.NewGlobalDef("strfmt", constant.NewCharArrayFromString("%s\n"+string(rune(0))))
 	fltFmt = m.NewGlobalDef("fltfmt", constant.NewCharArrayFromString("%f\n"+string(rune(0))))
 }

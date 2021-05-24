@@ -146,7 +146,7 @@ func CompileMath(stm *parser.MathStmt, block *ir.Block) (value.Value, *ir.Block,
 			dv1 := block.NewSIToFP(lhs, types.Double)
 			dv2 := block.NewSIToFP(rhs, types.Double)
 			dv3 := block.NewCall(pow, dv1, dv2)
-			ival := block.NewAdd(dv3, constant.NewFloat(types.Double, 0.5))
+			ival := block.NewFAdd(dv3, constant.NewFloat(types.Double, 0.5))
 			res = block.NewFPToSI(ival, types.I64)
 		}
 	}
