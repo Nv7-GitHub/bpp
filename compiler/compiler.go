@@ -30,10 +30,6 @@ func Compile(prog *parser.Program) (string, error) {
 	return m.String(), nil
 }
 
-type Builder func(parser.Statement, *ir.Block) (value.Value, *ir.Block, error)
-
-var builders = make(map[string]Builder)
-
 func CompileBlock(stms []parser.Statement, block *ir.Block) (*ir.Block, error) {
 	var v value.Value
 	var err error
