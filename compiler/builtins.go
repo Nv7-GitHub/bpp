@@ -19,6 +19,9 @@ var gcvt *ir.Func
 var pow *ir.Func
 var strtol *ir.Func
 var strtod *ir.Func
+var srand *ir.Func
+var time *ir.Func
+var rand *ir.Func
 
 var intFmt *ir.Global
 var strFmt *ir.Global
@@ -37,11 +40,20 @@ func generateBuiltins() {
 	pow = m.NewFunc("pow", types.Double, ir.NewParam("input", types.Double), ir.NewParam("power", types.Double))
 	strtol = m.NewFunc("strtol", types.I64, ir.NewParam("input", types.I8Ptr), ir.NewParam("remaining", types.NewPointer(types.I8Ptr)), ir.NewParam("base", types.I32))
 	strtod = m.NewFunc("strtod", types.Double, ir.NewParam("input", types.I8Ptr), ir.NewParam("remaining", types.NewPointer(types.I8Ptr)))
+	srand = m.NewFunc("srand", types.Void, ir.NewParam("seed", types.I32))
+	time = m.NewFunc("time", types.I64, ir.NewParam("time", types.I64Ptr))
+	rand = m.NewFunc("rand", types.I32)
 
 	intFmt = m.NewGlobalDef("intfmt", constant.NewCharArrayFromString("%ld\n"+string(rune(0))))
 	strFmt = m.NewGlobalDef("strfmt", constant.NewCharArrayFromString("%s\n"+string(rune(0))))
 	fltFmt = m.NewGlobalDef("fltfmt", constant.NewCharArrayFromString("%f\n"+string(rune(0))))
 	intCastFmt = m.NewGlobalDef("intcastfmt", constant.NewCharArrayFromString("%ld"+string(rune(0))))
+}
+
+func initMod(block *ir.Block) {
+	time := block.NewCall(time, constant.NewNull(types.I64Ptr))
+	trunced := block.NewTrunc(time, types.I32)
+	block.NewCall(srand, trunced)
 }
 
 func getStrPtr(val value.Value, block *ir.Block) value.Value {

@@ -18,6 +18,7 @@ func Compile(prog *parser.Program) (string, error) {
 
 	main := m.NewFunc("main", types.I32)
 	block := main.NewBlock("entry")
+	initMod(block)
 
 	var err error
 	block, err = CompileBlock(prog.Statements, block)
