@@ -49,6 +49,13 @@ func getStrPtr(val value.Value, block *ir.Block) value.Value {
 	if ok {
 		return block.NewGetElementPtr(glob.ContentType, val, constant.NewInt(types.I64, 0), constant.NewInt(types.I64, 0))
 	}
+	newv, ok := val.Type().(*types.PointerType)
+	if ok {
+		_, ok = newv.ElemType.(*types.ArrayType)
+		if ok {
+			return block.NewBitCast(val, types.I8Ptr)
+		}
+	}
 	return val
 }
 
