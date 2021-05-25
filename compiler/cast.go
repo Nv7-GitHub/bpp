@@ -17,18 +17,10 @@ func CompileTypeCast(stm *parser.TypeCastStmt, block *ir.Block) (value.Value, *i
 	}
 
 	kind := v.Type()
-	_, ok := kind.(*types.PointerType)
-	if ok {
-		kind = kind.(*types.PointerType).ElemType
-	}
-	if kind.Equal(types.I8) {
-		kind = types.NewArray(0, types.I8)
-	}
-
 	var res value.Value
 
-	switch kind.(type) {
-	case *types.IntType:
+	switch {
+	case kind.Equal(types.I64):
 		switch {
 		case stm.NewType.IsEqual(parser.STRING):
 			res = block.NewAlloca(types.NewArray(21, types.I8))
@@ -42,7 +34,7 @@ func CompileTypeCast(stm *parser.TypeCastStmt, block *ir.Block) (value.Value, *i
 			res = v
 		}
 
-	case *types.FloatType:
+	case kind.Equal(types.Double):
 		switch {
 		case stm.NewType.IsEqual(parser.STRING):
 			res = block.NewAlloca(types.NewArray(16, types.I8))
@@ -56,7 +48,7 @@ func CompileTypeCast(stm *parser.TypeCastStmt, block *ir.Block) (value.Value, *i
 			res = v
 		}
 
-	case *types.ArrayType:
+	case kind.Equal(types.I8Ptr):
 		switch {
 		case stm.NewType.IsEqual(parser.STRING):
 			res = v
