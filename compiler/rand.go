@@ -101,3 +101,23 @@ func CompileRandint(stm *parser.RandintStmt, block *ir.Block) (value.Value, *ir.
 
 	return out, block, nil
 }
+
+// Using this method: https://stackoverflow.com/a/64286825/11388343
+func CompileRandom(stm *parser.RandomStmt, block *ir.Block) (value.Value, *ir.Block, error) {
+	var lower value.Value
+	var upper value.Value
+	var err error
+	lower, block, err = CompileStmt(stm.Lower, block)
+	if err != nil {
+		return nil, block, err
+	}
+
+	upper, block, err = CompileStmt(stm.Upper, block)
+	if err != nil {
+		return nil, block, err
+	}
+
+	in := block.NewSIToFP(block.NewMul(block.NewCall(rand), block.NewCall(rand)), types.Double)
+	randflt := block.NewCall(sin, in) // sin(rand() * rand())
+	return block.NewFAdd(lower, block.NewFMul(block.NewFSub(upper, lower), block.NewCall(fabs, randflt))), block, nil
+}

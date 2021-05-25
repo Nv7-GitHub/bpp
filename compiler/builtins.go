@@ -28,6 +28,8 @@ var free *ir.Func
 var floor *ir.Func
 var ceil *ir.Func
 var round *ir.Func
+var sin *ir.Func
+var fabs *ir.Func
 
 var intFmt *ir.Global
 var strFmt *ir.Global
@@ -58,6 +60,8 @@ func generateBuiltins() {
 	floor = m.NewFunc("floor", types.Double, ir.NewParam("input", types.Double))
 	ceil = m.NewFunc("ceil", types.Double, ir.NewParam("input", types.Double))
 	round = m.NewFunc("round", types.Double, ir.NewParam("input", types.Double))
+	sin = m.NewFunc("sin", types.Double, ir.NewParam("input", types.Double))
+	fabs = m.NewFunc("fabs", types.Double, ir.NewParam("input", types.Double))
 
 	intFmt = m.NewGlobalDef("intfmt", constant.NewCharArrayFromString("%ld"+string(rune(0))))
 	strFmt = m.NewGlobalDef("strfmt", constant.NewCharArrayFromString("%s"+string(rune(0))))
