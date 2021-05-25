@@ -62,6 +62,9 @@ func CompileStmt(stm parser.Statement, b *ir.Block) (value.Value, *ir.Block, err
 	case *parser.RoundStmt:
 		return CompileRound(s, b)
 
+	case *parser.RepeatStmt:
+		return CompileRepeat(s, b)
+
 	default:
 		return nil, b, fmt.Errorf("line %d: unknown type %s", s.Line(), reflect.TypeOf(s))
 	}

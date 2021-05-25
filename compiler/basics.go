@@ -122,25 +122,19 @@ func CompileConcat(stm *parser.ConcatStmt, block *ir.Block) (value.Value, *ir.Bl
 		}
 	}
 
-	out := block.NewCall(malloc, constant.NewInt(types.I64, 0))
-
+	var length value.Value = constant.NewInt(types.I64, 0)
 	for _, val := range vals {
-		size1 := block.NewCall(strlen, out)
-		size2 := block.NewCall(strlen, val)
+		length = block.NewAdd(length, block.NewCall(strlen, val))
+	}
+	out := block.NewCall(malloc, length)
 
-		combined := block.NewAdd(size1, size2)
+	var off value.Value = constant.NewInt(types.I64, 0)
+	for _, val := range vals {
+		ptr := block.NewGetElementPtr(types.I8, out, off)
+		l := block.NewCall(strlen, val)
+		block.NewCall(memcpy, ptr, val, l)
 
-		res := block.NewCall(malloc, combined)
-		block.NewCall(memcpy, res, out, size1)
-
-		ress := block.NewGetElementPtr(types.I8, res, size1)
-		block.NewCall(memcpy, ress, val, size2)
-
-		last := block.NewGetElementPtr(types.I8, ress, combined)
-		block.NewStore(constant.NewInt(types.I8, 0), last)
-
-		block.NewCall(free, out)
-		out = res
+		off = block.NewAdd(off, l)
 	}
 
 	autofree[out] = empty{}
