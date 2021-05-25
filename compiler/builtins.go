@@ -11,8 +11,7 @@ import (
 
 var printf *ir.Func
 
-//var strlen *ir.Func
-var strcat *ir.Func
+var strlen *ir.Func
 var strcmp *ir.Func
 var sprintf *ir.Func
 var gcvt *ir.Func
@@ -22,6 +21,9 @@ var strtod *ir.Func
 var srand *ir.Func
 var time *ir.Func
 var rand *ir.Func
+var malloc *ir.Func
+var memcpy *ir.Func
+var free *ir.Func
 
 var intFmt *ir.Global
 var strFmt *ir.Global
@@ -31,8 +33,10 @@ var intCastFmt *ir.Global
 func generateBuiltins() {
 	printf = m.NewFunc("printf", types.I32, ir.NewParam("format", types.I8Ptr))
 	printf.Sig.Variadic = true
-	//strlen = m.NewFunc("strlen", types.I32, ir.NewParam("src", types.I8Ptr)) // For when LENGTH comes
-	strcat = m.NewFunc("strcat", types.I8Ptr, ir.NewParam("dst", types.I8Ptr), ir.NewParam("src", types.I8Ptr))
+	strlen = m.NewFunc("strlen", types.I64, ir.NewParam("src", types.I8Ptr))
+	malloc = m.NewFunc("malloc", types.I8Ptr, ir.NewParam("len", types.I64))
+	memcpy = m.NewFunc("memcpy", types.I8Ptr, ir.NewParam("src", types.I8Ptr), ir.NewParam("dst", types.I8Ptr), ir.NewParam("cnt", types.I64))
+	free = m.NewFunc("free", types.Void, ir.NewParam("src", types.I8Ptr))
 	strcmp = m.NewFunc("strcmp", types.I32, ir.NewParam("a", types.I8Ptr), ir.NewParam("b", types.I8Ptr))
 	sprintf = m.NewFunc("sprintf", types.I32, ir.NewParam("dst", types.I8Ptr), ir.NewParam("format", types.I8Ptr))
 	sprintf.Sig.Variadic = true

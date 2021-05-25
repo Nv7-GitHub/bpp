@@ -21,7 +21,12 @@ func CompileData(stm *parser.Data, block *ir.Block) (value.Value, *ir.Block, err
 	t := stm.Type()
 	switch {
 	case t.IsEqual(parser.STRING):
-		return getStr(stm.Data.(string)), block, nil
+		str := getStrPtr(getStr(stm.Data.(string)), block)
+		dat := block.NewCall(malloc, constant.NewInt(types.I64, int64(len(stm.Data.(string))+1)))
+		block.NewCall(memcpy, dat, str, constant.NewInt(types.I64, int64(len(stm.Data.(string)))))
+		last := block.NewGetElementPtr(types.I8, dat, constant.NewInt(types.I64, int64(len(stm.Data.(string)))))
+		block.NewStore(constant.NewInt(types.I8, 0), last)
+		return dat, block, nil
 
 	case t.IsEqual(parser.INT):
 		return constant.NewInt(types.I64, int64(stm.Data.(int))), block, nil
@@ -81,11 +86,26 @@ func CompileConcat(stm *parser.ConcatStmt, block *ir.Block) (value.Value, *ir.Bl
 		}
 	}
 
-	empty := block.NewAlloca(types.NewArray(0, types.I8))
-	ptr := block.NewBitCast(empty, types.I8Ptr)
+	out := block.NewCall(malloc, constant.NewInt(types.I64, 0))
+
 	for _, val := range vals {
-		block.NewCall(strcat, ptr, getStrPtr(val, block))
+		size1 := block.NewCall(strlen, out)
+		size2 := block.NewCall(strlen, val)
+
+		combined := block.NewAdd(size1, size2)
+
+		res := block.NewCall(malloc, combined)
+		block.NewCall(memcpy, res, out, size1)
+
+		ress := block.NewGetElementPtr(types.I8, res, size1)
+		block.NewCall(memcpy, ress, val, size2)
+
+		last := block.NewGetElementPtr(types.I8, ress, combined)
+		block.NewStore(constant.NewInt(types.I8, 0), last)
+
+		block.NewCall(free, out)
+		out = res
 	}
 
-	return empty, block, nil
+	return out, block, nil
 }

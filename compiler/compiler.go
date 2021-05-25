@@ -53,6 +53,9 @@ func addLine(block *ir.Block, val value.Value) {
 	if ok {
 		kind = kind.(*types.PointerType).ElemType
 	}
+	if kind.Equal(types.I8) {
+		kind = types.NewArray(0, types.I8)
+	}
 
 	switch kind.(type) {
 	case *types.ArrayType:
