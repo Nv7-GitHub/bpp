@@ -24,6 +24,9 @@ var rand *ir.Func
 var malloc *ir.Func
 var memcpy *ir.Func
 var free *ir.Func
+var floor *ir.Func
+var ceil *ir.Func
+var round *ir.Func
 
 var intFmt *ir.Global
 var strFmt *ir.Global
@@ -50,6 +53,9 @@ func generateBuiltins() {
 	srand = m.NewFunc("srand", types.Void, ir.NewParam("seed", types.I32))
 	time = m.NewFunc("time", types.I64, ir.NewParam("time", types.I64Ptr))
 	rand = m.NewFunc("rand", types.I32)
+	floor = m.NewFunc("floor", types.Double, ir.NewParam("input", types.Double))
+	ceil = m.NewFunc("ceil", types.Double, ir.NewParam("input", types.Double))
+	round = m.NewFunc("round", types.Double, ir.NewParam("input", types.Double))
 
 	intFmt = m.NewGlobalDef("intfmt", constant.NewCharArrayFromString("%ld"+string(rune(0))))
 	strFmt = m.NewGlobalDef("strfmt", constant.NewCharArrayFromString("%s"+string(rune(0))))

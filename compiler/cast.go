@@ -26,6 +26,7 @@ func CompileTypeCast(stm *parser.TypeCastStmt, block *ir.Block) (value.Value, *i
 			res = block.NewAlloca(types.NewArray(21, types.I8))
 			ptr := block.NewGetElementPtr(res.(*ir.InstAlloca).ElemType, res, constant.NewInt(types.I64, 0), constant.NewInt(types.I64, 0))
 			block.NewCall(sprintf, ptr, intFmt, v)
+			res = getStrPtr(res, block)
 
 		case stm.NewType.IsEqual(parser.FLOAT):
 			res = block.NewSIToFP(v, types.Double)
@@ -40,6 +41,7 @@ func CompileTypeCast(stm *parser.TypeCastStmt, block *ir.Block) (value.Value, *i
 			res = block.NewAlloca(types.NewArray(16, types.I8))
 			ptr := block.NewGetElementPtr(res.(*ir.InstAlloca).ElemType, res, constant.NewInt(types.I64, 0), constant.NewInt(types.I64, 0))
 			block.NewCall(gcvt, v, constant.NewInt(types.I32, 16), ptr)
+			res = getStrPtr(res, block)
 
 		case stm.NewType.IsEqual(parser.INT):
 			res = block.NewFPToSI(v, types.I64)

@@ -54,3 +54,50 @@ func getIndex(arr value.Value, ind value.Value, block *ir.Block) value.Value {
 	ptr := block.NewGetElementPtr(elemType, arr, constant.NewInt(types.I64, 0), ind)
 	return block.NewLoad(elemType.(*types.ArrayType).ElemType, ptr)
 }
+
+func CompileChoose(stm *parser.ChooseStmt, block *ir.Block) (value.Value, *ir.Block, error) {
+	var v value.Value
+	var err error
+	v, block, err = CompileStmt(stm.Data, block)
+	if err != nil {
+		return nil, block, err
+	}
+
+	var len value.Value
+	if v.Type().Equal(types.I8Ptr) {
+		len = block.NewCall(strlen, v)
+	} else {
+		len = constant.NewInt(types.I64, int64(v.Type().(*types.PointerType).ElemType.(*types.ArrayType).Len))
+	}
+
+	randval32 := block.NewCall(rand)
+	randval := block.NewZExt(randval32, types.I64)
+	ind := block.NewURem(randval, len)
+
+	out := getIndex(v, ind, block)
+
+	return out, block, nil
+}
+
+func CompileRandint(stm *parser.RandintStmt, block *ir.Block) (value.Value, *ir.Block, error) {
+	var lower value.Value
+	var upper value.Value
+	var err error
+	lower, block, err = CompileStmt(stm.Lower, block)
+	if err != nil {
+		return nil, block, err
+	}
+
+	upper, block, err = CompileStmt(stm.Upper, block)
+	if err != nil {
+		return nil, block, err
+	}
+
+	randval32 := block.NewCall(rand)
+	randval := block.NewZExt(randval32, types.I64)
+
+	top := block.NewAdd(block.NewSub(upper, lower), constant.NewInt(types.I64, 1))
+	out := block.NewAdd(block.NewURem(randval, top), lower)
+
+	return out, block, nil
+}
