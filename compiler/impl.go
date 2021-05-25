@@ -88,3 +88,34 @@ func CompileRepeat(stm *parser.RepeatStmt, block *ir.Block) (value.Value, *ir.Bl
 	block = end
 	return getStrPtr(out, block), block, nil
 }
+
+func CompileConcat(stm *parser.ConcatStmt, block *ir.Block) (value.Value, *ir.Block, error) {
+	// Build vals
+	vals := make([]value.Value, len(stm.Strings))
+	var err error
+	for i, s := range stm.Strings {
+		vals[i], block, err = CompileStmt(s, block)
+		if err != nil {
+			return nil, block, err
+		}
+	}
+
+	var length value.Value = constant.NewInt(types.I64, 0)
+	for _, val := range vals {
+		length = block.NewAdd(length, block.NewCall(strlen, val))
+	}
+	out := block.NewCall(malloc, length)
+
+	var off value.Value = constant.NewInt(types.I64, 0)
+	for _, val := range vals {
+		ptr := block.NewGetElementPtr(types.I8, out, off)
+		l := block.NewCall(strlen, val)
+		block.NewCall(memcpy, ptr, val, l)
+
+		off = block.NewAdd(off, l)
+	}
+
+	autofree[out] = empty{}
+
+	return out, block, nil
+}

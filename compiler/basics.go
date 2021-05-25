@@ -111,33 +111,18 @@ func CompileVar(stm *parser.VarStmt, block *ir.Block) (value.Value, *ir.Block, e
 	return loaded, block, nil
 }
 
-func CompileConcat(stm *parser.ConcatStmt, block *ir.Block) (value.Value, *ir.Block, error) {
-	// Build vals
-	vals := make([]value.Value, len(stm.Strings))
+func CompileArgs(stm *parser.ArgsStmt, block *ir.Block) (value.Value, *ir.Block, error) {
+	var ind value.Value
 	var err error
-	for i, s := range stm.Strings {
-		vals[i], block, err = CompileStmt(s, block)
-		if err != nil {
-			return nil, block, err
-		}
+	ind, block, err = CompileStmt(stm.Index, block)
+	if err != nil {
+		return nil, block, err
 	}
+	ind = block.NewAdd(ind, constant.NewInt(types.I64, 1)) // Add 1, because first arg is executable
 
-	var length value.Value = constant.NewInt(types.I64, 0)
-	for _, val := range vals {
-		length = block.NewAdd(length, block.NewCall(strlen, val))
-	}
-	out := block.NewCall(malloc, length)
+	argv := block.NewLoad(types.NewPointer(types.I8Ptr), args)
+	ptr := block.NewGetElementPtr(types.I8Ptr, argv, ind)
+	val := block.NewLoad(types.I8Ptr, ptr)
 
-	var off value.Value = constant.NewInt(types.I64, 0)
-	for _, val := range vals {
-		ptr := block.NewGetElementPtr(types.I8, out, off)
-		l := block.NewCall(strlen, val)
-		block.NewCall(memcpy, ptr, val, l)
-
-		off = block.NewAdd(off, l)
-	}
-
-	autofree[out] = empty{}
-
-	return out, block, nil
+	return val, block, nil
 }

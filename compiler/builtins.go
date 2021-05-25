@@ -39,6 +39,8 @@ var openBracket *ir.Global
 var closeBracket *ir.Global
 var comma *ir.Global
 
+var args *ir.Global
+
 func generateBuiltins() {
 	printf = m.NewFunc("printf", types.I32, ir.NewParam("format", types.I8Ptr))
 	printf.Sig.Variadic = true
@@ -70,12 +72,18 @@ func generateBuiltins() {
 	openBracket = m.NewGlobalDef("openbracket", constant.NewCharArrayFromString("["+string(rune(0))))
 	closeBracket = m.NewGlobalDef("closebracket", constant.NewCharArrayFromString("]"+string(rune(0))))
 	comma = m.NewGlobalDef("comma", constant.NewCharArrayFromString(", "+string(rune(0))))
+
+	args = m.NewGlobalDef("args", constant.NewNull(types.NewPointer(types.I8Ptr)))
 }
 
 func initMod(block *ir.Block) {
+	// Initialize random
 	time := block.NewCall(time, constant.NewNull(types.I64Ptr))
 	trunced := block.NewTrunc(time, types.I32)
 	block.NewCall(srand, trunced)
+
+	// Initialize program args
+	block.NewStore(block.Parent.Params[1], args) // Store argv to args
 }
 
 func getStrPtr(val value.Value, block *ir.Block) value.Value {

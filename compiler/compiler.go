@@ -17,7 +17,7 @@ func Compile(prog *parser.Program) (string, error) {
 	autofree = make(map[value.Value]empty)
 	generateBuiltins()
 
-	main := m.NewFunc("main", types.I32)
+	main := m.NewFunc("main", types.I32, ir.NewParam("argc", types.I32), ir.NewParam("argv", types.NewPointer(types.I8Ptr)))
 	block := main.NewBlock("entry")
 	initMod(block)
 

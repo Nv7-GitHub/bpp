@@ -202,6 +202,17 @@ Now, just use
 ```
 To get 10 factorial, or `3628800`!
 
+## Type Conversions
+Sometimes, you need to convert types. To do so, just do:
+```bpp
+[FLOAT 100]
+```
+or
+```bpp
+[STRING 0.1]
+```
+You can use `INT`, `FLOAT`, `STRING`, and `ARRAY` in any combination!
+
 ## Builtin Functions
 B++ has many builtin functions, which are listed below.
 
@@ -215,3 +226,4 @@ B++ has many builtin functions, which are listed below.
 | `[FLOOR val]` | Gets the floor, or rounds down float `val`. |
 | `[CEIL val]` | Gets the ceiling, or rounds up float `val`. |
 | `[ROUND val]` | Rounds float `val` to the nearest integer, or whole number. |
+| `[ARGS index]` | Gets argument with index `index` of argument array. |
