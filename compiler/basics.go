@@ -44,6 +44,37 @@ func CompileData(stm *parser.Data, block *ir.Block) (value.Value, *ir.Block, err
 	}
 }
 
+func CompileArray(stm *parser.ArrayStmt, block *ir.Block) (value.Value, *ir.Block, error) {
+	var arr *ir.InstAlloca
+	var kind types.Type
+
+	var v value.Value
+	var first *ir.InstGetElementPtr
+	var err error
+	for i, d := range stm.Values {
+		v, block, err = CompileStmt(d, block)
+		if err != nil {
+			return nil, block, err
+		}
+
+		if arr == nil {
+			kind = v.Type()
+			arr = block.NewAlloca(types.NewArray(uint64(len(stm.Values)), kind))
+			first = block.NewGetElementPtr(arr.ElemType, arr, constant.NewInt(types.I64, 0), constant.NewInt(types.I64, 0))
+		}
+
+		var item *ir.InstGetElementPtr
+		if i == 0 {
+			item = first
+		} else {
+			item = block.NewGetElementPtr(kind, first, constant.NewInt(types.I64, int64(i)))
+		}
+		block.NewStore(v, item)
+	}
+
+	return arr, block, nil
+}
+
 func CompileDefine(stm *parser.DefineStmt, block *ir.Block) (value.Value, *ir.Block, error) {
 	var v value.Value
 	var err error

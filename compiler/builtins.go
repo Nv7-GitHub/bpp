@@ -28,7 +28,10 @@ var free *ir.Func
 var intFmt *ir.Global
 var strFmt *ir.Global
 var fltFmt *ir.Global
-var intCastFmt *ir.Global
+var newLine *ir.Global
+var openBracket *ir.Global
+var closeBracket *ir.Global
+var comma *ir.Global
 
 func generateBuiltins() {
 	printf = m.NewFunc("printf", types.I32, ir.NewParam("format", types.I8Ptr))
@@ -48,10 +51,13 @@ func generateBuiltins() {
 	time = m.NewFunc("time", types.I64, ir.NewParam("time", types.I64Ptr))
 	rand = m.NewFunc("rand", types.I32)
 
-	intFmt = m.NewGlobalDef("intfmt", constant.NewCharArrayFromString("%ld\n"+string(rune(0))))
-	strFmt = m.NewGlobalDef("strfmt", constant.NewCharArrayFromString("%s\n"+string(rune(0))))
-	fltFmt = m.NewGlobalDef("fltfmt", constant.NewCharArrayFromString("%f\n"+string(rune(0))))
-	intCastFmt = m.NewGlobalDef("intcastfmt", constant.NewCharArrayFromString("%ld"+string(rune(0))))
+	intFmt = m.NewGlobalDef("intfmt", constant.NewCharArrayFromString("%ld"+string(rune(0))))
+	strFmt = m.NewGlobalDef("strfmt", constant.NewCharArrayFromString("%s"+string(rune(0))))
+	fltFmt = m.NewGlobalDef("fltfmt", constant.NewCharArrayFromString("%f"+string(rune(0))))
+	newLine = m.NewGlobalDef("newline", constant.NewCharArrayFromString("\n"+string(rune(0))))
+	openBracket = m.NewGlobalDef("openbracket", constant.NewCharArrayFromString("["+string(rune(0))))
+	closeBracket = m.NewGlobalDef("closebracket", constant.NewCharArrayFromString("]"+string(rune(0))))
+	comma = m.NewGlobalDef("comma", constant.NewCharArrayFromString(", "+string(rune(0))))
 }
 
 func initMod(block *ir.Block) {

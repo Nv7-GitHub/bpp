@@ -53,23 +53,42 @@ func CompileBlock(stms []parser.Statement, block *ir.Block) (*ir.Block, error) {
 }
 
 func addLine(block *ir.Block, val value.Value) {
+	printVal(block, val)
+	block.NewCall(printf, getStrPtr(newLine, block))
+}
+
+func printVal(block *ir.Block, val value.Value) {
 	kind := val.Type()
+
+	// Is array?
 	_, ok := kind.(*types.PointerType)
 	if ok {
-		kind = kind.(*types.PointerType).ElemType
-	}
-	if kind.Equal(types.I8) {
-		kind = types.NewArray(0, types.I8)
+		arrType, ok := kind.(*types.PointerType).ElemType.(*types.ArrayType)
+		if ok {
+			block.NewCall(printf, getStrPtr(openBracket, block))
+			comma := getStrPtr(comma, block)
+			for i := 0; i < int(arrType.Len); i++ {
+				// Print all the vals
+				ptr := block.NewGetElementPtr(arrType, val, constant.NewInt(types.I64, 0), constant.NewInt(types.I64, int64(i)))
+				ld := block.NewLoad(arrType.ElemType, ptr)
+				printVal(block, ld)
+				if i != int(arrType.Len)-1 {
+					block.NewCall(printf, comma)
+				}
+			}
+			block.NewCall(printf, getStrPtr(closeBracket, block))
+			return
+		}
 	}
 
-	switch kind.(type) {
-	case *types.ArrayType:
+	switch {
+	case kind.Equal(types.I8Ptr):
 		block.NewCall(printf, getStrPtr(strFmt, block), getStrPtr(val, block))
 
-	case *types.FloatType:
+	case kind.Equal(types.Double):
 		block.NewCall(printf, getStrPtr(fltFmt, block), val)
 
-	case *types.IntType:
+	case kind.Equal(types.I64):
 		block.NewCall(printf, getStrPtr(intFmt, block), val)
 	}
 }

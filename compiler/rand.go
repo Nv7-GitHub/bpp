@@ -27,22 +27,30 @@ func CompileIndex(stm *parser.IndexStmt, block *ir.Block) (value.Value, *ir.Bloc
 	return out, block, nil
 }
 
-func getIndex(str value.Value, ind value.Value, block *ir.Block) value.Value {
-	// Convert to localmem
-	ptr := getStrPtr(str, block)
+func getIndex(arr value.Value, ind value.Value, block *ir.Block) value.Value {
+	if arr.Type().Equal(types.I8Ptr) {
+		// Convert to localmem
+		ptr := getStrPtr(arr, block)
 
-	// Get index, and convert to char
-	charptr := block.NewGetElementPtr(types.I8, ptr, ind)
-	char := block.NewLoad(types.I8, charptr)
+		// Get index, and convert to char
+		charptr := block.NewGetElementPtr(types.I8, ptr, ind)
+		char := block.NewLoad(types.I8, charptr)
 
-	// Make output (char[2])
-	out := block.NewAlloca(types.NewArray(2, types.I8))
-	outptr := block.NewGetElementPtr(out.ElemType, out, constant.NewInt(types.I64, 0), constant.NewInt(types.I64, 0)) // convert char[2] to char*
+		// Make output (char[2])
+		out := block.NewAlloca(types.NewArray(2, types.I8))
+		outptr := block.NewGetElementPtr(out.ElemType, out, constant.NewInt(types.I64, 0), constant.NewInt(types.I64, 0)) // convert char[2] to char*
 
-	// Store []char{char, 0} in it
-	block.NewStore(char, outptr)
-	second := block.NewGetElementPtr(types.I8, outptr, constant.NewInt(types.I64, 1))
-	block.NewStore(constant.NewInt(types.I8, 0), second)
+		// Store []char{char, 0} in it
+		block.NewStore(char, outptr)
+		second := block.NewGetElementPtr(types.I8, outptr, constant.NewInt(types.I64, 1))
+		block.NewStore(constant.NewInt(types.I8, 0), second)
 
-	return out
+		return getStrPtr(out, block)
+	}
+
+	// It's an array!
+	elemType := arr.Type().(*types.PointerType).ElemType
+
+	ptr := block.NewGetElementPtr(elemType, arr, constant.NewInt(types.I64, 0), ind)
+	return block.NewLoad(elemType.(*types.ArrayType).ElemType, ptr)
 }
