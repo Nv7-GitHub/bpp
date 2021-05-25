@@ -14,6 +14,7 @@ func Compile(prog *parser.Program) (string, error) {
 	m = ir.NewModule()
 	tmpUsed = 0
 	variables = make(map[string]Variable)
+	autofree = make(map[value.Value]empty)
 	generateBuiltins()
 
 	main := m.NewFunc("main", types.I32)
@@ -24,6 +25,10 @@ func Compile(prog *parser.Program) (string, error) {
 	block, err = CompileBlock(prog.Statements, block)
 	if err != nil {
 		return "", err
+	}
+
+	for val := range autofree {
+		block.NewCall(free, val)
 	}
 
 	block.NewRet(constant.NewInt(types.I32, 0))

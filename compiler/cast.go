@@ -21,6 +21,9 @@ func CompileTypeCast(stm *parser.TypeCastStmt, block *ir.Block) (value.Value, *i
 	if ok {
 		kind = kind.(*types.PointerType).ElemType
 	}
+	if kind.Equal(types.I8) {
+		kind = types.NewArray(0, types.I8)
+	}
 
 	var res value.Value
 

@@ -17,6 +17,10 @@ type Variable struct {
 
 var variables map[string]Variable
 
+type empty struct{}
+
+var autofree map[value.Value]empty
+
 func CompileData(stm *parser.Data, block *ir.Block) (value.Value, *ir.Block, error) {
 	t := stm.Type()
 	switch {
@@ -26,6 +30,7 @@ func CompileData(stm *parser.Data, block *ir.Block) (value.Value, *ir.Block, err
 		block.NewCall(memcpy, dat, str, constant.NewInt(types.I64, int64(len(stm.Data.(string)))))
 		last := block.NewGetElementPtr(types.I8, dat, constant.NewInt(types.I64, int64(len(stm.Data.(string)))))
 		block.NewStore(constant.NewInt(types.I8, 0), last)
+		autofree[dat] = empty{}
 		return dat, block, nil
 
 	case t.IsEqual(parser.INT):
@@ -106,6 +111,8 @@ func CompileConcat(stm *parser.ConcatStmt, block *ir.Block) (value.Value, *ir.Bl
 		block.NewCall(free, out)
 		out = res
 	}
+
+	autofree[out] = empty{}
 
 	return out, block, nil
 }

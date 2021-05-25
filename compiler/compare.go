@@ -28,6 +28,9 @@ func CompileCompare(stm *parser.ComparisonStmt, block *ir.Block) (value.Value, *
 	if ok {
 		kind = kind.(*types.PointerType).ElemType
 	}
+	if kind.Equal(types.I8) {
+		kind = types.NewArray(0, types.I8)
+	}
 
 	var cmp value.Value
 
@@ -105,6 +108,9 @@ func CompileMath(stm *parser.MathStmt, block *ir.Block) (value.Value, *ir.Block,
 	_, ok := kind.(*types.PointerType)
 	if ok {
 		kind = kind.(*types.PointerType).ElemType
+	}
+	if kind.Equal(types.I8) {
+		kind = types.NewArray(0, types.I8)
 	}
 
 	var res value.Value
