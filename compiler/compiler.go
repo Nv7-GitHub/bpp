@@ -100,10 +100,10 @@ func printVal(block *ir.Block, val value.Value) {
 
 func addMalloc(len value.Value, block *ir.Block) value.Value {
 	val := initBlock.NewAlloca(types.I8Ptr)
-	//initBlock.NewStore(initBlock.NewCall(malloc, constant.NewInt(types.I64, 0)), val)
 	initBlock.NewStore(constant.NewNull(types.I8Ptr), val)
 
-	block.NewStore(block.NewCall(malloc, len), val)
+	alloced := block.NewCall(malloc, len)
+	block.NewStore(alloced, val)
 	autofree[val] = empty{}
 	return block.NewLoad(types.I8Ptr, val)
 }

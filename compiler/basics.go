@@ -27,7 +27,7 @@ func CompileData(stm *parser.Data, block *ir.Block) (value.Value, *ir.Block, err
 	case t.IsEqual(parser.STRING):
 		str := getStrPtr(getStr(stm.Data.(string)), block)
 		dat := addMalloc(constant.NewInt(types.I64, int64(len(stm.Data.(string))+1)), block)
-		block.NewCall(memcpy, dat, str, constant.NewInt(types.I64, int64(len(stm.Data.(string)))))
+		block.NewCall(strcpy, dat, str)
 		last := block.NewGetElementPtr(types.I8, dat, constant.NewInt(types.I64, int64(len(stm.Data.(string)))))
 		block.NewStore(constant.NewInt(types.I8, 0), last)
 		return dat, block, nil
@@ -90,6 +90,9 @@ func CompileDefine(stm *parser.DefineStmt, block *ir.Block) (value.Value, *ir.Bl
 		va = block.NewAlloca(v.Type())
 	} else {
 		va = variables[name].Val
+		if va.Type().Equal(types.NewPointer(types.I8Ptr)) {
+			block.NewCall(free, block.NewLoad(types.I8Ptr, va))
+		}
 	}
 
 	block.NewStore(v, va)
