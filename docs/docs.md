@@ -175,6 +175,13 @@ Now, to add 1 and 2, using this function, you would just do
 ```bpp
 [ADD 1 2]
 ```
+
+Side note: You can use 
+```bpp
+[RETURN [NULL]]
+```
+To return a blank value.
+
 > :warning: You can't access global variables, only variables defined in the function and the parameters.
 
 B++ supports recursion too! For example, to make a factorial function:
@@ -201,12 +208,6 @@ Now, just use
 [FACTORIAL 10]
 ```
 To get 10 factorial, or `3628800`!
-
-You can also use 
-```bpp
-[RETURN [NULL]]
-```
-To return a blank value!
 
 ## Type Conversions
 Sometimes, you need to convert types. To do so, just do:
