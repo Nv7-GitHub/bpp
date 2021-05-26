@@ -106,8 +106,10 @@ func ArgsStmt(p *Program, stm *parser.ArgsStmt) (Instruction, error) {
 		if i.Value.(int) >= len(p.Args) {
 			return NewBlankData(), fmt.Errorf("line %d: argument index out of bounds", stm.Line())
 		}
-		d := parser.ParseData(p.Args[i.Value.(int)], stm.Line())
-		return ParserDataToData(d), nil
+		return Data{
+			Type:  parser.STRING,
+			Value: p.Args[i.Value.(int)],
+		}, nil
 	}, nil
 }
 
