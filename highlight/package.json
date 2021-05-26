@@ -1,0 +1,25 @@
+{
+    "name": "highlight",
+    "displayName": "bpp",
+    "description": "B++ support in VSCode!",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.56.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "bpp",
+            "aliases": ["B++", "bpp"],
+            "extensions": ["bpp"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "bpp",
+            "scopeName": "source.bpp",
+            "path": "./syntaxes/bpp.tmLanguage.json"
+        }]
+    }
+}

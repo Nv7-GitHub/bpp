@@ -1,0 +1,70 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "B++",
+	"patterns": [
+		{
+			"patterns": [
+				{
+					"name": "keyword.operator.bpp",
+					"match": "(\\+|-|\\*|\\/|%|<|>|<=|>=|=)"
+				}
+			]
+		},
+
+		{
+			"name": "string.quoted.double.bpp",
+			"begin": "\"",
+			"end": "\""
+		},
+
+		{
+			"name": "comment.line.bpp",
+			"begin": "#",
+			"end": "\n"
+		},
+
+		{
+			"begin": "(\\[)(.+?)(?:(\\])| )",
+			"beginCaptures": {
+				"1": {
+					"name": "punctuation.statement.begin.bpp"
+				},
+				"2": {
+					"patterns": [
+						{
+							"match": "(FUNCTION|RETURN|PARAM|INT|FLOAT|STRING|ARRAY)",
+							"name": "keyword.function.bpp"
+						},
+						{
+							"match": "(DEFINE|VAR|CONCAT)",
+							"name": "keyword.control.bpp"
+						},
+						{
+							"match": "(IFB|IF|ENDIF|WHILE|ENDWHILE)",
+							"name": "support.function.bpp"
+						},
+						{
+							"match": ".+",
+							"name": "storage.modifier.bpp"
+						}
+					]
+				},
+				"3": {
+					"name": "punctuation.statement.end.bpp"
+				}
+			},
+			"end": ".*?"
+		},
+
+		{
+			"begin": " (\\d+)",
+			"beginCaptures": {
+				"1": {
+					"name": "constant.numeric.bpp"
+				}
+			},
+			"end": "( |\\])"
+		}
+	],
+	"scopeName": "source.bpp"
+}
