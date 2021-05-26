@@ -202,6 +202,12 @@ Now, just use
 ```
 To get 10 factorial, or `3628800`!
 
+You can also use 
+```bpp
+[RETURN [NULL]]
+```
+To return a blank value!
+
 ## Type Conversions
 Sometimes, you need to convert types. To do so, just do:
 ```bpp
