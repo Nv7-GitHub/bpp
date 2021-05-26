@@ -62,4 +62,14 @@ func SetupOthers() {
 		},
 		Signature: []DataType{STRING, INT},
 	}
+
+	parsers["NULL"] = StatementParser{
+		Parse: func(args []Statement, line int) (Statement, error) {
+			return &Data{
+				BasicStatement: &BasicStatement{line: line},
+				kind:           NULL,
+			}, nil
+		},
+		Signature: []DataType{},
+	}
 }

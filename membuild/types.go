@@ -12,10 +12,11 @@ func TypeCastStmt(p *Program, stm *parser.TypeCastStmt) (Instruction, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return func(p *Program) (Data, error) {
 		val, err := val(p)
 		if err != nil {
-			return NewBlankData(), nil
+			return NewBlankData(), err
 		}
 
 		switch stm.NewType {

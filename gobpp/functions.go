@@ -51,7 +51,7 @@ func ConvertFunc(fn *ast.FuncDecl) (string, error) {
 
 	_, exists := hasReturn[name]
 	if !exists {
-		out += "[RETURN \"\"]\n"
+		out += "[RETURN [NULL]]\n"
 	}
 	return out, nil
 }

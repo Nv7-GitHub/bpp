@@ -13,10 +13,20 @@ var initBlock *ir.Block
 
 func Compile(prog *parser.Program) (string, error) {
 	m = ir.NewModule()
+	generateBuiltins()
+	funcs = make(map[string]*ir.Func)
+
+	for _, stm := range prog.Statements {
+		fn, ok := stm.(*parser.FunctionBlock)
+		if ok {
+			AddFunction(fn)
+		}
+	}
+
+	// Main-specific things
 	tmpUsed = 0
 	variables = make(map[string]Variable)
 	autofree = make(map[string]empty)
-	generateBuiltins()
 
 	main := m.NewFunc("main", types.I32, ir.NewParam("argc", types.I32), ir.NewParam("argv", types.NewPointer(types.I8Ptr)))
 	initBlock = main.NewBlock("init")
@@ -58,6 +68,10 @@ func CompileBlock(stms []parser.Statement, block *ir.Block) (*ir.Block, error) {
 }
 
 func addLine(block *ir.Block, val value.Value) {
+	if val == nil {
+		return
+	}
+
 	printVal(block, val)
 	block.NewCall(printf, getStrPtr(newLine, block))
 }

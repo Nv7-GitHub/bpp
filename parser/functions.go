@@ -40,7 +40,7 @@ func (f *FunctionBlock) Keywords() []string {
 }
 
 func (f *FunctionBlock) EndSignature() []DataType {
-	return []DataType{ANY}
+	return []DataType{ANY | NULL}
 }
 
 func (f *FunctionBlock) End(_ string, args []Statement, statements []Statement) bool {
