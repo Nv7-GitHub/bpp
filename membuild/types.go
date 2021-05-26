@@ -36,8 +36,6 @@ func TypeCastStmt(p *Program, stm *parser.TypeCastStmt) (Instruction, error) {
 }
 
 func convertInt(val Data, num int) (Data, error) {
-	fmt.Println(val.Type, parser.STRING, parser.INT)
-
 	switch {
 	case val.Type.IsEqual(parser.STRING):
 		val, err := strconv.Atoi(val.Value.(string))
