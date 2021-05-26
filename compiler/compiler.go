@@ -9,6 +9,7 @@ import (
 )
 
 var m *ir.Module
+var initBlock *ir.Block
 
 func Compile(prog *parser.Program) (string, error) {
 	m = ir.NewModule()
@@ -18,7 +19,9 @@ func Compile(prog *parser.Program) (string, error) {
 	generateBuiltins()
 
 	main := m.NewFunc("main", types.I32, ir.NewParam("argc", types.I32), ir.NewParam("argv", types.NewPointer(types.I8Ptr)))
-	block := main.NewBlock("entry")
+	initBlock = main.NewBlock("init")
+	entry := main.NewBlock("entry")
+	block := entry
 	initMod(block)
 
 	var err error
@@ -27,8 +30,10 @@ func Compile(prog *parser.Program) (string, error) {
 		return "", err
 	}
 
+	initBlock.NewBr(entry)
+
 	for val := range autofree {
-		block.NewCall(free, val)
+		block.NewCall(free, block.NewLoad(types.I8Ptr, val))
 	}
 
 	block.NewRet(constant.NewInt(types.I32, 0))
@@ -91,4 +96,14 @@ func printVal(block *ir.Block, val value.Value) {
 	case kind.Equal(types.I64):
 		block.NewCall(printf, getStrPtr(intFmt, block), val)
 	}
+}
+
+func addMalloc(len value.Value, block *ir.Block) value.Value {
+	val := initBlock.NewAlloca(types.I8Ptr)
+	//initBlock.NewStore(initBlock.NewCall(malloc, constant.NewInt(types.I64, 0)), val)
+	initBlock.NewStore(constant.NewNull(types.I8Ptr), val)
+
+	block.NewStore(block.NewCall(malloc, len), val)
+	autofree[val] = empty{}
+	return block.NewLoad(types.I8Ptr, val)
 }

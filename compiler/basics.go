@@ -26,11 +26,10 @@ func CompileData(stm *parser.Data, block *ir.Block) (value.Value, *ir.Block, err
 	switch {
 	case t.IsEqual(parser.STRING):
 		str := getStrPtr(getStr(stm.Data.(string)), block)
-		dat := block.NewCall(malloc, constant.NewInt(types.I64, int64(len(stm.Data.(string))+1)))
+		dat := addMalloc(constant.NewInt(types.I64, int64(len(stm.Data.(string))+1)), block)
 		block.NewCall(memcpy, dat, str, constant.NewInt(types.I64, int64(len(stm.Data.(string)))))
 		last := block.NewGetElementPtr(types.I8, dat, constant.NewInt(types.I64, int64(len(stm.Data.(string)))))
 		block.NewStore(constant.NewInt(types.I8, 0), last)
-		autofree[dat] = empty{}
 		return dat, block, nil
 
 	case t.IsEqual(parser.INT):

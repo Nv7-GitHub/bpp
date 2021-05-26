@@ -54,7 +54,7 @@ func CompileRepeat(stm *parser.RepeatStmt, block *ir.Block) (value.Value, *ir.Bl
 	}
 
 	ln := block.NewCall(strlen, in)
-	out := block.NewCall(malloc, block.NewMul(cnt, ln))
+	out := addMalloc(block.NewMul(cnt, ln), block)
 	block.NewCall(memset, out, constant.NewInt(types.I32, 1), block.NewMul(cnt, ln))
 
 	// Make loop
@@ -82,8 +82,6 @@ func CompileRepeat(stm *parser.RepeatStmt, block *ir.Block) (value.Value, *ir.Bl
 	inced := block.NewAdd(it_l, constant.NewInt(types.I64, 1))
 	block.NewStore(inced, it)
 
-	autofree[out] = empty{}
-
 	block.NewBr(start)
 	block = end
 	return getStrPtr(out, block), block, nil
@@ -104,7 +102,7 @@ func CompileConcat(stm *parser.ConcatStmt, block *ir.Block) (value.Value, *ir.Bl
 	for _, val := range vals {
 		length = block.NewAdd(length, block.NewCall(strlen, val))
 	}
-	out := block.NewCall(malloc, length)
+	out := addMalloc(length, block)
 
 	var off value.Value = constant.NewInt(types.I64, 0)
 	for _, val := range vals {
@@ -114,8 +112,6 @@ func CompileConcat(stm *parser.ConcatStmt, block *ir.Block) (value.Value, *ir.Bl
 
 		off = block.NewAdd(off, l)
 	}
-
-	autofree[out] = empty{}
 
 	return out, block, nil
 }
