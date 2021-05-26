@@ -112,6 +112,12 @@ func CompileConcat(stm *parser.ConcatStmt, block *ir.Block) (value.Value, *ir.Bl
 		l := block.NewCall(strlen, val)
 		block.NewCall(memcpy, ptr, val, l)
 
+		// Is val a variable? if not, free it
+		_, ok := val.(*ir.InstLoad)
+		if !ok {
+			block.NewCall(free, val)
+		}
+
 		off = block.NewAdd(off, l)
 	}
 

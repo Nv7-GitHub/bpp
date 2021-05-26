@@ -89,6 +89,11 @@ func printVal(block *ir.Block, val value.Value) {
 	switch {
 	case kind.Equal(types.I8Ptr):
 		block.NewCall(printf, getStrPtr(strFmt, block), getStrPtr(val, block))
+		// Is val a variable? if not, free it
+		_, ok := val.(*ir.InstLoad)
+		if !ok {
+			block.NewCall(free, val)
+		}
 
 	case kind.Equal(types.Double):
 		block.NewCall(printf, getStrPtr(fltFmt, block), val)
