@@ -19,7 +19,10 @@ func Compile(prog *parser.Program) (string, error) {
 	for _, stm := range prog.Statements {
 		fn, ok := stm.(*parser.FunctionBlock)
 		if ok {
-			AddFunction(fn)
+			err := AddFunction(fn)
+			if err != nil {
+				return "", err
+			}
 		}
 	}
 

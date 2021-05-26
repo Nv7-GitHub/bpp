@@ -59,7 +59,11 @@ func AddFunction(fn *parser.FunctionBlock) error {
 		return err
 	}
 
-	function.Sig.RetType = ret.Type()
+	if ret == nil {
+		function.Sig.RetType = types.Void
+	} else {
+		function.Sig.RetType = ret.Type()
+	}
 
 	block.NewRet(ret)
 

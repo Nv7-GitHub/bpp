@@ -37,8 +37,11 @@ func CompileData(stm *parser.Data, block *ir.Block) (value.Value, *ir.Block, err
 	case t.IsEqual(parser.FLOAT):
 		return constant.NewFloat(types.Double, stm.Data.(float64)), block, nil
 
+	case t.IsEqual(parser.NULL):
+		return nil, block, nil
+
 	default:
-		return nil, block, fmt.Errorf("line %d: unknown print type", stm.Line())
+		return nil, block, fmt.Errorf("line %d: unknown data type", stm.Line())
 	}
 }
 
