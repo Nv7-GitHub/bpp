@@ -96,7 +96,11 @@ func CompileDefine(stm *parser.DefineStmt, block *ir.Block) (value.Value, *ir.Bl
 	_, exists := variables[name]
 	var va value.Value
 	if !exists {
-		va = block.NewAlloca(v.Type())
+		va = initBlock.NewAlloca(v.Type())
+		if va.Type().Equal(types.NewPointer(types.I8Ptr)) {
+			initBlock.NewStore(constant.NewNull(types.I8Ptr), va)
+			block.NewCall(free, block.NewLoad(types.I8Ptr, va))
+		}
 	} else {
 		va = variables[name].Val
 		if va.Type().Equal(types.NewPointer(types.I8Ptr)) {
