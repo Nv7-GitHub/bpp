@@ -22,7 +22,6 @@ var srand *ir.Func
 var time *ir.Func
 var rand *ir.Func
 var malloc *ir.Func
-var strcpy *ir.Func
 var memset *ir.Func
 var memcpy *ir.Func
 var free *ir.Func
@@ -49,7 +48,6 @@ func generateBuiltins() {
 	malloc = m.NewFunc("malloc", types.I8Ptr, ir.NewParam("len", types.I64))
 	memset = m.NewFunc("memset", types.I8Ptr, ir.NewParam("str", types.I8Ptr), ir.NewParam("char", types.I32), ir.NewParam("len", types.I64)) // DEBUG
 	memcpy = m.NewFunc("memcpy", types.I8Ptr, ir.NewParam("dst", types.I8Ptr), ir.NewParam("src", types.I8Ptr), ir.NewParam("cnt", types.I64))
-	strcpy = m.NewFunc("strcpy", types.I8Ptr, ir.NewParam("dst", types.I8Ptr), ir.NewParam("src", types.I8Ptr))
 	free = m.NewFunc("free", types.Void, ir.NewParam("src", types.I8Ptr))
 	strcmp = m.NewFunc("strcmp", types.I32, ir.NewParam("a", types.I8Ptr), ir.NewParam("b", types.I8Ptr))
 	sprintf = m.NewFunc("sprintf", types.I32, ir.NewParam("dst", types.I8Ptr), ir.NewParam("format", types.I8Ptr))

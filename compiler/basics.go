@@ -19,17 +19,16 @@ var variables map[string]Variable
 
 type empty struct{}
 
-var autofree map[value.Value]empty
+var autofree map[string]empty
 
 func CompileData(stm *parser.Data, block *ir.Block) (value.Value, *ir.Block, error) {
 	t := stm.Type()
 	switch {
 	case t.IsEqual(parser.STRING):
 		str := getStrPtr(getStr(stm.Data.(string)), block)
-		dat := addMalloc(constant.NewInt(types.I64, int64(len(stm.Data.(string))+1)), block)
-		block.NewCall(strcpy, dat, str)
-		last := block.NewGetElementPtr(types.I8, dat, constant.NewInt(types.I64, int64(len(stm.Data.(string)))))
-		block.NewStore(constant.NewInt(types.I8, 0), last)
+		length := int64(len(stm.Data.(string)) + 1)
+		dat := block.NewCall(malloc, constant.NewInt(types.I64, length))
+		block.NewCall(memcpy, dat, str, constant.NewInt(types.I64, length))
 		return dat, block, nil
 
 	case t.IsEqual(parser.INT):
@@ -83,6 +82,16 @@ func CompileDefine(stm *parser.DefineStmt, block *ir.Block) (value.Value, *ir.Bl
 	}
 
 	name := stm.Label.(*parser.Data).Data.(string)
+
+	if v.Type().Equal(types.I8Ptr) {
+		leng := block.NewCall(strlen, v)
+		length := block.NewAdd(leng, constant.NewInt(types.I64, 1)) // Add 1 for null ptr
+		dat := block.NewCall(malloc, length)
+		block.NewCall(memcpy, dat, v, length)
+		block.NewCall(free, v)
+		v = dat
+		autofree[name] = empty{}
+	}
 
 	_, exists := variables[name]
 	var va value.Value

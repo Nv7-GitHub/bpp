@@ -15,7 +15,7 @@ func Compile(prog *parser.Program) (string, error) {
 	m = ir.NewModule()
 	tmpUsed = 0
 	variables = make(map[string]Variable)
-	autofree = make(map[value.Value]empty)
+	autofree = make(map[string]empty)
 	generateBuiltins()
 
 	main := m.NewFunc("main", types.I32, ir.NewParam("argc", types.I32), ir.NewParam("argv", types.NewPointer(types.I8Ptr)))
@@ -33,7 +33,7 @@ func Compile(prog *parser.Program) (string, error) {
 	initBlock.NewBr(entry)
 
 	for val := range autofree {
-		block.NewCall(free, block.NewLoad(types.I8Ptr, val))
+		block.NewCall(free, block.NewLoad(types.I8Ptr, variables[val].Val))
 	}
 
 	block.NewRet(constant.NewInt(types.I32, 0))
@@ -96,14 +96,4 @@ func printVal(block *ir.Block, val value.Value) {
 	case kind.Equal(types.I64):
 		block.NewCall(printf, getStrPtr(intFmt, block), val)
 	}
-}
-
-func addMalloc(len value.Value, block *ir.Block) value.Value {
-	val := initBlock.NewAlloca(types.I8Ptr)
-	initBlock.NewStore(constant.NewNull(types.I8Ptr), val)
-
-	alloced := block.NewCall(malloc, len)
-	block.NewStore(alloced, val)
-	autofree[val] = empty{}
-	return block.NewLoad(types.I8Ptr, val)
 }

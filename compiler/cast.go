@@ -23,10 +23,8 @@ func CompileTypeCast(stm *parser.TypeCastStmt, block *ir.Block) (value.Value, *i
 	case kind.Equal(types.I64):
 		switch {
 		case stm.NewType.IsEqual(parser.STRING):
-			res = block.NewAlloca(types.NewArray(21, types.I8))
-			ptr := block.NewGetElementPtr(res.(*ir.InstAlloca).ElemType, res, constant.NewInt(types.I64, 0), constant.NewInt(types.I64, 0))
-			block.NewCall(sprintf, ptr, getStrPtr(intFmt, block), v)
-			res = getStrPtr(res, block)
+			res = block.NewCall(malloc, constant.NewInt(types.I64, 21))
+			block.NewCall(sprintf, res, getStrPtr(intFmt, block), v)
 
 		case stm.NewType.IsEqual(parser.FLOAT):
 			res = block.NewSIToFP(v, types.Double)
@@ -38,10 +36,8 @@ func CompileTypeCast(stm *parser.TypeCastStmt, block *ir.Block) (value.Value, *i
 	case kind.Equal(types.Double):
 		switch {
 		case stm.NewType.IsEqual(parser.STRING):
-			res = block.NewAlloca(types.NewArray(16, types.I8))
-			ptr := block.NewGetElementPtr(res.(*ir.InstAlloca).ElemType, res, constant.NewInt(types.I64, 0), constant.NewInt(types.I64, 0))
-			block.NewCall(gcvt, v, constant.NewInt(types.I32, 16), ptr)
-			res = getStrPtr(res, block)
+			res = block.NewCall(malloc, constant.NewInt(types.I64, 16))
+			block.NewCall(gcvt, v, constant.NewInt(types.I32, 16), res)
 
 		case stm.NewType.IsEqual(parser.INT):
 			res = block.NewFPToSI(v, types.I64)
