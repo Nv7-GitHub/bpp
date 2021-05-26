@@ -24,15 +24,12 @@
 		},
 
 		{
-			"begin": "(\\[)(.+?)(?:(\\])| )",
+			"begin": "\\[(.+?)(?:\\]| )",
 			"beginCaptures": {
 				"1": {
-					"name": "punctuation.statement.begin.bpp"
-				},
-				"2": {
 					"patterns": [
 						{
-							"match": "(FUNCTION|RETURN|PARAM|INT|FLOAT|STRING|ARRAY)",
+							"match": "(FUNCTION|RETURN|PARAM)",
 							"name": "keyword.function.bpp"
 						},
 						{
@@ -45,12 +42,9 @@
 						},
 						{
 							"match": ".+",
-							"name": "storage.modifier.bpp"
+							"name": "storage.type.numeric.bpp"
 						}
 					]
-				},
-				"3": {
-					"name": "punctuation.statement.end.bpp"
 				}
 			},
 			"end": ".*?"
