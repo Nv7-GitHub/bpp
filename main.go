@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"runtime/pprof"
 	"time"
 
 	"github.com/Nv7-Github/Bpp/parser"
@@ -40,12 +41,23 @@ type Args struct {
 	Run     *Run     `arg:"subcommand:run" help:"run a B++ program"`
 	Convert *Convert `arg:"subcommand:convert" help:"convert a go program to a B++ program"`
 	Time    bool     `help:"print timing for each stage" arg:"-t"`
+
+	CPUProf string `help:"CPU pprof statistics output file"`
+	Memprof string `help:"Heap pprof statistics output file"`
 }
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	var args Args
 	p = arg.MustParse(&args)
+
+	if args.CPUProf != "" {
+		pprofFile, err := os.OpenFile(args.CPUProf, os.O_WRONLY|os.O_CREATE, os.ModePerm)
+		handle(err)
+		err = pprof.StartCPUProfile(pprofFile)
+		handle(err)
+		defer pprof.StopCPUProfile()
+	}
 
 	switch {
 	case args.Build != nil:
@@ -58,6 +70,13 @@ func main() {
 		ConvertCmd(args)
 	default:
 		p.WriteUsage(os.Stdout)
+	}
+
+	if args.Memprof != "" {
+		pprofFile, err := os.OpenFile(args.Memprof, os.O_WRONLY|os.O_CREATE, os.ModePerm)
+		handle(err)
+		err = pprof.WriteHeapProfile(pprofFile)
+		handle(err)
 	}
 }
 

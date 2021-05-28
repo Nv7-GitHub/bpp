@@ -17,6 +17,9 @@
 # VSCode Extension
 *.vsix
 
+# Benchmarking
+*.pprof
+
 # Testing Script
 *.bpp
 ast.txt
