@@ -1,6 +1,8 @@
 package compiler
 
 import (
+	"fmt"
+
 	"github.com/Nv7-Github/Bpp/parser"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/types"
@@ -13,6 +15,7 @@ var paramTypeMap = map[parser.DataType]types.Type{
 	parser.INT:    types.I64,
 	parser.FLOAT:  types.Double,
 	parser.STRING: types.I8Ptr,
+	parser.NULL:   types.Void,
 }
 
 func AddFunction(fn *parser.FunctionBlock) error {
@@ -25,7 +28,14 @@ func AddFunction(fn *parser.FunctionBlock) error {
 	for i, par := range fn.Signature.Signature {
 		params[i] = ir.NewParam(fn.Signature.Names[i], paramTypeMap[par])
 	}
-	function := m.NewFunc(fn.Name, types.I32, params...)
+	retType, exists := paramTypeMap[fn.Return.Type()]
+	if !exists {
+		return fmt.Errorf("line %d: unknown return type", fn.Return.Line())
+	}
+
+	function := m.NewFunc(fn.Name, retType, params...)
+
+	funcs[fn.Name] = function
 
 	initBlock = function.NewBlock("init")
 	entry := function.NewBlock("entry")
@@ -59,15 +69,7 @@ func AddFunction(fn *parser.FunctionBlock) error {
 		return err
 	}
 
-	if ret == nil {
-		function.Sig.RetType = types.Void
-	} else {
-		function.Sig.RetType = ret.Type()
-	}
-
 	block.NewRet(ret)
-
-	funcs[fn.Name] = function
 
 	return nil
 }

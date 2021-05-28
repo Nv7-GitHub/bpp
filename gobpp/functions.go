@@ -20,7 +20,20 @@ var typeMap = map[string]string{
 	"int":     "INT",
 }
 
+var fnRetTypes map[string]string
+
 func ConvertFunc(fn *ast.FuncDecl) (string, error) {
+	name := strings.ToUpper(fn.Name.Name)
+
+	if fn.Type.Results != nil {
+		typeName := fn.Type.Results.List[0].Type.(*ast.Ident).Name
+		kind, exists := typeMap[typeName]
+		if !exists {
+			return "", fmt.Errorf("function %s: unknown type %s", fn.Name.Name, typeName)
+		}
+		fnRetTypes[name] = kind
+	}
+
 	args := ""
 	for _, arg := range fn.Type.Params.List {
 		var kind string
@@ -38,8 +51,6 @@ func ConvertFunc(fn *ast.FuncDecl) (string, error) {
 
 		args += fmt.Sprintf(" [PARAM %s %s]", arg.Names[0].Name, kind)
 	}
-
-	name := strings.ToUpper(fn.Name.Name)
 
 	out := fmt.Sprintf("[FUNCTION %s%s]\n", name, args)
 
@@ -75,7 +86,12 @@ func ReturnStmt(s *ast.ReturnStmt, fn string) (string, error) {
 		return "", err
 	}
 
+	kind, exists := fnRetTypes[fn]
+	if !exists {
+		return "", fmt.Errorf("function %s: no return type", fn)
+	}
+
 	hasReturn[fn] = empty{}
 
-	return fmt.Sprintf("[RETURN %s]", res), nil
+	return fmt.Sprintf("[RETURN [%s %s]]", kind, res), nil
 }

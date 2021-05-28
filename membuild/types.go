@@ -53,6 +53,9 @@ func convertInt(val Data, num int) (Data, error) {
 			Type:  parser.INT,
 			Value: int(val.Value.(float64)),
 		}, nil
+
+	case val.Type.IsEqual(parser.INT):
+		return val, nil
 	}
 	return NewBlankData(), fmt.Errorf("line %d: cannot convert type to integer", num)
 }
@@ -74,6 +77,9 @@ func convertFloat(val Data, num int) (Data, error) {
 			Type:  parser.FLOAT,
 			Value: float64(val.Value.(int)),
 		}, nil
+
+	case val.Type.IsEqual(parser.FLOAT):
+		return val, nil
 	}
 
 	return NewBlankData(), fmt.Errorf("line %d: cannot convert type to float", num)
