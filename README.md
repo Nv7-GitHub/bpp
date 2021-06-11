@@ -71,7 +71,7 @@ You can also use -o or --output to specify the output file. For example, to comp
 ```
 bpp build -o kin examples/kin.bpp
 ```
-You can also use --preserve or -p to keep the translated C++!
+This will produce LLVM IR. To convert it into an executable, use an LLVM compiler, like
 ```
-bpp build -p <filename>
+bpp build <filename> -cc clang
 ```
