@@ -3,6 +3,7 @@ package compiler
 import (
 	"fmt"
 
+	"github.com/llir/irutil"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
@@ -65,13 +66,13 @@ func generateBuiltins() {
 	sin = m.NewFunc("sin", types.Double, ir.NewParam("input", types.Double))
 	fabs = m.NewFunc("fabs", types.Double, ir.NewParam("input", types.Double))
 
-	intFmt = m.NewGlobalDef("intfmt", constant.NewCharArrayFromString("%ld"+string(rune(0))))
-	strFmt = m.NewGlobalDef("strfmt", constant.NewCharArrayFromString("%s"+string(rune(0))))
-	fltFmt = m.NewGlobalDef("fltfmt", constant.NewCharArrayFromString("%f"+string(rune(0))))
-	newLine = m.NewGlobalDef("newline", constant.NewCharArrayFromString("\n"+string(rune(0))))
-	openBracket = m.NewGlobalDef("openbracket", constant.NewCharArrayFromString("["+string(rune(0))))
-	closeBracket = m.NewGlobalDef("closebracket", constant.NewCharArrayFromString("]"+string(rune(0))))
-	comma = m.NewGlobalDef("comma", constant.NewCharArrayFromString(", "+string(rune(0))))
+	intFmt = m.NewGlobalDef("intfmt", irutil.NewCString("%ld"))
+	strFmt = m.NewGlobalDef("strfmt", irutil.NewCString("%s"))
+	fltFmt = m.NewGlobalDef("fltfmt", irutil.NewCString("%f"))
+	newLine = m.NewGlobalDef("newline", irutil.NewCString("\n"))
+	openBracket = m.NewGlobalDef("openbracket", irutil.NewCString("["))
+	closeBracket = m.NewGlobalDef("closebracket", irutil.NewCString("]"))
+	comma = m.NewGlobalDef("comma", irutil.NewCString(", "))
 
 	args = m.NewGlobalDef("args", constant.NewNull(types.NewPointer(types.I8Ptr)))
 }
