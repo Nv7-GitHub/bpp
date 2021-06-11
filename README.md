@@ -1,5 +1,9 @@
 # B++
-A B++ interpreter written in Go! Check [the docs](docs/docs.md) for more information on the B++ language and how it works, and [the programming guide](docs/lib.md) on how to import and use this library, with your code!
+
+[![Go Reference](https://pkg.go.dev/badge/github.com/Nv7-Github/Bpp.svg)](https://pkg.go.dev/github.com/Nv7-Github/Bpp)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Nv7-Github/Bpp)](https://goreportcard.com/report/github.com/Nv7-Github/Bpp)
+
+A B++ parser, interpreter, and compiler written in Go! Check [the docs](docs/docs.md) for more information on the B++ language and how it works, and [the programming guide](docs/lib.md) on how to import and use this library, with your code!
 
 ## Installation
 To install or update B++, do
@@ -31,7 +35,7 @@ Lets say you have a file called `factorial.go`:
 ```go
 package main
 
-func factorial(num int) {
+func factorial(num int) int {
   result := 1
   if num >= 1 {
     result = factorial(num - 1) * num
@@ -67,7 +71,7 @@ You can also use -o or --output to specify the output file. For example, to comp
 ```
 bpp build -o kin examples/kin.bpp
 ```
-You can also use --preserve or -p to keep the translated C++!
+This will produce LLVM IR. To convert it into an executable, use an LLVM compiler, like
 ```
-bpp build -p <filename>
+bpp build <filename> -cc clang
 ```
