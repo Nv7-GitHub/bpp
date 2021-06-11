@@ -35,7 +35,7 @@ Lets say you have a file called `factorial.go`:
 ```go
 package main
 
-func factorial(num int) {
+func factorial(num int) int {
   result := 1
   if num >= 1 {
     result = factorial(num - 1) * num
