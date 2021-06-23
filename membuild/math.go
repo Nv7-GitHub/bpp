@@ -7,6 +7,7 @@ import (
 	"github.com/Nv7-Github/Bpp/parser"
 )
 
+// MathStmt compiles a MATH statement
 func MathStmt(p *Program, stm *parser.MathStmt) (Instruction, error) {
 	left, err := BuildStmt(p, stm.Left)
 	if err != nil {

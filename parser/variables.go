@@ -7,6 +7,7 @@ type DefineStmt struct {
 	Value Statement
 }
 
+// Type gives the return type of a DEFINE statement (NULL)
 func (d *DefineStmt) Type() DataType {
 	return NULL
 }
@@ -17,10 +18,12 @@ type VarStmt struct {
 	Label Statement
 }
 
+// Type gives the return type of a VAR statement (ANY)
 func (v *VarStmt) Type() DataType {
 	return ANY
 }
 
+// SetupVariables adds the DEFINE and VAR statements
 func SetupVariables() {
 	parsers["DEFINE"] = StatementParser{
 		Parse: func(args []Statement, line int) (Statement, error) {

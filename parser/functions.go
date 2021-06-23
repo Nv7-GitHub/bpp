@@ -2,6 +2,7 @@ package parser
 
 import "fmt"
 
+// FunctionType stores the types of a function signature
 type FunctionType struct {
 	Signature  []DataType
 	Names      []string
@@ -17,6 +18,7 @@ type ParamStmt struct {
 	Kind DataType
 }
 
+// Type returns the type of a PARAM statement (PARAMETER)
 func (p *ParamStmt) Type() DataType {
 	return PARAMETER
 }
@@ -31,18 +33,22 @@ type FunctionBlock struct {
 	Body      []Statement
 }
 
+// Type returns the return type of a FUNCTION block
 func (f *FunctionBlock) Type() DataType {
 	return f.Return.Type()
 }
 
+// Keywords return the keywords for a FUNCTION block (RETURN)
 func (f *FunctionBlock) Keywords() []string {
 	return []string{"RETURN"}
 }
 
+// EndSignature gets the ending signature of a FUNCTION (ANY or NULL)
 func (f *FunctionBlock) EndSignature() []DataType {
 	return []DataType{ANY | NULL}
 }
 
+// End parses a function end (which would be a RETURN)
 func (f *FunctionBlock) End(_ string, args []Statement, statements []Statement) bool {
 	f.Return = args[0]
 	f.Body = statements
@@ -58,6 +64,7 @@ var dataTypes = map[string]DataType{
 	"ARRAY":  ARRAY,
 }
 
+// SetupFunctions adds the PARAM statement and the FUNCTION block
 func SetupFunctions() {
 	parsers["PARAM"] = StatementParser{
 		Parse: func(args []Statement, line int) (Statement, error) {
@@ -123,6 +130,7 @@ type FunctionCallStmt struct {
 	ReturnType DataType
 }
 
+// Type returns the return type of a function call
 func (f *FunctionCallStmt) Type() DataType {
 	return f.ReturnType
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/Nv7-Github/Bpp/parser"
 )
 
+// IfBlock compiles an if block (IFB)
 func IfBlock(p *Program, stm *parser.IfBlock) (Instruction, error) {
 	cond, err := BuildStmt(p, stm.Condition)
 	if err != nil {
@@ -67,6 +68,7 @@ func IfBlock(p *Program, stm *parser.IfBlock) (Instruction, error) {
 	}, nil
 }
 
+// WhileBlock compiles a WHILE block
 func WhileBlock(p *Program, stm *parser.WhileBlock) (Instruction, error) {
 	cond, err := BuildStmt(p, stm.Condition)
 	if err != nil {

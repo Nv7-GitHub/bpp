@@ -1,5 +1,6 @@
 package membuild
 
+// Run runs the program
 func (p *Program) Run() error {
 	for _, instruction := range p.Instructions {
 		val, err := instruction(p)

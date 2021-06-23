@@ -9,18 +9,22 @@ type IfBlock struct {
 	Else      []Statement
 }
 
+// Type gets the type of an IFB statement (NULL)
 func (i *IfBlock) Type() DataType {
 	return NULL
 }
 
+// Keywords gets the keywords of an IFB statement (ELSE and ENDIF)
 func (i *IfBlock) Keywords() []string {
 	return []string{"ELSE", "ENDIF"}
 }
 
+// EndSignature gets the ending signature of an IFB statement (blank)
 func (i *IfBlock) EndSignature() []DataType {
 	return []DataType{}
 }
 
+// End parses the end of an IFB statement
 func (i *IfBlock) End(kind string, _ []Statement, statements []Statement) bool {
 	if kind == "ELSE" {
 		i.Body = statements
@@ -35,6 +39,7 @@ func (i *IfBlock) End(kind string, _ []Statement, statements []Statement) bool {
 	return true
 }
 
+// SetupBlocks adds the IFB and WHILE functions
 func SetupBlocks() {
 	blocks["IFB"] = BlockParser{
 		Parse: func(args []Statement, line int) (Block, error) {
@@ -65,18 +70,22 @@ type WhileBlock struct {
 	Body      []Statement
 }
 
+// Type gives the type of a WHILE statement (nothing)
 func (w *WhileBlock) Type() DataType {
 	return NULL
 }
 
+// Keywords give the keywords of a WHILE statement (just ENDWHILE)
 func (w *WhileBlock) Keywords() []string {
 	return []string{"ENDWHILE"}
 }
 
+// EndSignature gets the end signature of a WHILE statement (blank)
 func (w *WhileBlock) EndSignature() []DataType {
 	return []DataType{}
 }
 
+// End parses the ending of a WHILE statement
 func (w *WhileBlock) End(kind string, _ []Statement, statements []Statement) bool {
 	w.Body = statements
 	return true

@@ -8,6 +8,7 @@ import (
 	"github.com/Nv7-Github/Bpp/parser"
 )
 
+// RandintStmt compiles a RANDINT statement
 func RandintStmt(p *Program, stm *parser.RandintStmt) (Instruction, error) {
 	lower, err := BuildStmt(p, stm.Lower)
 	if err != nil {
@@ -33,6 +34,7 @@ func RandintStmt(p *Program, stm *parser.RandintStmt) (Instruction, error) {
 	}, nil
 }
 
+// ConcatStmt compiles a CONCAT statement
 func ConcatStmt(p *Program, stm *parser.ConcatStmt) (Instruction, error) {
 	argDat := make([]Instruction, len(stm.Strings))
 	var err error
@@ -58,6 +60,7 @@ func ConcatStmt(p *Program, stm *parser.ConcatStmt) (Instruction, error) {
 	}, nil
 }
 
+// IndexStmt compiles an INDEX statement
 func IndexStmt(p *Program, stm *parser.IndexStmt) (Instruction, error) {
 	val, err := BuildStmt(p, stm.Value)
 	if err != nil {
@@ -93,6 +96,7 @@ func IndexStmt(p *Program, stm *parser.IndexStmt) (Instruction, error) {
 	}, nil
 }
 
+// ArgsStmt compiles an ARGS statement
 func ArgsStmt(p *Program, stm *parser.ArgsStmt) (Instruction, error) {
 	ind, err := BuildStmt(p, stm.Index)
 	if err != nil {
@@ -114,6 +118,7 @@ func ArgsStmt(p *Program, stm *parser.ArgsStmt) (Instruction, error) {
 	}, nil
 }
 
+// ArrayStmt compiles an ARRAY definition
 func ArrayStmt(p *Program, stm *parser.ArrayStmt) (Instruction, error) {
 	vals := make([]Instruction, len(stm.Values))
 	var err error

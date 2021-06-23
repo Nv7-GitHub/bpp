@@ -7,6 +7,7 @@ import (
 	"github.com/Nv7-Github/Bpp/parser"
 )
 
+// BuildStmt compiles a statement
 func BuildStmt(p *Program, stmt parser.Statement, instructionum ...int) (Instruction, error) {
 	switch s := stmt.(type) {
 	case *parser.Data:

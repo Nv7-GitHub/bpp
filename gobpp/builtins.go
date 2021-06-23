@@ -1,13 +1,24 @@
 package gobpp
 
-import "go/ast"
+import (
+	"go/ast"
+	"strings"
+)
 
-type Converter func([]ast.Expr) (string, error)
+// Function defines the signature for a function parser
+type Function func(args []ast.Expr) error
 
-var converters = make(map[string]Converter)
+// Init initializes a program
+func (p *Program) Init() {
+	p.Builder = &strings.Builder{}
+	p.Funcs = make(map[string]Function)
 
-func SetupBasics() {
-	converters["print"] = func(args []ast.Expr) (string, error) {
-		return ConvertExpr(args[0])
+	p.Funcs["print"] = func(args []ast.Expr) error {
+		return p.AddExpr(args[0])
 	}
+}
+
+// End cleans up a program and adds running code
+func (p *Program) End() {
+	p.WriteString("[MAIN]")
 }

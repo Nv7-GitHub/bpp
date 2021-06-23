@@ -19,6 +19,7 @@ type IfStmt struct {
 	Else      Statement
 }
 
+// Type gives the return type of an IF statement (ANY or NULL)
 func (i *IfStmt) Type() DataType {
 	return ANY | NULL
 }
@@ -31,10 +32,12 @@ type ComparisonStmt struct {
 	Right     Statement
 }
 
+// Type gives the return type of an COMPARE statement (an INT, equal to 0 or 1)
 func (c *ComparisonStmt) Type() DataType {
 	return INT
 }
 
+// SetupComparisons adds the IF and COMPARE functions
 func SetupComparisons() {
 	parsers["IF"] = StatementParser{
 		Parse: func(args []Statement, line int) (Statement, error) {

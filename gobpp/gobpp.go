@@ -1,35 +1,42 @@
 package gobpp
 
 import (
-	"fmt"
 	"go/ast"
-	"reflect"
+	"go/token"
+	"strings"
 )
 
-func Convert(f *ast.File) (string, error) {
-	hasReturn = make(map[string]empty)
-	fnRetTypes = make(map[string]string)
+// Program defines the program source code and some program data
+type Program struct {
+	*strings.Builder
 
-	out := ""
-	for _, fn := range f.Decls {
-		dat, err := ConvertDecl(fn)
-		if err != nil {
-			return "", err
-		}
-		out += dat + "\n"
-	}
-
-	out += "[MAIN]"
-
-	return out, nil
+	Fset     *token.FileSet
+	Funcs    map[string]Function
+	FuncName string
 }
 
-func ConvertDecl(decl ast.Decl) (string, error) {
-	switch d := decl.(type) {
-	case *ast.FuncDecl:
-		return ConvertFunc(d)
+// Pos uses the Fset to convert a token.Pos to a string
+func (p *Program) Pos(pos token.Pos) string {
+	return p.Fset.Position(pos).String()
+}
 
-	default:
-		return "", fmt.Errorf("unknown declaration type: %s", reflect.TypeOf(d).String())
+// NodePos gets the position of a ast.Node and converts that to a string with the same method as Pos
+func (p *Program) NodePos(node ast.Node) string {
+	return p.Fset.Position(node.Pos()).String()
+}
+
+// Convert converts a parsed Go source code file and returns B++ source code
+func Convert(fset *token.FileSet, filename string, f *ast.File) (string, error) {
+	p := &Program{
+		Fset: fset,
 	}
+	p.Init()
+
+	err := p.AddFile(f)
+	if err != nil {
+		return "", err
+	}
+
+	p.End()
+	return p.String(), nil
 }

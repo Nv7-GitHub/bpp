@@ -2,6 +2,7 @@ package parser
 
 import "fmt"
 
+// ParseArgs parses the source code of arguments to a function
 func ParseArgs(args []string, line int) ([]Statement, error) {
 	out := make([]Statement, len(args))
 	var err error
@@ -19,6 +20,7 @@ func ParseArgs(args []string, line int) ([]Statement, error) {
 	return out, nil
 }
 
+// MatchTypes compares 2 signatures, and is used in type-checking for function and block parsing. It supports variadic arguments.
 func MatchTypes(data []Statement, line int, types []DataType) error {
 	if len(types) > 1 && types[len(types)-1] == VARIADIC {
 		for i, arg := range data {

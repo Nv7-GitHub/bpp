@@ -3,30 +3,51 @@ package gobpp
 import (
 	"fmt"
 	"go/ast"
-	"reflect"
+	"go/token"
 )
 
-func ConvertStmt(stmt ast.Stmt, fn string) (string, error) {
-	switch s := stmt.(type) {
-	case *ast.ExprStmt:
-		return CallExpr(s.X.(*ast.CallExpr))
+var opMapAssign = map[token.Token]string{
+	token.ADD_ASSIGN: "+",
+	token.SUB_ASSIGN: "-",
+	token.MUL_ASSIGN: "*",
+	token.QUO_ASSIGN: "/",
+}
 
-	case *ast.AssignStmt:
-		return AssignStmt(s)
+func (p *Program) addAssignStmt(stm *ast.AssignStmt) error {
+	r := stm.Rhs[0]
 
-	case *ast.ReturnStmt:
-		return ReturnStmt(s, fn)
-
-	case *ast.IfStmt:
-		return IfStmt(s, fn)
-
-	case *ast.IncDecStmt:
-		return IncDecStmt(s)
-
-	case *ast.ForStmt:
-		return ForStmt(s, fn)
-
-	default:
-		return "", fmt.Errorf("unknown statement type %s", reflect.TypeOf(s))
+	name := stm.Lhs[0].(*ast.Ident).Name
+	p.WriteString("[DEFINE ")
+	p.WriteString(name)
+	p.WriteString(" ")
+	if stm.Tok == token.ASSIGN || stm.Tok == token.DEFINE {
+		p.AddExpr(r)
+		p.WriteString("]")
+		return nil
 	}
+
+	op, exists := opMapAssign[stm.Tok]
+	if !exists {
+		return fmt.Errorf("%s: unknown operation %v", p.NodePos(stm), stm.Tok)
+	}
+	fmt.Fprintf(p, "[MATH [VAR %s] %s ", name, op)
+	p.AddExpr(r)
+	p.WriteString("]]")
+	return nil
+}
+
+var incDecMap = map[token.Token]string{
+	token.INC: "+",
+	token.DEC: "-",
+}
+
+func (p *Program) addIncDecStmt(i *ast.IncDecStmt) error {
+	name := i.X.(*ast.Ident).Name
+	op, exists := incDecMap[i.Tok]
+	if !exists {
+		return fmt.Errorf("%s: unknown operation %v", p.NodePos(i), i.Tok)
+	}
+
+	fmt.Fprintf(p, "[DEFINE %s [MATH [VAR %s] %s 1]]", name, name, op)
+	return nil
 }

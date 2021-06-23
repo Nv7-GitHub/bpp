@@ -6,8 +6,9 @@ type ArgsStmt struct {
 	Index Statement
 }
 
+// Type returns the return type of an ARGS statement (STRING)
 func (a *ArgsStmt) Type() DataType {
-	return ANY
+	return STRING
 }
 
 // ConcatStmt is the equivalent of [CONCAT stmt.Strings]
@@ -16,6 +17,7 @@ type ConcatStmt struct {
 	Strings []Statement
 }
 
+// Type returns the return type of a CONCAT statement (STRING)
 func (c *ConcatStmt) Type() DataType {
 	return STRING
 }
@@ -27,10 +29,12 @@ type RepeatStmt struct {
 	Count Statement
 }
 
+// Type gives the return type of a REPEAT statement (STRING)
 func (r *RepeatStmt) Type() DataType {
 	return STRING
 }
 
+// SetupOthers adds the ARGS, CONCAT, and REPEAT statements
 func SetupOthers() {
 	parsers["ARGS"] = StatementParser{
 		Parse: func(args []Statement, line int) (Statement, error) {

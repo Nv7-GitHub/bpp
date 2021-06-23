@@ -22,19 +22,23 @@ var typeMap = map[string]string{
 
 var fnRetTypes map[string]string
 
-func ConvertFunc(fn *ast.FuncDecl) (string, error) {
+func (p *Program) addFuncDecl(fn *ast.FuncDecl) error {
 	name := strings.ToUpper(fn.Name.Name)
+	p.FuncName = name
 
 	if fn.Type.Results != nil {
 		typeName := fn.Type.Results.List[0].Type.(*ast.Ident).Name
 		kind, exists := typeMap[typeName]
 		if !exists {
-			return "", fmt.Errorf("function %s: unknown type %s", fn.Name.Name, typeName)
+			return fmt.Errorf("%s: unknown type %s", p.NodePos(fn), typeName)
 		}
 		fnRetTypes[name] = kind
 	}
 
-	args := ""
+	p.WriteString("[FUNCTION ")
+	p.WriteString(name)
+	p.WriteString("]\n")
+
 	for _, arg := range fn.Type.Params.List {
 		var kind string
 
@@ -46,52 +50,52 @@ func ConvertFunc(fn *ast.FuncDecl) (string, error) {
 			kind = "ARRAY"
 
 		default:
-			return "", fmt.Errorf("unknown function parameter type: %s", reflect.TypeOf(arg.Type))
+			return fmt.Errorf("%s: unknown function parameter type: %s", p.NodePos(arg), reflect.TypeOf(arg.Type))
 		}
 
-		args += fmt.Sprintf(" [PARAM %s %s]", arg.Names[0].Name, kind)
+		fmt.Fprintf(p, " [PARAM %s %s]", arg.Names[0].Name, kind)
 	}
 
-	out := fmt.Sprintf("[FUNCTION %s%s]\n", name, args)
-
-	blk, err := ConvertBlock(fn.Body.List, name)
+	err := p.AddBlock(fn.Body.List)
 	if err != nil {
-		return "", err
+		return err
 	}
-	out += blk
 
 	_, exists := hasReturn[name]
 	if !exists {
-		out += "[RETURN [NULL]]\n"
+		p.WriteString("[RETURN [NULL]]\n")
 	}
-	return out, nil
+	p.FuncName = ""
+	return nil
 }
 
-func ConvertBlock(args []ast.Stmt, name string) (string, error) {
-	out := ""
+// AddBlock adds a block of statements to a B++ program, add a boolean parameter to the end of the call to remove the "\n" from the end of the code generated
+func (p *Program) AddBlock(args []ast.Stmt) error {
+	var err error
 	for _, stmt := range args {
-		conved, err := ConvertStmt(stmt, name)
+		err = p.AddStmt(stmt)
 		if err != nil {
-			return "", err
+			return err
 		}
-
-		out += conved + "\n"
+		p.WriteString("\n")
 	}
-	return out, nil
+	return nil
 }
 
-func ReturnStmt(s *ast.ReturnStmt, fn string) (string, error) {
-	res, err := ConvertExpr(s.Results[0])
-	if err != nil {
-		return "", err
-	}
-
-	kind, exists := fnRetTypes[fn]
+func (p *Program) addReturnStmt(s *ast.ReturnStmt) error {
+	p.WriteString("[RETURN [")
+	kind, exists := fnRetTypes[p.FuncName]
 	if !exists {
-		return "", fmt.Errorf("function %s: no return type", fn)
+		return fmt.Errorf("%s: no return type", p.NodePos(s))
+	}
+	p.WriteString(kind)
+
+	err := p.AddExpr(s.Results[0])
+	if err != nil {
+		return err
 	}
 
-	hasReturn[fn] = empty{}
+	hasReturn[p.FuncName] = empty{}
 
-	return fmt.Sprintf("[RETURN [%s %s]]", kind, res), nil
+	return nil
 }

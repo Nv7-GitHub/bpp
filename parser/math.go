@@ -18,6 +18,7 @@ type MathStmt struct {
 	Right     Statement
 }
 
+// Type gives the return type of a MATH statement (INT or FLOAT)
 func (m *MathStmt) Type() DataType {
 	return INT | FLOAT
 }
@@ -28,6 +29,7 @@ type RoundStmt struct {
 	Val Statement
 }
 
+// Type gives the return type of a round statement (INT)
 func (r *RoundStmt) Type() DataType {
 	return INT
 }
@@ -38,6 +40,7 @@ type FloorStmt struct {
 	Val Statement
 }
 
+// Type gives the return type of a FLOOR statement (INT)
 func (f *FloorStmt) Type() DataType {
 	return INT
 }
@@ -48,10 +51,12 @@ type CeilStmt struct {
 	Val Statement
 }
 
+// Type gives the return type of a CEIL statement (INT)
 func (c *CeilStmt) Type() DataType {
 	return INT
 }
 
+// SetupMath adds the MATH, ROUND, FLOOR, and CEIL statements
 func SetupMath() {
 	parsers["MATH"] = StatementParser{
 		Parse: func(args []Statement, line int) (Statement, error) {

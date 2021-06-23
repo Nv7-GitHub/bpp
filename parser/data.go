@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// ParseData parses a literal and converts it to a Data statement with the corresponding type
 func ParseData(src string, line int) *Data {
 	src = strings.TrimSpace(src)
 	if len(src) == 0 {

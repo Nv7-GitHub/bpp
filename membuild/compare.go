@@ -7,6 +7,7 @@ import (
 	"github.com/Nv7-Github/Bpp/parser"
 )
 
+// CompareStmt compiles a COMPARE statement
 func CompareStmt(p *Program, stm *parser.ComparisonStmt) (Instruction, error) {
 	left, err := BuildStmt(p, stm.Left)
 	if err != nil {

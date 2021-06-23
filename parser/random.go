@@ -7,6 +7,7 @@ type RandintStmt struct {
 	Upper Statement
 }
 
+// Type gives the return type of a RANDINT statement (INT)
 func (r *RandintStmt) Type() DataType {
 	return INT
 }
@@ -18,6 +19,7 @@ type RandomStmt struct {
 	Upper Statement
 }
 
+// Type gives the return type of a RANDOM statement (FLOAT)
 func (r *RandomStmt) Type() DataType {
 	return FLOAT
 }
@@ -28,10 +30,15 @@ type ChooseStmt struct {
 	Data Statement
 }
 
+// Type gives the return type of a CHOOSE statement (STRING if the data is a STRING, otherwise ANY)
 func (c *ChooseStmt) Type() DataType {
+	if c.Data.Type().IsEqual(STRING) {
+		return STRING
+	}
 	return ANY
 }
 
+// SetupRandoms adds the RANDINT, RANDOM, CHOOSE, and CHOOSECHAR statements
 func SetupRandoms() {
 	parsers["RANDINT"] = StatementParser{
 		Parse: func(args []Statement, line int) (Statement, error) {

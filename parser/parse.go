@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// Parse parses B++ source code and returns a parsed program
 func Parse(code string) (*Program, error) {
 	lns := strings.Split(code, "\n")
 
@@ -34,6 +35,7 @@ func Parse(code string) (*Program, error) {
 	return p, nil
 }
 
+// ParseStmt parses a B++ statement's source code and returns the parsed statement
 func ParseStmt(line string, num int, scope ...*ScopeStack) (Statement, error) {
 	if strings.ContainsRune(line, '#') {
 		line = line[:strings.IndexRune(line, '#')]
@@ -121,44 +123,42 @@ func ParseStmt(line string, num int, scope ...*ScopeStack) (Statement, error) {
 			}
 
 			return parser.Parse(argDat, num)
-		} else {
-			if isBParser == 2 {
-				err = MatchTypes(argDat, num, fnType.Signature)
-				if err != nil {
-					return nil, err
-				}
-
-				return &FunctionCallStmt{
-					BasicStatement: &BasicStatement{line: num},
-					ReturnType:     fnType.ReturnType,
-					Name:           funcName,
-					Args:           argDat,
-				}, nil
-			} else if isBParser == 1 {
-				err = MatchTypes(argDat, num, bParser.Signature)
-				if err != nil {
-					return nil, err
-				}
-
-				block, err = bParser.Parse(argDat, num)
-				if err != nil {
-					return nil, err
-				}
-
-				s := NewScope(block)
-				scope[0].AddScope(s)
-
-				return nil, nil
-			} else {
-				err = MatchTypes(argDat, num, block.EndSignature())
-				if err != nil {
-					return nil, err
-				}
-
-				scope[0].FinishScope(funcName, argDat)
-
-				return nil, nil
+		} else if isBParser == 2 {
+			err = MatchTypes(argDat, num, fnType.Signature)
+			if err != nil {
+				return nil, err
 			}
+
+			return &FunctionCallStmt{
+				BasicStatement: &BasicStatement{line: num},
+				ReturnType:     fnType.ReturnType,
+				Name:           funcName,
+				Args:           argDat,
+			}, nil
+		} else if isBParser == 1 {
+			err = MatchTypes(argDat, num, bParser.Signature)
+			if err != nil {
+				return nil, err
+			}
+
+			block, err = bParser.Parse(argDat, num)
+			if err != nil {
+				return nil, err
+			}
+
+			s := NewScope(block)
+			scope[0].AddScope(s)
+
+			return nil, nil
+		} else {
+			err = MatchTypes(argDat, num, block.EndSignature())
+			if err != nil {
+				return nil, err
+			}
+
+			scope[0].FinishScope(funcName, argDat)
+
+			return nil, nil
 		}
 	}
 	return ParseData(line, num), nil

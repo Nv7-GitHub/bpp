@@ -6,6 +6,7 @@ type ArrayStmt struct {
 	Values []Statement
 }
 
+// Type gets the type of an ARRAY statement (ARRAY)
 func (a *ArrayStmt) Type() DataType {
 	return ARRAY
 }
@@ -17,10 +18,12 @@ type IndexStmt struct {
 	Index Statement
 }
 
+// Type gets the type of an INDEX statement (ANY)
 func (i *IndexStmt) Type() DataType {
 	return ANY
 }
 
+// SetupArrays adds the ARRAY and INDEX functions
 func SetupArrays() {
 	parsers["ARRAY"] = StatementParser{
 		Parse: func(args []Statement, line int) (Statement, error) {

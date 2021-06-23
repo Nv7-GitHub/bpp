@@ -1,69 +1,64 @@
 package gobpp
 
 import (
-	"fmt"
 	"go/ast"
 )
 
-func IfStmt(i *ast.IfStmt, fn string) (string, error) {
-	cond, err := ConvertExpr(i.Cond)
+func (p *Program) addIfStmt(i *ast.IfStmt) error {
+	p.WriteString("[IFB ")
+	err := p.AddExpr(i.Cond)
 	if err != nil {
-		return "", err
+		return err
 	}
-	out := fmt.Sprintf("[IFB %s]\n", cond)
+	p.WriteString("]\n")
 
-	body, err := ConvertBlock(i.Body.List, fn)
+	err = p.AddBlock(i.Body.List)
 	if err != nil {
-		return "", err
+		return err
 	}
-	out += body
 
 	if i.Else != nil {
-		out += "[ELSE]\n"
-		el, err := ConvertBlock(i.Else.(*ast.BlockStmt).List, fn)
+		p.WriteString("[ELSE]\n")
+		err = p.AddBlock(i.Else.(*ast.BlockStmt).List)
 		if err != nil {
-			return "", err
+			return err
 		}
-
-		out += el
 	}
 
-	out += "[ENDIF]"
-	return out, nil
+	p.WriteString("[ENDIF]")
+	return nil
 }
 
-func ForStmt(stm *ast.ForStmt, fn string) (string, error) {
-	out := ""
+func (p *Program) addForStmt(stm *ast.ForStmt) error {
 	if stm.Init != nil {
-		o, err := ConvertStmt(stm.Init, fn)
+		err := p.AddStmt(stm.Init)
 		if err != nil {
-			return "", err
+			return err
 		}
 
-		out += o + "\n"
+		p.WriteString("\n")
 	}
 
-	cond, err := ConvertExpr(stm.Cond)
+	p.WriteString("[WHILE ")
+	err := p.AddExpr(stm.Cond)
 	if err != nil {
-		return "", err
+		return err
 	}
-	out += fmt.Sprintf("[WHILE %s]\n", cond)
+	p.WriteString("]\n")
 
-	body, err := ConvertBlock(stm.Body.List, fn)
+	err = p.AddBlock(stm.Body.List)
 	if err != nil {
-		return "", err
+		return err
 	}
-	out += body
 
 	if stm.Post != nil {
-		o, err := ConvertStmt(stm.Post, fn)
+		err = p.AddStmt(stm.Post)
 		if err != nil {
-			return "", err
+			return err
 		}
-
-		out += o + "\n"
+		p.WriteString("\n")
 	}
 
-	out += "[ENDWHILE]\n"
-	return out, nil
+	p.WriteString("[ENDWHILE]")
+	return nil
 }

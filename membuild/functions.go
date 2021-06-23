@@ -4,6 +4,7 @@ import (
 	"github.com/Nv7-Github/Bpp/parser"
 )
 
+// Function stores the data for a compiled function.
 type Function struct {
 	Body   []Instruction
 	Name   string
@@ -11,6 +12,7 @@ type Function struct {
 	Return Instruction
 }
 
+// FunctionBlock compiles a FUNCTION block.
 func FunctionBlock(p *Program, stm *parser.FunctionBlock) (Instruction, error) {
 	body := make([]Instruction, len(stm.Body))
 	for i, stm := range stm.Body {
@@ -38,6 +40,7 @@ func FunctionBlock(p *Program, stm *parser.FunctionBlock) (Instruction, error) {
 	}, nil
 }
 
+// FunctionCallStmt compiles a function call
 func FunctionCallStmt(p *Program, stm *parser.FunctionCallStmt) (Instruction, error) {
 	args := make([]Instruction, len(stm.Args))
 	for i, stm := range stm.Args {

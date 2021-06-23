@@ -7,6 +7,7 @@ import (
 	"github.com/Nv7-Github/Bpp/parser"
 )
 
+// TypeCastStmt compiles a type-cast statement
 func TypeCastStmt(p *Program, stm *parser.TypeCastStmt) (Instruction, error) {
 	val, err := BuildStmt(p, stm.Value)
 	if err != nil {

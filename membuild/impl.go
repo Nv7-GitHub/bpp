@@ -6,6 +6,7 @@ import (
 	"github.com/Nv7-Github/Bpp/parser"
 )
 
+// DefineStmt compiles a DEFINE statement
 func DefineStmt(p *Program, stm *parser.DefineStmt) (Instruction, error) {
 	label, err := BuildStmt(p, stm.Label)
 	if err != nil {
@@ -28,6 +29,7 @@ func DefineStmt(p *Program, stm *parser.DefineStmt) (Instruction, error) {
 	}, nil
 }
 
+// VarStmt compiles a VAR statement
 func VarStmt(p *Program, stm *parser.VarStmt) (Instruction, error) {
 	label, err := BuildStmt(p, stm.Label)
 	if err != nil {
@@ -42,6 +44,7 @@ func VarStmt(p *Program, stm *parser.VarStmt) (Instruction, error) {
 	}, nil
 }
 
+// IfStmt compiles an IF statement
 func IfStmt(p *Program, stm *parser.IfStmt) (Instruction, error) {
 	cond, err := BuildStmt(p, stm.Condition)
 	if err != nil {
@@ -67,6 +70,7 @@ func IfStmt(p *Program, stm *parser.IfStmt) (Instruction, error) {
 	}, nil
 }
 
+// FloorStmt compiles a FLOOR statement
 func FloorStmt(p *Program, stm *parser.FloorStmt) (Instruction, error) {
 	val, err := BuildStmt(p, stm.Val)
 	if err != nil {
@@ -84,6 +88,7 @@ func FloorStmt(p *Program, stm *parser.FloorStmt) (Instruction, error) {
 	}, nil
 }
 
+// CeilStmt compiles a CEIL statement
 func CeilStmt(p *Program, stm *parser.CeilStmt) (Instruction, error) {
 	val, err := BuildStmt(p, stm.Val)
 	if err != nil {
@@ -101,6 +106,7 @@ func CeilStmt(p *Program, stm *parser.CeilStmt) (Instruction, error) {
 	}, nil
 }
 
+// RoundStmt compiles a ROUND statement
 func RoundStmt(p *Program, stm *parser.RoundStmt) (Instruction, error) {
 	val, err := BuildStmt(p, stm.Val)
 	if err != nil {

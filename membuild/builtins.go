@@ -8,6 +8,7 @@ import (
 	"github.com/Nv7-Github/Bpp/parser"
 )
 
+// ChooseStmt compiles a CHOOSE statement
 func ChooseStmt(p *Program, stm *parser.ChooseStmt) (Instruction, error) {
 	val, err := BuildStmt(p, stm.Data)
 	if err != nil {
@@ -35,6 +36,7 @@ func ChooseStmt(p *Program, stm *parser.ChooseStmt) (Instruction, error) {
 	}, nil
 }
 
+// RepeatStmt compiles a REPEAT statement
 func RepeatStmt(p *Program, stm *parser.RepeatStmt) (Instruction, error) {
 	val, err := BuildStmt(p, stm.Val)
 	if err != nil {
@@ -77,6 +79,7 @@ func RepeatStmt(p *Program, stm *parser.RepeatStmt) (Instruction, error) {
 	}, nil
 }
 
+// RandomStmt compiles a RANDOM statement
 func RandomStmt(p *Program, stm *parser.RandomStmt) (Instruction, error) {
 	lower, err := BuildStmt(p, stm.Lower)
 	if err != nil {
