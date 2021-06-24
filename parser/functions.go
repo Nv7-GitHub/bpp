@@ -67,24 +67,24 @@ var dataTypes = map[string]DataType{
 // SetupFunctions adds the PARAM statement and the FUNCTION block
 func SetupFunctions() {
 	parsers["PARAM"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			name, ok := args[0].(*Data)
 			if !ok {
-				return nil, fmt.Errorf("line %d: parameter 1 to PARAM must be constant", line)
+				return nil, fmt.Errorf("%v: parameter 1 to PARAM must be constant", pos)
 			}
 
 			kind, ok := args[1].(*Data)
 			if !ok {
-				return nil, fmt.Errorf("line %d: parameter 2 to PARAM must be constant", line)
+				return nil, fmt.Errorf("%v: parameter 2 to PARAM must be constant", pos)
 			}
 
 			k, exists := dataTypes[kind.Data.(string)]
 			if !exists {
-				return nil, fmt.Errorf("line %d: parameter 2 to PARAM must be INT, FLOAT, STRING, or ARRAY", line)
+				return nil, fmt.Errorf("%v: parameter 2 to PARAM must be INT, FLOAT, STRING, or ARRAY", pos)
 			}
 
 			return &ParamStmt{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				Name:           name.Data.(string),
 				Kind:           k,
 			}, nil
@@ -93,7 +93,7 @@ func SetupFunctions() {
 	}
 
 	blocks["FUNCTION"] = BlockParser{
-		Parse: func(args []Statement, line int) (Block, error) {
+		Parse: func(args []Statement, pos *Pos) (Block, error) {
 			sig := FunctionType{
 				Signature: make([]DataType, len(args)-1),
 				Names:     make([]string, len(args)-1),
@@ -101,7 +101,7 @@ func SetupFunctions() {
 			for i, arg := range args[1:] {
 				par, ok := arg.(*ParamStmt)
 				if !ok {
-					return nil, fmt.Errorf("line %d: parameters must be a PARAM", line)
+					return nil, fmt.Errorf("%v: parameters must be a PARAM", pos)
 				}
 
 				sig.Signature[i] = par.Kind
@@ -109,7 +109,7 @@ func SetupFunctions() {
 			}
 
 			fn := &FunctionBlock{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				Signature:      sig,
 				Name:           args[0].(*Data).Data.(string),
 			}

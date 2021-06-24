@@ -32,7 +32,7 @@ func ChooseStmt(p *Program, stm *parser.ChooseStmt) (Instruction, error) {
 		if ok {
 			return arr[rand.Intn(len(arr))], nil
 		}
-		return NewBlankData(), fmt.Errorf("line %d: parameter to CHOOSE must be STRING or ARRAY", stm.Line())
+		return NewBlankData(), fmt.Errorf("%v: parameter to CHOOSE must be STRING or ARRAY", stm.Pos())
 	}, nil
 }
 
@@ -75,7 +75,7 @@ func RepeatStmt(p *Program, stm *parser.RepeatStmt) (Instruction, error) {
 			v.Value = repeated
 			return v, nil
 		}
-		return NewBlankData(), fmt.Errorf("line %d: parameter 1 to REPEAT must be STRING or ARRAY", stm.Line())
+		return NewBlankData(), fmt.Errorf("%v: parameter 1 to REPEAT must be STRING or ARRAY", stm.Pos())
 	}, nil
 }
 
@@ -98,11 +98,11 @@ func RandomStmt(p *Program, stm *parser.RandomStmt) (Instruction, error) {
 		if err != nil {
 			return NewBlankData(), err
 		}
-		l, err := getFloat(low.Value, stm.Line(), "RANDOM")
+		l, err := getFloat(low.Value, stm.Pos(), "RANDOM")
 		if err != nil {
 			return NewBlankData(), err
 		}
-		u, err := getFloat(up.Value, stm.Line(), "RANDOM")
+		u, err := getFloat(up.Value, stm.Pos(), "RANDOM")
 		if err != nil {
 			return NewBlankData(), err
 		}

@@ -26,21 +26,21 @@ func (i *IndexStmt) Type() DataType {
 // SetupArrays adds the ARRAY and INDEX functions
 func SetupArrays() {
 	parsers["ARRAY"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &ArrayStmt{
 				Values:         args,
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 			}, nil
 		},
 		Signature: []DataType{ANY, VARIADIC},
 	}
 
 	parsers["INDEX"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &IndexStmt{
 				Value:          args[0],
 				Index:          args[1],
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 			}, nil
 		},
 		Signature: []DataType{STRING | ARRAY, INT},

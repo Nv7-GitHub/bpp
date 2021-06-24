@@ -41,7 +41,7 @@ func CompileData(stm *parser.Data, block *ir.Block) (value.Value, *ir.Block, err
 		return nil, block, nil
 
 	default:
-		return nil, block, fmt.Errorf("line %d: unknown data type", stm.Line())
+		return nil, block, fmt.Errorf("%v: unknown data type", stm.Pos())
 	}
 }
 

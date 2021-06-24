@@ -57,11 +57,11 @@ func CompareStmt(p *Program, stm *parser.ComparisonStmt) (Instruction, error) {
 			}
 			return getBoolVal(!eq), nil
 		} else if right.Type.IsEqual(parser.FLOAT) || left.Type.IsEqual(parser.FLOAT) {
-			l, err = getFloat(left.Value, stm.Line(), "COMPARE")
+			l, err = getFloat(left.Value, stm.Pos(), "COMPARE")
 			if err != nil {
 				return NewBlankData(), err
 			}
-			r, err = getFloat(right.Value, stm.Line(), "COMPARE")
+			r, err = getFloat(right.Value, stm.Pos(), "COMPARE")
 			if err != nil {
 				return NewBlankData(), err
 			}
@@ -94,7 +94,7 @@ func CompareStmt(p *Program, stm *parser.ComparisonStmt) (Instruction, error) {
 	}, nil
 }
 
-func getFloat(val interface{}, line int, funcName string) (float64, error) {
+func getFloat(val interface{}, pos *parser.Pos, funcName string) (float64, error) {
 	v, ok := val.(float64)
 	if ok {
 		return v, nil
@@ -103,7 +103,7 @@ func getFloat(val interface{}, line int, funcName string) (float64, error) {
 	if ok {
 		return float64(a), nil
 	}
-	return 0, fmt.Errorf("line %d: unknown type %s in %s", line, reflect.TypeOf(val), funcName)
+	return 0, fmt.Errorf("%v: unknown type %s in %s", pos, reflect.TypeOf(val), funcName)
 }
 
 func getBoolVal(cond bool) Data {

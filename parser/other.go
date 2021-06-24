@@ -37,40 +37,40 @@ func (r *RepeatStmt) Type() DataType {
 // SetupOthers adds the ARGS, CONCAT, and REPEAT statements
 func SetupOthers() {
 	parsers["ARGS"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &ArgsStmt{
 				Index:          args[0],
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 			}, nil
 		},
 		Signature: []DataType{INT},
 	}
 
 	parsers["CONCAT"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &ConcatStmt{
 				Strings:        args,
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 			}, nil
 		},
 		Signature: []DataType{ANY, VARIADIC},
 	}
 
 	parsers["REPEAT"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &RepeatStmt{
 				Val:            args[0],
 				Count:          args[1],
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 			}, nil
 		},
 		Signature: []DataType{STRING, INT},
 	}
 
 	parsers["NULL"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &Data{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				kind:           NULL,
 			}, nil
 		},

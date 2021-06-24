@@ -32,11 +32,11 @@ All the statements are stored in a `Program` object. Within the Program, there i
 Functions are added by adding to the `parsers` map. For example, here is the code for the `DEFINE` statement:
 ```go
 parsers["DEFINE"] = StatementParser{
-  Parse: func(args []Statement, line int) (Statement, error) {
+  Parse: func(args []Statement, pos *Pos) (Statement, error) {
     return &DefineStmt{
       Label:          args[0],
       Value:          args[1],
-      BasicStatement: &BasicStatement{line: line},
+      BasicStatement: &BasicStatement{pos: pos},
     }, nil
   },
   Signature: []DataType{IDENTIFIER, ANY},
@@ -72,10 +72,10 @@ Lets look at the types.
 Now, let's look at the `VARIADIC` type. This allows accepting any number of arguments to a function. This is used in the `ARRAY` function. Let's take a look at that:
 ```go
 parsers["ARRAY"] = StatementParser{
-  Parse: func(args []Statement, line int) (Statement, error) {
+  Parse: func(args []Statement, pos *Pos) (Statement, error) {
     return &ArrayStmt{
       Values:         args,
-      BasicStatement: &BasicStatement{line: line},
+      BasicStatement: &BasicStatement{pos: pos},
     }, nil
   },
   Signature: []DataType{ANY, VARIADIC},

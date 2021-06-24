@@ -59,33 +59,33 @@ func (c *CeilStmt) Type() DataType {
 // SetupMath adds the MATH, ROUND, FLOOR, and CEIL statements
 func SetupMath() {
 	parsers["MATH"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			dat, ok := args[1].(*Data)
 			if !ok {
-				return nil, fmt.Errorf("line %d: argument 2 to COMPARE must be an operator", line)
+				return nil, fmt.Errorf("%v: argument 2 to COMPARE must be an operator", pos)
 			}
 			opTxt, ok := dat.Data.(string)
 			if !ok {
-				return nil, fmt.Errorf("line %d: argument 2 to COMPARE must be an operator", line)
+				return nil, fmt.Errorf("%v: argument 2 to COMPARE must be an operator", pos)
 			}
 			op, exists := mathMap[opTxt]
 			if !exists {
-				return nil, fmt.Errorf("line %d: unknown comparison operator '%s'", line, opTxt)
+				return nil, fmt.Errorf("%v: unknown comparison operator '%s'", pos, opTxt)
 			}
 			return &MathStmt{
 				Operation:      op,
 				Left:           args[0],
 				Right:          args[2],
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 			}, nil
 		},
 		Signature: []DataType{ANY | NULL, IDENTIFIER, ANY | NULL},
 	}
 
 	parsers["ROUND"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &RoundStmt{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				Val:            args[0],
 			}, nil
 		},
@@ -93,9 +93,9 @@ func SetupMath() {
 	}
 
 	parsers["FLOOR"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &FloorStmt{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				Val:            args[0],
 			}, nil
 		},
@@ -103,9 +103,9 @@ func SetupMath() {
 	}
 
 	parsers["CEIL"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &CeilStmt{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				Val:            args[0],
 			}, nil
 		},

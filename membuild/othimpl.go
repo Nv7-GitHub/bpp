@@ -92,7 +92,7 @@ func IndexStmt(p *Program, stm *parser.IndexStmt) (Instruction, error) {
 		if ok {
 			return arr[i.Value.(int)], nil
 		}
-		return NewBlankData(), fmt.Errorf("line %d: parameter to INDEX must be STRING or ARRAY", stm.Line())
+		return NewBlankData(), fmt.Errorf("%v: parameter to INDEX must be STRING or ARRAY", stm.Pos())
 	}, nil
 }
 
@@ -109,7 +109,7 @@ func ArgsStmt(p *Program, stm *parser.ArgsStmt) (Instruction, error) {
 		}
 
 		if i.Value.(int) >= len(p.Args) {
-			return NewBlankData(), fmt.Errorf("line %d: argument index out of bounds", stm.Line())
+			return NewBlankData(), fmt.Errorf("%v: argument index out of bounds", stm.Pos())
 		}
 		return Data{
 			Type:  parser.STRING,

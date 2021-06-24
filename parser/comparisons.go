@@ -40,36 +40,36 @@ func (c *ComparisonStmt) Type() DataType {
 // SetupComparisons adds the IF and COMPARE functions
 func SetupComparisons() {
 	parsers["IF"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &IfStmt{
 				Condition:      args[0],
 				Body:           args[1],
 				Else:           args[2],
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 			}, nil
 		},
 		Signature: []DataType{INT, ANY | NULL, ANY | NULL},
 	}
 
 	parsers["COMPARE"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			dat, ok := args[1].(*Data)
 			if !ok {
-				return nil, fmt.Errorf("line %d: argument 2 to COMPARE must be an operator", line)
+				return nil, fmt.Errorf("%v: argument 2 to COMPARE must be an operator", pos)
 			}
 			opTxt, ok := dat.Data.(string)
 			if !ok {
-				return nil, fmt.Errorf("line %d: argument 2 to COMPARE must be an operator", line)
+				return nil, fmt.Errorf("%v: argument 2 to COMPARE must be an operator", pos)
 			}
 			op, exists := comparisonMap[opTxt]
 			if !exists {
-				return nil, fmt.Errorf("line %d: unknown comparison operator '%s'", line, opTxt)
+				return nil, fmt.Errorf("%v: unknown comparison operator '%s'", pos, opTxt)
 			}
 			return &ComparisonStmt{
 				Operation:      op,
 				Left:           args[0],
 				Right:          args[2],
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 			}, nil
 		},
 		Signature: []DataType{ANY | NULL, IDENTIFIER, ANY | NULL},

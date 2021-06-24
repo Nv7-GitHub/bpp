@@ -26,21 +26,21 @@ func (v *VarStmt) Type() DataType {
 // SetupVariables adds the DEFINE and VAR statements
 func SetupVariables() {
 	parsers["DEFINE"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &DefineStmt{
 				Label:          args[0],
 				Value:          args[1],
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 			}, nil
 		},
 		Signature: []DataType{IDENTIFIER, ANY},
 	}
 
 	parsers["VAR"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &VarStmt{
 				Label:          args[0],
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 			}, nil
 		},
 		Signature: []DataType{IDENTIFIER},

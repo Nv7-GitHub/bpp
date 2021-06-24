@@ -1,14 +1,35 @@
 package parser
 
+import "fmt"
+
+// NewPos creates a new initialized Pos with the values supplied.
+func NewPos(filename string, line int) *Pos {
+	return &Pos{
+		Filename: filename,
+		Line:     line,
+	}
+}
+
+// Pos defines a position in a B++ program, commonly used in debug prints
+type Pos struct {
+	Filename string
+	Line     int
+}
+
+// String allows Pos to implement the Stringer interface
+func (p *Pos) String() string {
+	return fmt.Sprintf("%s:%d", p.Filename, p.Line)
+}
+
 // Statement stores the data for everything in B++
 type Statement interface {
-	Line() int
+	Pos() *Pos
 	Type() DataType
 }
 
 // Block is a statement that supports being multiple types
 type Block interface {
-	Line() int
+	Pos() *Pos
 	Type() DataType
 
 	Keywords() []string
@@ -18,24 +39,24 @@ type Block interface {
 
 // StatementParser defines the type for a statement parser - a cusotm function that can parse the statement and a signature of its parameters
 type StatementParser struct {
-	Parse     func(args []Statement, line int) (Statement, error)
+	Parse     func(args []Statement, pos *Pos) (Statement, error)
 	Signature []DataType
 }
 
 // BlockParser defines the type of a block parser - a function to parse the first statement of a block and return a block object based on that, and the signature of the first statement in the block
 type BlockParser struct {
-	Parse     func(args []Statement, line int) (Block, error)
+	Parse     func(args []Statement, pos *Pos) (Block, error)
 	Signature []DataType
 }
 
 // BasicStatement allows other statements to implement the Statement interface
 type BasicStatement struct {
-	line int
+	pos *Pos
 }
 
-// Line gives the line of a basic statement
-func (b *BasicStatement) Line() int {
-	return b.line
+// Pos gives the pos of a basic statement
+func (b *BasicStatement) Pos() *Pos {
+	return b.pos
 }
 
 // Type gives NULL for a basic statement, this method is usually overwritten by the statement embedding this struct

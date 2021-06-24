@@ -15,9 +15,9 @@ func (t *TypeCastStmt) Type() DataType {
 // SetupTypes adds the type-cast parsers for STRING, INT, FLOAT, and LIST
 func SetupTypes() {
 	parsers["STRING"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &TypeCastStmt{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				Value:          args[0],
 				NewType:        STRING,
 			}, nil
@@ -26,9 +26,9 @@ func SetupTypes() {
 	}
 
 	parsers["INT"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &TypeCastStmt{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				Value:          args[0],
 				NewType:        INT,
 			}, nil
@@ -37,9 +37,9 @@ func SetupTypes() {
 	}
 
 	parsers["FLOAT"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &TypeCastStmt{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				Value:          args[0],
 				NewType:        FLOAT,
 			}, nil
@@ -48,9 +48,9 @@ func SetupTypes() {
 	}
 
 	parsers["LIST"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &TypeCastStmt{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				Value:          args[0],
 				NewType:        ARRAY,
 			}, nil

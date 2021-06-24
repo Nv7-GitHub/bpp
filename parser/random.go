@@ -41,9 +41,9 @@ func (c *ChooseStmt) Type() DataType {
 // SetupRandoms adds the RANDINT, RANDOM, CHOOSE, and CHOOSECHAR statements
 func SetupRandoms() {
 	parsers["RANDINT"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &RandintStmt{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				Lower:          args[0],
 				Upper:          args[1],
 			}, nil
@@ -52,9 +52,9 @@ func SetupRandoms() {
 	}
 
 	parsers["RANDOM"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &RandomStmt{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				Lower:          args[0],
 				Upper:          args[1],
 			}, nil
@@ -63,9 +63,9 @@ func SetupRandoms() {
 	}
 
 	parsers["CHOOSE"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &ChooseStmt{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				Data:           args[0],
 			}, nil
 		},
@@ -73,9 +73,9 @@ func SetupRandoms() {
 	}
 
 	parsers["CHOOSECHAR"] = StatementParser{
-		Parse: func(args []Statement, line int) (Statement, error) {
+		Parse: func(args []Statement, pos *Pos) (Statement, error) {
 			return &ChooseStmt{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				Data:           args[0],
 			}, nil
 		},

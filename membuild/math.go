@@ -28,18 +28,18 @@ func MathStmt(p *Program, stm *parser.MathStmt) (Instruction, error) {
 		}
 
 		if left.Type.IsEqual(parser.NULL) {
-			return NewBlankData(), fmt.Errorf("line %d: parameters to MATH must not be null", stm.Line())
+			return NewBlankData(), fmt.Errorf("%v: parameters to MATH must not be null", stm.Pos())
 		}
 
 		var l float64 = -7
 		var r float64 = 7
 
 		if right.Type.IsEqual(parser.FLOAT) || left.Type.IsEqual(parser.FLOAT) {
-			l, err = getFloat(left.Value, stm.Line(), "MATH")
+			l, err = getFloat(left.Value, stm.Pos(), "MATH")
 			if err != nil {
 				return NewBlankData(), err
 			}
-			r, err = getFloat(right.Value, stm.Line(), "MATH")
+			r, err = getFloat(right.Value, stm.Pos(), "MATH")
 			if err != nil {
 				return NewBlankData(), err
 			}

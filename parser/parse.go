@@ -6,8 +6,39 @@ import (
 	"strings"
 )
 
+// Program is the main program, containing the source AST
+type Program struct {
+	Statements []Statement
+}
+
+// Type is there to make a Program implement the Statement interface
+func (p *Program) Type() DataType {
+	return NULL
+}
+
+// Pos is there to make a Program implement the Statement interface
+func (p *Program) Pos() *Pos {
+	return NewPos("", 0)
+}
+
+// Keywords is there to make a Program implement the Block interface
+func (p *Program) Keywords() []string {
+	return []string{}
+}
+
+// End is there to make a Program implement the Block interface
+func (p *Program) End(_ string, _ []Statement, stmts []Statement) bool {
+	p.Statements = stmts
+	return true
+}
+
+// EndSignature is there to make a Program implement the Block interface
+func (p *Program) EndSignature() []DataType {
+	return make([]DataType, 0)
+}
+
 // Parse parses B++ source code and returns a parsed program
-func Parse(code string) (*Program, error) {
+func Parse(filename, code string) (*Program, error) {
 	lns := strings.Split(code, "\n")
 
 	functionTypes = make(map[string]FunctionType)
@@ -17,7 +48,7 @@ func Parse(code string) (*Program, error) {
 	scopes.AddScope(NewScope(prog))
 
 	for i, val := range lns {
-		stmt, err := ParseStmt(val, i+1, scopes)
+		stmt, err := ParseStmt(val, NewPos(filename, i+1), scopes)
 		if err != nil {
 			return nil, err
 		}
@@ -36,7 +67,7 @@ func Parse(code string) (*Program, error) {
 }
 
 // ParseStmt parses a B++ statement's source code and returns the parsed statement
-func ParseStmt(line string, num int, scope ...*ScopeStack) (Statement, error) {
+func ParseStmt(line string, pos *Pos, scope ...*ScopeStack) (Statement, error) {
 	if strings.ContainsRune(line, '#') {
 		line = line[:strings.IndexRune(line, '#')]
 	}
@@ -72,13 +103,13 @@ func ParseStmt(line string, num int, scope ...*ScopeStack) (Statement, error) {
 							isBParser = 1
 							bParser = bparser
 						} else {
-							return nil, fmt.Errorf("line %d: No such function '%s'", num, funcName)
+							return nil, fmt.Errorf("%v: No such function '%s'", pos, funcName)
 						}
 					} else {
 						block = s.Block
 					}
 				} else {
-					return nil, fmt.Errorf("line %d: No such function '%s'", num, funcName)
+					return nil, fmt.Errorf("%v: No such function '%s'", pos, funcName)
 				}
 			} else {
 				isBParser = 2
@@ -111,37 +142,37 @@ func ParseStmt(line string, num int, scope ...*ScopeStack) (Statement, error) {
 		}
 
 		// Type checking
-		argDat, err := ParseArgs(args, num)
+		argDat, err := ParseArgs(args, pos)
 		if err != nil {
 			return nil, err
 		}
 
 		if hasParser {
-			err = MatchTypes(argDat, num, parser.Signature)
+			err = MatchTypes(argDat, pos, parser.Signature)
 			if err != nil {
 				return nil, err
 			}
 
-			return parser.Parse(argDat, num)
+			return parser.Parse(argDat, pos)
 		} else if isBParser == 2 {
-			err = MatchTypes(argDat, num, fnType.Signature)
+			err = MatchTypes(argDat, pos, fnType.Signature)
 			if err != nil {
 				return nil, err
 			}
 
 			return &FunctionCallStmt{
-				BasicStatement: &BasicStatement{line: num},
+				BasicStatement: &BasicStatement{pos: pos},
 				ReturnType:     fnType.ReturnType,
 				Name:           funcName,
 				Args:           argDat,
 			}, nil
 		} else if isBParser == 1 {
-			err = MatchTypes(argDat, num, bParser.Signature)
+			err = MatchTypes(argDat, pos, bParser.Signature)
 			if err != nil {
 				return nil, err
 			}
 
-			block, err = bParser.Parse(argDat, num)
+			block, err = bParser.Parse(argDat, pos)
 			if err != nil {
 				return nil, err
 			}
@@ -151,7 +182,7 @@ func ParseStmt(line string, num int, scope ...*ScopeStack) (Statement, error) {
 
 			return nil, nil
 		} else {
-			err = MatchTypes(argDat, num, block.EndSignature())
+			err = MatchTypes(argDat, pos, block.EndSignature())
 			if err != nil {
 				return nil, err
 			}
@@ -161,5 +192,5 @@ func ParseStmt(line string, num int, scope ...*ScopeStack) (Statement, error) {
 			return nil, nil
 		}
 	}
-	return ParseData(line, num), nil
+	return ParseData(line, pos), nil
 }

@@ -6,13 +6,13 @@ import (
 )
 
 // ParseData parses a literal and converts it to a Data statement with the corresponding type
-func ParseData(src string, line int) *Data {
+func ParseData(src string, pos *Pos) *Data {
 	src = strings.TrimSpace(src)
 	if len(src) == 0 {
 		return &Data{
 			kind:           NULL,
 			Data:           nil,
-			BasicStatement: &BasicStatement{line: line},
+			BasicStatement: &BasicStatement{pos: pos},
 		}
 	}
 
@@ -20,7 +20,7 @@ func ParseData(src string, line int) *Data {
 		return &Data{
 			kind:           STRING,
 			Data:           src[1 : len(src)-1],
-			BasicStatement: &BasicStatement{line: line},
+			BasicStatement: &BasicStatement{pos: pos},
 		}
 	}
 
@@ -29,7 +29,7 @@ func ParseData(src string, line int) *Data {
 		return &Data{
 			kind:           INT,
 			Data:           intDat,
-			BasicStatement: &BasicStatement{line: line},
+			BasicStatement: &BasicStatement{pos: pos},
 		}
 	}
 
@@ -38,13 +38,13 @@ func ParseData(src string, line int) *Data {
 		return &Data{
 			kind:           FLOAT,
 			Data:           floatDat,
-			BasicStatement: &BasicStatement{line: line},
+			BasicStatement: &BasicStatement{pos: pos},
 		}
 	}
 
 	return &Data{
 		kind:           STRING | IDENTIFIER,
 		Data:           src,
-		BasicStatement: &BasicStatement{line: line},
+		BasicStatement: &BasicStatement{pos: pos},
 	}
 }

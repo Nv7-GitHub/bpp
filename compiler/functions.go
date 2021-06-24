@@ -30,7 +30,7 @@ func AddFunction(fn *parser.FunctionBlock) error {
 	}
 	retType, exists := paramTypeMap[fn.Return.Type()]
 	if !exists {
-		return fmt.Errorf("line %d: unknown return type", fn.Return.Line())
+		return fmt.Errorf("%v: unknown return type", fn.Return.Pos())
 	}
 
 	function := m.NewFunc(fn.Name, retType, params...)

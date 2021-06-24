@@ -93,7 +93,7 @@ func ParseProg(isTiming bool, filename string) *parser.Program {
 	if isTiming {
 		start = time.Now()
 	}
-	prog, err := parser.Parse(string(src))
+	prog, err := parser.Parse(filename, string(src))
 	handle(err)
 	if isTiming {
 		fmt.Println("Parsed program in", time.Since(start))

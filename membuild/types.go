@@ -22,10 +22,10 @@ func TypeCastStmt(p *Program, stm *parser.TypeCastStmt) (Instruction, error) {
 
 		switch stm.NewType {
 		case parser.INT:
-			return convertInt(val, stm.Line())
+			return convertInt(val, stm.Pos())
 
 		case parser.FLOAT:
-			return convertFloat(val, stm.Line())
+			return convertFloat(val, stm.Pos())
 
 		case parser.STRING:
 			return Data{
@@ -37,12 +37,12 @@ func TypeCastStmt(p *Program, stm *parser.TypeCastStmt) (Instruction, error) {
 	}, nil
 }
 
-func convertInt(val Data, num int) (Data, error) {
+func convertInt(val Data, pos *parser.Pos) (Data, error) {
 	switch {
 	case val.Type.IsEqual(parser.STRING):
 		val, err := strconv.Atoi(val.Value.(string))
 		if err != nil {
-			return NewBlankData(), fmt.Errorf("line %d: parameter to INT is not integer", num)
+			return NewBlankData(), fmt.Errorf("%v: parameter to INT is not integer", pos)
 		}
 		return Data{
 			Type:  parser.INT,
@@ -58,15 +58,15 @@ func convertInt(val Data, num int) (Data, error) {
 	case val.Type.IsEqual(parser.INT):
 		return val, nil
 	}
-	return NewBlankData(), fmt.Errorf("line %d: cannot convert type to integer", num)
+	return NewBlankData(), fmt.Errorf("%v: cannot convert type to integer", pos)
 }
 
-func convertFloat(val Data, num int) (Data, error) {
+func convertFloat(val Data, pos *parser.Pos) (Data, error) {
 	switch {
 	case val.Type.IsEqual(parser.STRING):
 		val, err := strconv.ParseFloat(val.Value.(string), 64)
 		if err != nil {
-			return NewBlankData(), fmt.Errorf("line %d: parameter to FLOAT is not a float", num)
+			return NewBlankData(), fmt.Errorf("%v: parameter to FLOAT is not a float", pos)
 		}
 		return Data{
 			Type:  parser.FLOAT,
@@ -83,5 +83,5 @@ func convertFloat(val Data, num int) (Data, error) {
 		return val, nil
 	}
 
-	return NewBlankData(), fmt.Errorf("line %d: cannot convert type to float", num)
+	return NewBlankData(), fmt.Errorf("%v: cannot convert type to float", pos)
 }

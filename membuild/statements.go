@@ -78,6 +78,6 @@ func BuildStmt(p *Program, stmt parser.Statement, instructionum ...int) (Instruc
 		return FunctionCallStmt(p, s)
 
 	default:
-		return nil, fmt.Errorf("line %d: unknown type %s", stmt.Line(), reflect.TypeOf(stmt).String())
+		return nil, fmt.Errorf("%v: unknown type %s", stmt.Pos(), reflect.TypeOf(stmt).String())
 	}
 }

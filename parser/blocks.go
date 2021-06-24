@@ -42,9 +42,9 @@ func (i *IfBlock) End(kind string, _ []Statement, statements []Statement) bool {
 // SetupBlocks adds the IFB and WHILE functions
 func SetupBlocks() {
 	blocks["IFB"] = BlockParser{
-		Parse: func(args []Statement, line int) (Block, error) {
+		Parse: func(args []Statement, pos *Pos) (Block, error) {
 			return &IfBlock{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				Condition:      args[0],
 			}, nil
 		},
@@ -52,9 +52,9 @@ func SetupBlocks() {
 	}
 
 	blocks["WHILE"] = BlockParser{
-		Parse: func(args []Statement, line int) (Block, error) {
+		Parse: func(args []Statement, pos *Pos) (Block, error) {
 			return &WhileBlock{
-				BasicStatement: &BasicStatement{line: line},
+				BasicStatement: &BasicStatement{pos: pos},
 				Condition:      args[0],
 			}, nil
 		},
