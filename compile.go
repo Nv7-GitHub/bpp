@@ -14,6 +14,7 @@ import (
 	"github.com/Nv7-Github/Bpp/parser"
 )
 
+// CompileCmd implements the "compile" sub-command
 func CompileCmd(args Args, prog *parser.Program) {
 	ext := filepath.Ext(args.Build.File)
 	name := args.Build.File[0 : len(args.Build.File)-len(ext)]

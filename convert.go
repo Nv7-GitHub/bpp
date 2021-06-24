@@ -11,6 +11,7 @@ import (
 	"github.com/Nv7-Github/Bpp/gobpp"
 )
 
+// ConvertCmd implements the "convert" sub-command
 func ConvertCmd(args Args) {
 	src, err := os.ReadFile(args.Convert.File)
 	handle(err)

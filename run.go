@@ -9,6 +9,7 @@ import (
 	"github.com/Nv7-Github/Bpp/parser"
 )
 
+// RunCmd implements the "run" sub-command
 func RunCmd(args Args, prog *parser.Program) {
 	var start time.Time
 	if args.Time {

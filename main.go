@@ -19,6 +19,7 @@ func handle(err error) {
 	}
 }
 
+// Build defines the "build" sub-command
 type Build struct {
 	Output string `help:"output file for executable" arg:"-o"`
 	CC     string `help:"LLVM compiler (optional)"`
@@ -26,16 +27,19 @@ type Build struct {
 	File   string `arg:"positional,-i,--input" help:"input B++ program"`
 }
 
+// Run defines the "run" sub-command
 type Run struct {
 	Args string `help:"arguments for program, comma-seperated"`
 	File string `arg:"positional,-i,--input" help:"input B++ program"`
 }
 
+// Convert defines the "convert" sub-command
 type Convert struct {
 	Output string `help:"output B++ program" arg:"-o"`
 	File   string `arg:"positional,-i,--input" help:"input Go program"`
 }
 
+// Args defines the program's arguments
 type Args struct {
 	Build   *Build   `arg:"subcommand:build" help:"compile a B++ program"`
 	Run     *Run     `arg:"subcommand:run" help:"run a B++ program"`
@@ -80,6 +84,7 @@ func main() {
 	}
 }
 
+// ParseProg parses a Go program
 func ParseProg(isTiming bool, filename string) *parser.Program {
 	src, err := os.ReadFile(filename)
 	handle(err)
