@@ -47,7 +47,7 @@ type Args struct {
 	Time    bool     `help:"print timing for each stage" arg:"-t"`
 
 	CPUProf string `help:"CPU pprof statistics output file"`
-	Memprof string `help:"Heap pprof statistics output file"`
+	Memprof string `help:"heap pprof statistics output file"`
 }
 
 func main() {
