@@ -75,3 +75,14 @@ This will produce LLVM IR. To convert it into an executable, use an LLVM compile
 ```
 bpp build <filename> -cc clang
 ```
+
+## Multiple Files
+For both `build` and `run`, you can pass multiple files. These can be used with an `IMPORT` statement. To pass multiple files, do
+```bash
+bpp run main.bpp file1.bpp file2.bpp
+```
+You can also use directories, like:
+```bash
+bpp build .
+```
+> :warning: If you are using more than one file, there must be a file called `main.bpp`, which will be run.

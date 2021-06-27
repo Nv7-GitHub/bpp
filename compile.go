@@ -16,8 +16,8 @@ import (
 
 // CompileCmd implements the "compile" sub-command
 func CompileCmd(args Args, prog *parser.Program) {
-	ext := filepath.Ext(args.Build.File)
-	name := args.Build.File[0 : len(args.Build.File)-len(ext)]
+	ext := filepath.Ext(args.Build.Files[0])
+	name := args.Build.Files[0][0 : len(args.Build.Files[0])-len(ext)]
 
 	var start time.Time
 	if args.Time {

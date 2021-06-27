@@ -8,6 +8,8 @@ B++ is a programming language initially developed by the developers for The Brai
 - [Basic Functions](#basic-functions)
 - [Comparison](#comparison)
 - [Blocks](#blocks)
+- [Type Conversions](#type-conversions)
+- [Import Statements](#import-statements)
 - [Builtin Functions](#builtin-functions)
 
 ## Introduction
@@ -219,6 +221,17 @@ or
 [STRING 0.1]
 ```
 You can use `INT`, `FLOAT`, `STRING`, and `ARRAY` in any combination!
+
+## Import Statements
+B++ also supports multiple files! To do this, use
+```bpp
+[IMPORT "file.bpp"]
+```
+This executes the file when the statement is reached. That means conditional imports are also possible, for example
+```bpp
+[IF [COMPARE [ARGS 0] = "yes"] [IMPORT "yes.bpp"] [IMPORT "no.bpp"]]
+```
+Make sure to include the other files when running the code!
 
 ## Builtin Functions
 B++ has many builtin functions, which are listed below.

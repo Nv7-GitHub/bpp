@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"os"
@@ -21,16 +22,16 @@ func handle(err error) {
 
 // Build defines the "build" sub-command
 type Build struct {
-	Output string `help:"output file for executable" arg:"-o"`
-	CC     string `help:"LLVM compiler (optional)"`
-	Asm    string `help:"LLC compiler (optional)"`
-	File   string `arg:"positional,-i,--input" help:"input B++ program"`
+	Output string   `help:"output file for executable" arg:"-o"`
+	CC     string   `help:"LLVM compiler (optional)"`
+	Asm    string   `help:"LLC compiler (optional)"`
+	Files  []string `arg:"positional,-i,--input" help:"input B++ program"`
 }
 
 // Run defines the "run" sub-command
 type Run struct {
-	Args string `help:"arguments for program, comma-seperated"`
-	File string `arg:"positional,-i,--input" help:"input B++ program"`
+	Args  string   `help:"arguments for program, comma-seperated"`
+	Files []string `arg:"positional,-i,--input" help:"input B++ program"`
 }
 
 // Convert defines the "convert" sub-command
@@ -65,10 +66,16 @@ func main() {
 
 	switch {
 	case args.Build != nil:
-		prog := ParseProg(args.Time, args.Build.File)
+		if len(args.Build.Files) < 1 {
+			handle(errors.New("you must supply at least one file"))
+		}
+		prog := ParseProg(args.Time, args.Build.Files)
 		CompileCmd(args, prog)
 	case args.Run != nil:
-		prog := ParseProg(args.Time, args.Run.File)
+		if len(args.Run.Files) < 1 {
+			handle(errors.New("you must supply at least one file"))
+		}
+		prog := ParseProg(args.Time, args.Run.Files)
 		RunCmd(args, prog)
 	case args.Convert != nil:
 		ConvertCmd(args)
@@ -85,21 +92,26 @@ func main() {
 }
 
 // ParseProg parses a Go program
-func ParseProg(isTiming bool, filename string) *parser.Program {
+func ParseProg(isTiming bool, filenames []string) *parser.Program {
 	files := make(map[string]string)
-	dir, err := os.ReadDir(filename)
-	if err == nil {
-		for _, file := range dir {
-			if !file.IsDir() {
-				src, err := os.ReadFile(file.Name())
-				handle(err)
-				files[file.Name()] = string(src)
+
+	// Read files
+	var err error
+	for _, filename := range filenames {
+		dir, err := os.ReadDir(filename)
+		if err == nil {
+			for _, file := range dir {
+				if !file.IsDir() {
+					src, err := os.ReadFile(file.Name())
+					handle(err)
+					files[file.Name()] = string(src)
+				}
 			}
+		} else {
+			src, err := os.ReadFile(filename)
+			handle(err)
+			files[filename] = string(src)
 		}
-	} else {
-		src, err := os.ReadFile(filename)
-		handle(err)
-		files[filename] = string(src)
 	}
 
 	var out *parser.Program
@@ -109,7 +121,7 @@ func ParseProg(isTiming bool, filename string) *parser.Program {
 		start = time.Now()
 	}
 	if len(files) == 1 {
-		out, err = parser.Parse(filename, files[filename])
+		out, err = parser.Parse(filenames[0], files[filenames[0]])
 		handle(err)
 	} else {
 		out, err = parser.ParseFiles("main.bpp", files)

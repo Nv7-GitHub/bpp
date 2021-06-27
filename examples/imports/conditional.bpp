@@ -1,3 +1,5 @@
 [IFB [COMPARE [ARGS 0] = "yes"]]
   [IMPORT "yay.bpp"]
+[ELSE]
+  [DEFINE isyes 0]
 [ENDIF]

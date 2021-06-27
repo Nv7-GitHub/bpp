@@ -1,0 +1,9 @@
+[IMPORT "math.bpp"]
+
+[ADD 1 2]
+[SUB 1 2]
+[MUL 2 3]
+[DIV 2 3]
+
+[IMPORT "conditional.bpp"]
+[IF [VAR isyes] "You gave the argument yes!" "You didn't give the argument yes :("]
