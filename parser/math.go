@@ -70,7 +70,7 @@ func SetupMath() {
 			}
 			op, exists := mathMap[opTxt]
 			if !exists {
-				return nil, fmt.Errorf("%v: unknown comparison operator '%s'", pos, opTxt)
+				return nil, fmt.Errorf("%v: unknown mathematical operator '%s'", pos, opTxt)
 			}
 			return &MathStmt{
 				Operation:      op,

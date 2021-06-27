@@ -77,6 +77,9 @@ func BuildStmt(p *Program, stmt parser.Statement, instructionum ...int) (Instruc
 	case *parser.FunctionCallStmt:
 		return FunctionCallStmt(p, s)
 
+	case *parser.ImportStmt:
+		return ImportStmt(p, s)
+
 	default:
 		return nil, fmt.Errorf("%v: unknown type %s", stmt.Pos(), reflect.TypeOf(stmt).String())
 	}

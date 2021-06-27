@@ -2,69 +2,8 @@ package parser
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 )
-
-// Program is the main program, containing the source AST
-type Program struct {
-	Statements []Statement
-}
-
-// Type is there to make a Program implement the Statement interface
-func (p *Program) Type() DataType {
-	return NULL
-}
-
-// Pos is there to make a Program implement the Statement interface
-func (p *Program) Pos() *Pos {
-	return NewPos("", 0)
-}
-
-// Keywords is there to make a Program implement the Block interface
-func (p *Program) Keywords() []string {
-	return []string{}
-}
-
-// End is there to make a Program implement the Block interface
-func (p *Program) End(_ string, _ []Statement, stmts []Statement) bool {
-	p.Statements = stmts
-	return true
-}
-
-// EndSignature is there to make a Program implement the Block interface
-func (p *Program) EndSignature() []DataType {
-	return make([]DataType, 0)
-}
-
-// Parse parses B++ source code and returns a parsed program
-func Parse(filename, code string) (*Program, error) {
-	lns := strings.Split(code, "\n")
-
-	functionTypes = make(map[string]FunctionType)
-
-	prog := &Program{}
-	scopes := NewScopeStack()
-	scopes.AddScope(NewScope(prog))
-
-	for i, val := range lns {
-		stmt, err := ParseStmt(val, NewPos(filename, i+1), scopes)
-		if err != nil {
-			return nil, err
-		}
-		if stmt != nil {
-			scopes.AddStatement(stmt)
-		}
-	}
-
-	pScope := scopes.GetScope()
-	p, ok := pScope.Block.(*Program)
-	if !ok {
-		return nil, fmt.Errorf("unterminated block: %s", reflect.TypeOf(pScope.Block))
-	}
-	scopes.FinishScope("", make([]Statement, 0))
-	return p, nil
-}
 
 // ParseStmt parses a B++ statement's source code and returns the parsed statement
 func ParseStmt(line string, pos *Pos, scope ...*ScopeStack) (Statement, error) {

@@ -26,7 +26,7 @@ ast.txt
 main.c
 run.sh
 .vscode/*
-!examples/*
+!examples/**
 *.gotxt
 *.s
 *.ll

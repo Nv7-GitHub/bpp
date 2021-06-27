@@ -34,6 +34,18 @@ func (r *RepeatStmt) Type() DataType {
 	return STRING
 }
 
+// ImportStmt is the AST tree resulted of [IMPORT stmt.Filename]
+type ImportStmt struct {
+	*BasicStatement
+	Statements []Statement
+	Filename   string
+}
+
+// Type returns the return type of a IMPORT statement (NULL)
+func (i *ImportStmt) Type() DataType {
+	return NULL
+}
+
 // SetupOthers adds the ARGS, CONCAT, and REPEAT statements
 func SetupOthers() {
 	parsers["ARGS"] = StatementParser{

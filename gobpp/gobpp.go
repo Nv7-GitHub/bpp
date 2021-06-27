@@ -1,3 +1,4 @@
+// Package gobpp converts Go source code into B++ source code.
 package gobpp
 
 import (

@@ -1,3 +1,4 @@
+// Package compiler compiles a B++ AST tree into LLVM IR, which can then be compiled into extremely high-performance Assembly.
 package compiler
 
 import (

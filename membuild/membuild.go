@@ -1,3 +1,4 @@
+// Package membuild converts a B++ AST tree into a series of lambdas which can then be executed.
 package membuild
 
 import (

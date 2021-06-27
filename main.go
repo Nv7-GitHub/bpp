@@ -86,18 +86,38 @@ func main() {
 
 // ParseProg parses a Go program
 func ParseProg(isTiming bool, filename string) *parser.Program {
-	src, err := os.ReadFile(filename)
-	handle(err)
+	files := make(map[string]string)
+	dir, err := os.ReadDir(filename)
+	if err == nil {
+		for _, file := range dir {
+			if !file.IsDir() {
+				src, err := os.ReadFile(file.Name())
+				handle(err)
+				files[file.Name()] = string(src)
+			}
+		}
+	} else {
+		src, err := os.ReadFile(filename)
+		handle(err)
+		files[filename] = string(src)
+	}
+
+	var out *parser.Program
 
 	var start time.Time
 	if isTiming {
 		start = time.Now()
 	}
-	prog, err := parser.Parse(filename, string(src))
-	handle(err)
+	if len(files) == 1 {
+		out, err = parser.Parse(filename, files[filename])
+		handle(err)
+	} else {
+		out, err = parser.ParseFiles("main.bpp", files)
+		handle(err)
+	}
 	if isTiming {
 		fmt.Println("Parsed program in", time.Since(start))
 	}
 
-	return prog
+	return out
 }
