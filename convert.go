@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/Nv7-Github/Bpp/gobpp"
+	"github.com/Nv7-Github/bpp/gobpp"
 )
 
 // ConvertCmd implements the "convert" sub-command

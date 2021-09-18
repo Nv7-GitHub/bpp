@@ -10,8 +10,8 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/Nv7-Github/Bpp/compiler"
-	"github.com/Nv7-Github/Bpp/parser"
+	"github.com/Nv7-Github/bpp/compiler"
+	"github.com/Nv7-Github/bpp/parser"
 )
 
 // CompileCmd implements the "compile" sub-command

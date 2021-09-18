@@ -8,8 +8,8 @@ import (
 	"runtime/pprof"
 	"time"
 
-	"github.com/Nv7-Github/Bpp/ir"
-	"github.com/Nv7-Github/Bpp/parser"
+	"github.com/Nv7-Github/bpp/ir"
+	"github.com/Nv7-Github/bpp/parser"
 	arg "github.com/alexflint/go-arg"
 )
 

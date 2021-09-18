@@ -1,4 +1,4 @@
-module github.com/Nv7-Github/Bpp
+module github.com/Nv7-Github/bpp
 
 go 1.16
 

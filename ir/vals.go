@@ -3,7 +3,7 @@ package ir
 import (
 	"fmt"
 
-	"github.com/Nv7-Github/Bpp/parser"
+	"github.com/Nv7-Github/bpp/parser"
 )
 
 func createConst(val *parser.Data) (*Const, error) {
@@ -44,21 +44,21 @@ func (c *Const) String() string {
 	return fmt.Sprintf("Const<%s>: %v", c.Type().String(), c.Data)
 }
 
-type castStmt struct {
+type Cast struct {
 	val int
 	typ Type
 }
 
-func (c *castStmt) Type() Type {
+func (c *Cast) Type() Type {
 	return c.typ
 }
 
-func (c *castStmt) String() string {
+func (c *Cast) String() string {
 	return fmt.Sprintf("Cast<%s>: %d", c.Type().String(), c.val)
 }
 
 func (i *IR) newCast(val int, typ Type) int {
-	return i.AddInstruction(&castStmt{
+	return i.AddInstruction(&Cast{
 		val: val,
 		typ: typ,
 	})

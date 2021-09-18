@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/Nv7-Github/Bpp/parser"
+	"github.com/Nv7-Github/bpp/parser"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/value"
 )

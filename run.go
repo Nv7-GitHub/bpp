@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Nv7-Github/Bpp/membuild"
-	"github.com/Nv7-Github/Bpp/parser"
+	"github.com/Nv7-Github/bpp/membuild"
+	"github.com/Nv7-Github/bpp/parser"
 )
 
 // RunCmd implements the "run" sub-command

@@ -3,7 +3,7 @@ package ir
 import (
 	"fmt"
 
-	"github.com/Nv7-Github/Bpp/parser"
+	"github.com/Nv7-Github/bpp/parser"
 )
 
 type varData struct {
@@ -45,60 +45,60 @@ func (i *IR) addVar(stmt *parser.VarStmt) (int, error) {
 }
 
 // Memory instructions
-type allocStatic struct {
+type AllocStatic struct {
 	typ Type
 }
 
-func (a *allocStatic) Type() Type {
+func (a *AllocStatic) Type() Type {
 	return a.typ
 }
-func (a *allocStatic) String() string {
+func (a *AllocStatic) String() string {
 	return fmt.Sprintf("AllocStatic<%s>", a.Type().String())
 }
 
 func (i *IR) newAllocStatic(typ Type) int {
-	instr := &allocStatic{typ: typ}
+	instr := &AllocStatic{typ: typ}
 	return i.AddInstruction(instr)
 }
 
-type setMemory struct {
+type SetMemory struct {
 	Mem   int
 	Value int
 
 	typ Type
 }
 
-func (s *setMemory) Type() Type {
+func (s *SetMemory) Type() Type {
 	return NULL
 }
 
-func (s *setMemory) String() string {
+func (s *SetMemory) String() string {
 	return fmt.Sprintf("SetMemory<%s>: (%d, %d)", s.typ.String(), s.Mem, s.Value)
 }
 
 func (i *IR) newSetMemory(mem int, val int) int {
-	return i.AddInstruction(&setMemory{
+	return i.AddInstruction(&SetMemory{
 		Mem:   mem,
 		Value: val,
 	})
 }
 
-type getMemory struct {
+type GetMemory struct {
 	Mem int
 
 	typ Type
 }
 
-func (s *getMemory) Type() Type {
+func (s *GetMemory) Type() Type {
 	return s.typ
 }
 
-func (s *getMemory) String() string {
+func (s *GetMemory) String() string {
 	return fmt.Sprintf("GetMemory<%s>: %d", s.typ.String(), s.Mem)
 }
 
 func (i *IR) newGetMemory(mem int, typ Type) int {
-	return i.AddInstruction(&getMemory{
+	return i.AddInstruction(&GetMemory{
 		Mem: mem,
 		typ: typ,
 	})

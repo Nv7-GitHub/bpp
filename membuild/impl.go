@@ -3,7 +3,7 @@ package membuild
 import (
 	"math"
 
-	"github.com/Nv7-Github/Bpp/parser"
+	"github.com/Nv7-Github/bpp/parser"
 )
 
 // DefineStmt compiles a DEFINE statement

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/Nv7-Github/Bpp/parser"
+	"github.com/Nv7-Github/bpp/parser"
 )
 
 func (i *IR) AddStmt(stmt parser.Statement) (int, error) {
@@ -24,6 +24,9 @@ func (i *IR) AddStmt(stmt parser.Statement) (int, error) {
 
 	case *parser.MathStmt:
 		return i.addMath(s)
+
+	case *parser.ComparisonStmt:
+		return i.addComparison(s)
 
 	default:
 		return 0, fmt.Errorf("%v: unknown statement type: %s", s.Pos(), reflect.TypeOf(s).String())

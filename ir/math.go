@@ -3,7 +3,7 @@ package ir
 import (
 	"fmt"
 
-	"github.com/Nv7-Github/Bpp/parser"
+	"github.com/Nv7-Github/bpp/parser"
 )
 
 func (i *IR) addMath(stmt *parser.MathStmt) (int, error) {
@@ -41,7 +41,7 @@ func (i *IR) addMath(stmt *parser.MathStmt) (int, error) {
 	}
 
 	// Add Instruction
-	return i.AddInstruction(&math{
+	return i.AddInstruction(&Math{
 		Op:   stmt.Operation,
 		Val1: val1,
 		Val2: val2,
@@ -49,17 +49,17 @@ func (i *IR) addMath(stmt *parser.MathStmt) (int, error) {
 	}), nil
 }
 
-type math struct {
+type Math struct {
 	Op   parser.Operator
 	Val1 int
 	Val2 int
 	typ  Type
 }
 
-func (m *math) Type() Type {
+func (m *Math) Type() Type {
 	return m.typ
 }
 
-func (m *math) String() string {
+func (m *Math) String() string {
 	return fmt.Sprintf("Math<%s, %s>: (%d, %d)", m.typ.String(), m.Op.String(), m.Val1, m.Val2)
 }

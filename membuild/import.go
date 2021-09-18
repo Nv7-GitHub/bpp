@@ -1,6 +1,6 @@
 package membuild
 
-import "github.com/Nv7-Github/Bpp/parser"
+import "github.com/Nv7-Github/bpp/parser"
 
 // ImportStmt compiles an IMPORT statement
 func ImportStmt(p *Program, stm *parser.ImportStmt) (Instruction, error) {

@@ -39,6 +39,10 @@ type IR struct {
 	vars map[string]varData
 }
 
+func (i *IR) Index() int {
+	return len(i.Instructions)
+}
+
 func (i *IR) AddInstruction(instr Instruction) int {
 	ind := len(i.Instructions)
 	i.Instructions = append(i.Instructions, instr)

@@ -1,14 +1,14 @@
 # B++
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/Nv7-Github/Bpp.svg)](https://pkg.go.dev/github.com/Nv7-Github/Bpp)
-[![Go Report Card](https://goreportcard.com/badge/github.com/Nv7-Github/Bpp)](https://goreportcard.com/report/github.com/Nv7-Github/Bpp)
+[![Go Reference](https://pkg.go.dev/badge/github.com/Nv7-Github/bpp.svg)](https://pkg.go.dev/github.com/Nv7-Github/bpp)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Nv7-Github/bpp)](https://goreportcard.com/report/github.com/Nv7-Github/bpp)
 
 A B++ parser, interpreter, and compiler written in Go! Check [the docs](docs/docs.md) for more information on the B++ language and how it works, and [the programming guide](docs/lib.md) on how to import and use this library, with your code!
 
 ## Installation
 To install or update B++, do
 ```bash
-go get -u github.com/Nv7-Github/Bpp
+go get -u github.com/Nv7-Github/bpp
 ```
 
 ## Usage
@@ -60,7 +60,7 @@ bpp convert factorial.go -o coolprogram.bpp
 To save the B++ code to a file called `coolprogram.bpp`!
 
 ## Compiling Programs
-Bpp also supports compiling B++ programs into a native, extremely high-performance executable! You can use --time or -t with this too.
+bpp also supports compiling B++ programs into a native, extremely high-performance executable! You can use --time or -t with this too.
 > :warning: Arrays are not supported!
 
 To compile a program, just do 
