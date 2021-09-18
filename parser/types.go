@@ -85,6 +85,24 @@ const (
 	POWER                          // ^
 )
 
+var operatorNames = map[Operator]string{
+	EQUAL:          "EQUAL",
+	NOTEQUAL:       "NOTEQUAL",
+	GREATER:        "GREATER",
+	LESS:           "LESS",
+	GREATEREQUAL:   "GREATEREQUAL",
+	LESSEQUAL:      "LESSEQUAL",
+	ADDITION:       "ADDITION",
+	SUBTRACTION:    "SUBTRACTION",
+	MULTIPLICATION: "MULTIPLICATION",
+	DIVISION:       "DIVISION",
+	POWER:          "POWER",
+}
+
+func (o Operator) String() string {
+	return operatorNames[o]
+}
+
 // DataType is an enum for all B++ data types. It also supports combining multiple data types through bit masks. The data type for the B++ Data struct is commented next to the enum value
 type DataType int
 

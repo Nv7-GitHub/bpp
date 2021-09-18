@@ -8,6 +8,7 @@ import (
 	"runtime/pprof"
 	"time"
 
+	"github.com/Nv7-Github/Bpp/ir"
 	"github.com/Nv7-Github/Bpp/parser"
 	arg "github.com/alexflint/go-arg"
 )
@@ -40,10 +41,16 @@ type Convert struct {
 	File   string `arg:"positional,-i,--input" help:"input Go program"`
 }
 
+// IR defines the "ir" sub-command
+type IR struct {
+	Files []string `arg:"positional,-i,--input" help:"input B++ program"`
+}
+
 // Args defines the program's arguments
 type Args struct {
 	Build   *Build   `arg:"subcommand:build" help:"compile a B++ program"`
 	Run     *Run     `arg:"subcommand:run" help:"run a B++ program"`
+	IR      *IR      `arg:"subcommand:ir" help:"generate B++ IR"`
 	Convert *Convert `arg:"subcommand:convert" help:"convert a go program to a B++ program"`
 	Time    bool     `help:"print timing for each stage" arg:"-t"`
 
@@ -79,6 +86,11 @@ func main() {
 		RunCmd(args, prog)
 	case args.Convert != nil:
 		ConvertCmd(args)
+	case args.IR != nil:
+		prog := ParseProg(args.Time, args.IR.Files)
+		ir, err := ir.CreateIR(prog)
+		handle(err)
+		fmt.Println(ir.String())
 	default:
 		p.WriteUsage(os.Stdout)
 	}
