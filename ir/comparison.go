@@ -2,7 +2,6 @@ package ir
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/Nv7-Github/bpp/parser"
 )
@@ -56,74 +55,4 @@ func (c *Compare) String() string {
 
 func (i *IR) newCompare(op parser.Operator, val1, val2 int, typ Type) int {
 	return i.AddInstruction(&Compare{Op: op, Val1: val1, Val2: val2, typ: typ})
-}
-
-/*func (i *IR) addIf(stmt *parser.IfStmt) (int, error) {
-	cond, err := i.AddStmt(stmt.Condition)
-	if err != nil {
-		return 0, err
-	}
-
-	ind := i.Index()
-	_, err = i.AddStmt(stmt.Body)
-	if err != nil {
-		return 0, err
-	}
-	body := i.Instructions[ind:]
-	i.Instructions = i.Instructions[:ind]
-
-	typ1 := body[0].Type()
-	typ2 := NULL
-
-	var els []Instruction = nil
-	if stmt.Else != nil {
-		ind = i.Index()
-		_, err = i.AddStmt(stmt.Else)
-		if err != nil {
-			return 0, err
-		}
-		els = i.Instructions[ind:]
-		i.Instructions = i.Instructions[:ind]
-		typ2 = els[0].Type()
-	}
-
-	i.newIf(cond, body, els)
-
-	c1 := comparisonTiers[typ1]
-	c2 := comparisonTiers[typ2]
-	var outType Type
-	if c1 > c2 {
-		outType = typ1
-	} else {
-		outType = typ2
-	}
-}*/
-
-type If struct {
-	Body []Instruction
-	Else []Instruction
-	Cond int
-}
-
-func (i *If) Type() Type {
-	return NULL
-}
-
-func (i *If) String() string {
-	out := &strings.Builder{}
-	fmt.Fprintf(out, "If<%d>:", i.Cond)
-	for _, instr := range i.Body {
-		fmt.Fprintf(out, "\t%s", instr.String())
-	}
-	if i.Else != nil {
-		fmt.Fprintf(out, "else:")
-		for _, instr := range i.Else {
-			fmt.Fprintf(out, "\t%s", instr.String())
-		}
-	}
-	return strings.TrimSpace(out.String())
-}
-
-func (i *IR) newIf(cond int, body, els []Instruction) {
-	i.AddInstruction(&If{Cond: cond, Body: body, Else: els})
 }
