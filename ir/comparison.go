@@ -57,7 +57,6 @@ func (i *IR) newCompare(op parser.Operator, val1, val2 int, typ Type) int {
 	return i.AddInstruction(&Compare{Op: op, Val1: val1, Val2: val2, typ: typ})
 }
 
-// TODO: Make if statement not return null
 func (i *IR) addIf(stmt *parser.IfStmt) (int, error) {
 	cond, err := i.AddStmt(stmt.Condition)
 	if err != nil {
@@ -67,18 +66,16 @@ func (i *IR) addIf(stmt *parser.IfStmt) (int, error) {
 	jmp := i.newCondJmp(cond)
 
 	ifTrue := i.newJmpPoint()
-	_, err = i.AddStmtTop(stmt.Body)
+	ifTrueVal, err := i.AddStmtTop(stmt.Body)
 	if err != nil {
 		return 0, err
 	}
 	ifTrueEnd := i.newJmp()
 
 	ifFalse := i.newJmpPoint()
-	if stmt.Else != nil {
-		_, err = i.AddStmtTop(stmt.Else)
-		if err != nil {
-			return 0, err
-		}
+	ifFalseVal, err := i.AddStmtTop(stmt.Else)
+	if err != nil {
+		return 0, err
 	}
 	ifFalseEnd := i.newJmp()
 
@@ -87,7 +84,9 @@ func (i *IR) addIf(stmt *parser.IfStmt) (int, error) {
 	i.SetJmpPoint(ifTrueEnd, end)
 	i.SetJmpPoint(ifFalseEnd, end)
 
-	return end, nil
+	var phiTyp Type
+	ifTrueVal, ifFalseVal, phiTyp = i.makeComparable(ifTrueVal, ifFalseVal)
+	return i.newPHI(cond, ifTrueVal, ifFalseVal, phiTyp), nil
 }
 
 type Jmp struct {
@@ -136,4 +135,23 @@ func (j *JmpPoint) String() string {
 
 func (i *IR) newJmpPoint() int {
 	return i.AddInstruction(&JmpPoint{})
+}
+
+type PHI struct {
+	Cond     int
+	ValTrue  int
+	ValFalse int
+	typ      Type
+}
+
+func (p *PHI) Type() Type {
+	return p.typ
+}
+
+func (p *PHI) String() string {
+	return fmt.Sprintf("PHI<%s>: %d => (%d, %d)", p.Type().String(), p.Cond, p.ValTrue, p.ValFalse)
+}
+
+func (i *IR) newPHI(cond, valTrue, valFalse int, typ Type) int {
+	return i.AddInstruction(&PHI{Cond: cond, ValTrue: valTrue, ValFalse: valFalse, typ: typ})
 }

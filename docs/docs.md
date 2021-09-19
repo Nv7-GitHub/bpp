@@ -61,6 +61,11 @@ Strings can be defined like any other variable. You can get a letter of a string
 ```
 This gets the first letter of the string "Hi!", or "H". Note that the first letter has an index of 0.
 
+You can also get the length of a string using
+```bpp
+[LENGTH "Hello, World!"]
+```
+
 ### Floats and Integers
 You can do math on floats an integers, using [the MATH function](#math). 
 Integers are defined by doing:
@@ -82,6 +87,12 @@ You can get a value at an index using.
 [INDEX [ARRAY 1 2 3 4] 0]
 ```
 This gets the first element in the array. Note that the first element has an index of 0.
+
+You can get the length of an array using 
+```bpp
+[LENGTH [ARRAY 1 2 3 4]]
+```
+This would return 4, which is the number of items in the array.
 
 ## Basic Functions
 There are a few basic functions which you will most likely ue a lot. They are explained below.
