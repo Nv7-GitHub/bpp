@@ -22,12 +22,12 @@ func (g *GetParam) String() string {
 }
 
 func (i *IR) AddFunction(fn *parser.FunctionBlock) error {
-	_, exists := i.fns[fn.Name]
+	_, exists := i.Fns[fn.Name]
 	if exists {
 		return fmt.Errorf("%v: function \"%s\" already defined", fn.Pos(), fn.Name)
 	}
 	// Add fn name for recursion
-	i.fns[fn.Name] = len(i.Functions)
+	i.Fns[fn.Name] = len(i.Functions)
 
 	i.Instructions = make([]Instruction, 0)
 	i.vars = make(map[string]varData)
@@ -101,7 +101,7 @@ func (f *FunctionCall) String() string {
 }
 
 func (i *IR) addFunctionCall(stmt *parser.FunctionCallStmt) (int, error) {
-	fn, exists := i.fns[stmt.Name]
+	fn, exists := i.Fns[stmt.Name]
 	if !exists {
 		return 0, fmt.Errorf("%v: function \"%s\" not defined", stmt.Pos(), stmt.Name)
 	}

@@ -45,21 +45,21 @@ func (c *Const) String() string {
 }
 
 type Cast struct {
-	val int
-	typ Type
+	Val int
+	Typ Type
 }
 
 func (c *Cast) Type() Type {
-	return c.typ
+	return c.Typ
 }
 
 func (c *Cast) String() string {
-	return fmt.Sprintf("Cast<%s>: %d", c.Type().String(), c.val)
+	return fmt.Sprintf("Cast<%s>: %d", c.Type().String(), c.Val)
 }
 
 func (i *IR) newCast(val int, typ Type) int {
 	return i.AddInstruction(&Cast{
-		val: val,
-		typ: typ,
+		Val: val,
+		Typ: typ,
 	})
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -88,9 +89,22 @@ func main() {
 		ConvertCmd(args)
 	case args.IR != nil:
 		prog := ParseProg(args.Time, args.IR.Files)
-		ir, err := ir.CreateIR(prog)
+		ir_v, err := ir.CreateIR(prog)
 		handle(err)
-		fmt.Println(ir.String())
+
+		out, err := os.Create("code.ir")
+		handle(err)
+		enc := gob.NewEncoder(out)
+		handle(enc.Encode(ir_v))
+		out.Close()
+
+		in, err := os.Open("code.ir")
+		handle(err)
+		dec := gob.NewDecoder(in)
+		var i *ir.IR
+		handle(dec.Decode(&i))
+
+		fmt.Println(i.String())
 	default:
 		p.WriteUsage(os.Stdout)
 	}
