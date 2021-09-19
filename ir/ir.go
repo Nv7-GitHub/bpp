@@ -15,6 +15,21 @@ func NewIR() *IR {
 
 func CreateIR(prog *parser.Program) (*IR, error) {
 	ir := NewIR()
+	// Add functions
+	for _, stm := range prog.Statements {
+		f, ok := stm.(*parser.FunctionBlock)
+		if !ok {
+			continue
+		}
+		err := ir.AddFunction(f)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// Add statements
+	ir.Instructions = make([]Instruction, 0)
+	ir.vars = make(map[string]varData)
 	for _, stmt := range prog.Statements {
 		_, err := ir.AddStmtTop(stmt)
 		if err != nil {

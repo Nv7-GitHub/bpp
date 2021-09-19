@@ -35,6 +35,7 @@ type Instruction interface {
 
 type IR struct {
 	Instructions []Instruction
+	Functions    map[string]Function
 
 	vars map[string]varData
 }
