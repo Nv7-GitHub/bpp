@@ -85,11 +85,11 @@ func (m MathFunctionType) String() string {
 type MathFunction struct {
 	Op  MathFunctionType
 	Val int
-	typ Type
+	Typ Type
 }
 
 func (m *MathFunction) Type() Type {
-	return m.typ
+	return m.Typ
 }
 
 func (m *MathFunction) String() string {
@@ -100,7 +100,7 @@ func (i *IR) newMathFunction(fn MathFunctionType, val int) int {
 	return i.AddInstruction(&MathFunction{
 		Op:  fn,
 		Val: val,
-		typ: i.GetInstruction(val).Type(),
+		Typ: i.GetInstruction(val).Type(),
 	})
 }
 

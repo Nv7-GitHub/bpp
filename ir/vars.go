@@ -66,18 +66,18 @@ func (i *IR) addVar(stmt *parser.VarStmt) (int, error) {
 
 // Memory instructions
 type AllocStatic struct {
-	typ Type
+	Typ Type
 }
 
 func (a *AllocStatic) Type() Type {
-	return a.typ
+	return a.Typ
 }
 func (a *AllocStatic) String() string {
 	return fmt.Sprintf("AllocStatic<%s>", a.Type().String())
 }
 
 func (i *IR) newAllocStatic(typ Type) int {
-	instr := &AllocStatic{typ: typ}
+	instr := &AllocStatic{Typ: typ}
 	return i.AddInstruction(instr)
 }
 
@@ -85,7 +85,7 @@ type SetMemory struct {
 	Mem   int
 	Value int
 
-	typ Type
+	Typ Type
 }
 
 func (s *SetMemory) Type() Type {
@@ -93,46 +93,46 @@ func (s *SetMemory) Type() Type {
 }
 
 func (s *SetMemory) String() string {
-	return fmt.Sprintf("SetMemory<%s>: (%d, %d)", s.typ.String(), s.Mem, s.Value)
+	return fmt.Sprintf("SetMemory<%s>: (%d, %d)", s.Type().String(), s.Mem, s.Value)
 }
 
 func (i *IR) newSetMemory(mem int, val int) int {
 	return i.AddInstruction(&SetMemory{
 		Mem:   mem,
 		Value: val,
-		typ:   i.GetInstruction(val).Type(),
+		Typ:   i.GetInstruction(val).Type(),
 	})
 }
 
 type GetMemory struct {
 	Mem int
 
-	typ Type
+	Typ Type
 }
 
 func (s *GetMemory) Type() Type {
-	return s.typ
+	return s.Typ
 }
 
 func (s *GetMemory) String() string {
-	return fmt.Sprintf("GetMemory<%s>: %d", s.typ.String(), s.Mem)
+	return fmt.Sprintf("GetMemory<%s>: %d", s.Typ.String(), s.Mem)
 }
 
 func (i *IR) newGetMemory(mem int, typ Type) int {
 	return i.AddInstruction(&GetMemory{
 		Mem: mem,
-		typ: typ,
+		Typ: typ,
 	})
 }
 
 // Dynamic types
 type AllocDynamic struct {
 	Val int
-	typ Type
+	Typ Type
 }
 
 func (a *AllocDynamic) Type() Type {
-	return a.typ
+	return a.Typ
 }
 
 func (a *AllocDynamic) String() string {
@@ -143,7 +143,7 @@ func (i *IR) newAllocDynamic(val int) int {
 	v := i.GetInstruction(val)
 	instr := &AllocDynamic{
 		Val: val,
-		typ: v.Type(),
+		Typ: v.Type(),
 	}
 	return i.AddInstruction(instr)
 }
@@ -152,7 +152,7 @@ type SetMemoryDynamic struct {
 	Mem   int
 	Value int
 
-	typ Type
+	Typ Type
 }
 
 func (s *SetMemoryDynamic) Type() Type {
@@ -160,34 +160,34 @@ func (s *SetMemoryDynamic) Type() Type {
 }
 
 func (s *SetMemoryDynamic) String() string {
-	return fmt.Sprintf("SetMemoryDynamic<%s>: (%d, %d)", s.typ.String(), s.Mem, s.Value)
+	return fmt.Sprintf("SetMemoryDynamic<%s>: (%d, %d)", s.Typ.String(), s.Mem, s.Value)
 }
 
 func (i *IR) newSetMemoryDynamic(mem int, val int) int {
 	return i.AddInstruction(&SetMemoryDynamic{
 		Mem:   mem,
 		Value: val,
-		typ:   i.GetInstruction(val).Type(),
+		Typ:   i.GetInstruction(val).Type(),
 	})
 }
 
 type GetMemoryDynamic struct {
 	Mem int
 
-	typ Type
+	Typ Type
 }
 
 func (s *GetMemoryDynamic) Type() Type {
-	return s.typ
+	return s.Typ
 }
 
 func (s *GetMemoryDynamic) String() string {
-	return fmt.Sprintf("GetMemory<%s>: %d", s.typ.String(), s.Mem)
+	return fmt.Sprintf("GetMemory<%s>: %d", s.Typ.String(), s.Mem)
 }
 
 func (i *IR) newGetMemoryDynamic(mem int, typ Type) int {
 	return i.AddInstruction(&GetMemoryDynamic{
 		Mem: mem,
-		typ: typ,
+		Typ: typ,
 	})
 }
