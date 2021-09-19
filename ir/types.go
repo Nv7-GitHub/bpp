@@ -55,7 +55,7 @@ func (i *IR) String() string {
 	out := &strings.Builder{}
 	for fnName, fnId := range i.fns {
 		fn := i.Functions[fnId]
-		fmt.Fprintf(out, "%d [%s]:\n", fnId, fnName)
+		fmt.Fprintf(out, "%d [%s] => %d:\n", fnId, fnName, fn.Ret)
 		for j, instr := range fn.Instructions {
 			fmt.Fprintf(out, "\t%d: %s\n", j, instr)
 		}
