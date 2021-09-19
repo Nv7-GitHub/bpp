@@ -70,6 +70,9 @@ func (i *IR) AddStmt(stmt parser.Statement) (int, error) {
 	case *parser.RoundStmt:
 		return i.addMathFunction(ROUND, s.Val)
 
+	case *parser.ArgsStmt:
+		return i.addArgs(s)
+
 	default:
 		return 0, fmt.Errorf("%v: unknown statement type: %s", s.Pos(), reflect.TypeOf(s).String())
 	}

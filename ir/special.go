@@ -63,3 +63,27 @@ func (i *IR) addTypeCast(stmt *parser.TypeCastStmt) (int, error) {
 
 	return i.newCast(val, getType(stmt.NewType)), nil
 }
+
+type GetArg struct {
+	Index int
+}
+
+func (g *GetArg) Type() Type {
+	return STRING
+}
+
+func (g *GetArg) String() string {
+	return fmt.Sprintf("GetArg: %d", g.Index)
+}
+
+func (i *IR) newGetArg(index int) int {
+	return i.AddInstruction(&GetArg{Index: index})
+}
+
+func (i *IR) addArgs(stmt *parser.ArgsStmt) (int, error) {
+	ind, err := i.AddStmt(stmt.Index)
+	if err != nil {
+		return 0, err
+	}
+	return i.newGetArg(ind), nil
+}
