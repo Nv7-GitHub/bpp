@@ -35,9 +35,10 @@ type Instruction interface {
 
 type IR struct {
 	Instructions []Instruction
-	Functions    map[string]Function
+	Functions    []Function
 
 	vars map[string]varData
+	fns  map[string]int
 }
 
 func (i *IR) Index() int {
