@@ -8,7 +8,7 @@ import (
 
 func NewIR() *IR {
 	ir := &IR{
-		vars: make(map[string]varData),
+		Functions: make(map[string]Function),
 	}
 	return ir
 }
@@ -16,7 +16,7 @@ func NewIR() *IR {
 func CreateIR(prog *parser.Program) (*IR, error) {
 	ir := NewIR()
 	// Add functions
-	for _, stm := range prog.Statements {
+	for i, stm := range prog.Statements {
 		f, ok := stm.(*parser.FunctionBlock)
 		if !ok {
 			continue
@@ -25,6 +25,10 @@ func CreateIR(prog *parser.Program) (*IR, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		// Remove from array
+		copy(prog.Statements[i:], prog.Statements[i+1:])
+		prog.Statements = prog.Statements[:len(prog.Statements)-1]
 	}
 
 	// Add statements
