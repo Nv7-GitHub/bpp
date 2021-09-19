@@ -56,3 +56,84 @@ func (c *Compare) String() string {
 func (i *IR) newCompare(op parser.Operator, val1, val2 int, typ Type) int {
 	return i.AddInstruction(&Compare{Op: op, Val1: val1, Val2: val2, typ: typ})
 }
+
+// TODO: Make if statement not return null
+func (i *IR) addIf(stmt *parser.IfStmt) (int, error) {
+	cond, err := i.AddStmt(stmt.Condition)
+	if err != nil {
+		return 0, err
+	}
+
+	jmp := i.newCondJmp(cond)
+
+	ifTrue := i.newJmpPoint()
+	_, err = i.AddStmtTop(stmt.Body)
+	if err != nil {
+		return 0, err
+	}
+	ifTrueEnd := i.newJmp()
+
+	ifFalse := i.newJmpPoint()
+	if stmt.Else != nil {
+		_, err = i.AddStmtTop(stmt.Else)
+		if err != nil {
+			return 0, err
+		}
+	}
+	ifFalseEnd := i.newJmp()
+
+	end := i.newJmpPoint()
+	i.SetCondJmpPoint(jmp, ifTrue, ifFalse)
+	i.SetJmpPoint(ifTrueEnd, end)
+	i.SetJmpPoint(ifFalseEnd, end)
+
+	return end, nil
+}
+
+type Jmp struct {
+	Target int
+}
+
+func (j *Jmp) Type() Type {
+	return NULL
+}
+
+func (j *Jmp) String() string {
+	return fmt.Sprintf("Jmp: %d", j.Target)
+}
+
+func (i *IR) newJmp() int {
+	return i.AddInstruction(&Jmp{Target: -1})
+}
+
+type CondJmp struct {
+	Cond        int
+	TargetTrue  int
+	TargetFalse int
+}
+
+func (j *CondJmp) Type() Type {
+	return NULL
+}
+
+func (j *CondJmp) String() string {
+	return fmt.Sprintf("CondJmp: %d => (%d, %d)", j.Cond, j.TargetTrue, j.TargetFalse)
+}
+
+func (i *IR) newCondJmp(cond int) int {
+	return i.AddInstruction(&CondJmp{Cond: cond, TargetTrue: -1, TargetFalse: -1})
+}
+
+type JmpPoint struct{}
+
+func (j *JmpPoint) Type() Type {
+	return NULL
+}
+
+func (j *JmpPoint) String() string {
+	return "JmpPoint"
+}
+
+func (i *IR) newJmpPoint() int {
+	return i.AddInstruction(&JmpPoint{})
+}

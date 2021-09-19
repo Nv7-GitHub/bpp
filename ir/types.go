@@ -61,6 +61,19 @@ func (i *IR) GetInstruction(index int) Instruction {
 	return i.Instructions[index]
 }
 
+func (i *IR) SetJmpPoint(index int, target int) {
+	jmp := i.Instructions[index].(*Jmp)
+	jmp.Target = target
+	i.Instructions[index] = jmp
+}
+
+func (i *IR) SetCondJmpPoint(index int, targetTrue int, targetFalse int) {
+	jmp := i.Instructions[index].(*CondJmp)
+	jmp.TargetTrue = targetTrue
+	jmp.TargetFalse = targetFalse
+	i.Instructions[index] = jmp
+}
+
 func Indent(val string) string {
 	lines := strings.Split(val, "\n")
 	for i, line := range lines {

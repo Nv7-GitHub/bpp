@@ -28,6 +28,15 @@ func (i *IR) AddStmt(stmt parser.Statement) (int, error) {
 	case *parser.ComparisonStmt:
 		return i.addComparison(s)
 
+	case *parser.IfStmt:
+		return i.addIf(s)
+
+	case *parser.IfBlock:
+		return i.addIfB(s)
+
+	case *parser.WhileBlock:
+		return i.addWhile(s)
+
 	default:
 		return 0, fmt.Errorf("%v: unknown statement type: %s", s.Pos(), reflect.TypeOf(s).String())
 	}
