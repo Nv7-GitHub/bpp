@@ -31,3 +31,4 @@ run.sh
 *.s
 *.ll
 a
+test.sh
