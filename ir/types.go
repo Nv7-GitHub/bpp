@@ -81,3 +81,5 @@ func Indent(val string) string {
 	}
 	return strings.Join(lines, "\n")
 }
+
+type empty struct{}

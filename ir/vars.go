@@ -11,6 +11,11 @@ type varData struct {
 	Typ Type
 }
 
+var dynamics = map[Type]empty{
+	STRING: {},
+	ARRAY:  {},
+}
+
 func (i *IR) addDefine(stmt *parser.DefineStmt) (int, error) {
 	valind, err := i.AddStmt(stmt.Value)
 	if err != nil {
@@ -18,11 +23,18 @@ func (i *IR) addDefine(stmt *parser.DefineStmt) (int, error) {
 	}
 	typ := i.GetInstruction(valind).Type()
 
-	// Check if it already existsm if it doesnt, alloc the memory
+	// Check if it already exists and if it doesnt, alloc the memory
 	name := stmt.Label.(*parser.Data).Data.(string)
 	_, exists := i.vars[name]
 	if !exists {
-		mem := i.newAllocStatic(typ)
+		// If dynamic, alloc dynamic
+		_, exists := dynamics[typ]
+		var mem int
+		if !exists {
+			mem = i.newAllocStatic(typ)
+		} else {
+			mem = i.newAllocDynamic(valind)
+		}
 		i.vars[name] = varData{
 			Mem: mem,
 			Typ: typ,
@@ -31,6 +43,10 @@ func (i *IR) addDefine(stmt *parser.DefineStmt) (int, error) {
 
 	// Overwrite data
 	val := i.vars[name]
+	_, exists = dynamics[typ]
+	if exists {
+		return i.newSetMemoryDynamic(val.Mem, valind), nil
+	}
 	return i.newSetMemory(val.Mem, valind), nil
 }
 
@@ -39,6 +55,10 @@ func (i *IR) addVar(stmt *parser.VarStmt) (int, error) {
 	val, exists := i.vars[name]
 	if !exists {
 		return 0, fmt.Errorf("%v: variable %s not defined", stmt.Pos().String(), name)
+	}
+	_, dynamic := dynamics[val.Typ]
+	if dynamic {
+		return i.newGetMemoryDynamic(val.Mem, val.Typ), nil
 	}
 
 	return i.newGetMemory(val.Mem, val.Typ), nil
@@ -80,6 +100,7 @@ func (i *IR) newSetMemory(mem int, val int) int {
 	return i.AddInstruction(&SetMemory{
 		Mem:   mem,
 		Value: val,
+		typ:   i.GetInstruction(val).Type(),
 	})
 }
 
@@ -99,6 +120,73 @@ func (s *GetMemory) String() string {
 
 func (i *IR) newGetMemory(mem int, typ Type) int {
 	return i.AddInstruction(&GetMemory{
+		Mem: mem,
+		typ: typ,
+	})
+}
+
+// Dynamic types
+type AllocDynamic struct {
+	Val int
+	typ Type
+}
+
+func (a *AllocDynamic) Type() Type {
+	return a.typ
+}
+
+func (a *AllocDynamic) String() string {
+	return fmt.Sprintf("AllocDynamic<%s>: %d", a.Type().String(), a.Val)
+}
+
+func (i *IR) newAllocDynamic(val int) int {
+	v := i.GetInstruction(val)
+	instr := &AllocDynamic{
+		Val: val,
+		typ: v.Type(),
+	}
+	return i.AddInstruction(instr)
+}
+
+type SetMemoryDynamic struct {
+	Mem   int
+	Value int
+
+	typ Type
+}
+
+func (s *SetMemoryDynamic) Type() Type {
+	return NULL
+}
+
+func (s *SetMemoryDynamic) String() string {
+	return fmt.Sprintf("SetMemoryDynamic<%s>: (%d, %d)", s.typ.String(), s.Mem, s.Value)
+}
+
+func (i *IR) newSetMemoryDynamic(mem int, val int) int {
+	return i.AddInstruction(&SetMemoryDynamic{
+		Mem:   mem,
+		Value: val,
+		typ:   i.GetInstruction(val).Type(),
+	})
+}
+
+type GetMemoryDynamic struct {
+	Mem int
+
+	typ Type
+}
+
+func (s *GetMemoryDynamic) Type() Type {
+	return s.typ
+}
+
+func (s *GetMemoryDynamic) String() string {
+	return fmt.Sprintf("GetMemory<%s>: %d", s.typ.String(), s.Mem)
+}
+
+func (i *IR) newGetMemoryDynamic(mem int, typ Type) int {
+	return i.AddInstruction(&GetMemoryDynamic{
 		Mem: mem,
 		typ: typ,
 	})

@@ -37,6 +37,15 @@ func (i *IR) AddStmt(stmt parser.Statement) (int, error) {
 	case *parser.WhileBlock:
 		return i.addWhile(s)
 
+	case *parser.ConcatStmt:
+		return i.addConcat(s)
+
+	case *parser.TypeCastStmt:
+		return i.addTypeCast(s)
+
+	case *parser.ArrayStmt:
+		return i.addArray(s)
+
 	default:
 		return 0, fmt.Errorf("%v: unknown statement type: %s", s.Pos(), reflect.TypeOf(s).String())
 	}
