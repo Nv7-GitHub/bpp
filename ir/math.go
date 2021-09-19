@@ -63,3 +63,52 @@ func (m *Math) Type() Type {
 func (m *Math) String() string {
 	return fmt.Sprintf("Math<%s, %s>: (%d, %d)", m.typ.String(), m.Op.String(), m.Val1, m.Val2)
 }
+
+type MathFunctionType int
+
+const (
+	FLOOR MathFunctionType = iota
+	CEIL
+	ROUND
+)
+
+var mathFunctionNames = map[MathFunctionType]string{
+	FLOOR: "FLOOR",
+	CEIL:  "CEIL",
+	ROUND: "ROUND",
+}
+
+func (m MathFunctionType) String() string {
+	return mathFunctionNames[m]
+}
+
+type MathFunction struct {
+	Op  MathFunctionType
+	Val int
+	typ Type
+}
+
+func (m *MathFunction) Type() Type {
+	return m.typ
+}
+
+func (m *MathFunction) String() string {
+	return fmt.Sprintf("MathFunction<%s, %s>: %d", m.Type().String(), m.Op.String(), m.Val)
+}
+
+func (i *IR) newMathFunction(fn MathFunctionType, val int) int {
+	return i.AddInstruction(&MathFunction{
+		Op:  fn,
+		Val: val,
+		typ: i.GetInstruction(val).Type(),
+	})
+}
+
+func (i *IR) addMathFunction(fn MathFunctionType, val parser.Statement) (int, error) {
+	v, err := i.AddStmt(val)
+	if err != nil {
+		return 0, err
+	}
+
+	return i.newMathFunction(fn, v), nil
+}
