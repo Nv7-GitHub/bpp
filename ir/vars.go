@@ -93,7 +93,7 @@ func (s *SetMemory) Type() Type {
 }
 
 func (s *SetMemory) String() string {
-	return fmt.Sprintf("SetMemory<%s>: (%d, %d)", s.Type().String(), s.Mem, s.Value)
+	return fmt.Sprintf("SetMemory<%s>: (%d, %d)", s.Typ.String(), s.Mem, s.Value)
 }
 
 func (i *IR) newSetMemory(mem int, val int) int {

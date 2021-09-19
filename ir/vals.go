@@ -10,19 +10,19 @@ func createConst(val *parser.Data) (*Const, error) {
 	switch {
 	case val.Type().IsEqual(parser.INT):
 		return &Const{
-			typ:  INT,
+			Typ:  INT,
 			Data: val.Data,
 		}, nil
 
 	case val.Type().IsEqual(parser.FLOAT):
 		return &Const{
-			typ:  FLOAT,
+			Typ:  FLOAT,
 			Data: val.Data,
 		}, nil
 
 	case val.Type().IsEqual(parser.STRING):
 		return &Const{
-			typ:  STRING,
+			Typ:  STRING,
 			Data: val.Data,
 		}, nil
 
@@ -32,12 +32,12 @@ func createConst(val *parser.Data) (*Const, error) {
 }
 
 type Const struct {
-	typ  Type
+	Typ  Type
 	Data interface{}
 }
 
 func (c *Const) Type() Type {
-	return c.typ
+	return c.Typ
 }
 
 func (c *Const) String() string {

@@ -85,11 +85,11 @@ type Function struct {
 type FunctionCall struct {
 	Fn     int
 	Params []int
-	typ    Type
+	Typ    Type
 }
 
 func (f *FunctionCall) Type() Type {
-	return f.typ
+	return f.Typ
 }
 
 func (f *FunctionCall) String() string {
@@ -118,6 +118,6 @@ func (i *IR) addFunctionCall(stmt *parser.FunctionCallStmt) (int, error) {
 	return i.AddInstruction(&FunctionCall{
 		Fn:     fn,
 		Params: pars,
-		typ:    i.Functions[fn].Instructions[i.Functions[fn].Ret].Type(),
+		Typ:    i.Functions[fn].Instructions[i.Functions[fn].Ret].Type(),
 	}), nil
 }

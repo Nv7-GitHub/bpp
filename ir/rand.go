@@ -30,7 +30,7 @@ func (i *IR) addChoose(stmt *parser.ChooseStmt) (int, error) {
 	}
 
 	length := i.newLength(val)
-	zero := i.AddInstruction(&Const{Data: 0, typ: INT})
+	zero := i.AddInstruction(&Const{Data: 0, Typ: INT})
 	ind := i.newRandint(zero, length)
 	return i.newIndex(val, ind), nil
 }
