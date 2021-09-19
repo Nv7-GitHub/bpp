@@ -47,9 +47,6 @@ func BuildStmt(p *Program, stmt parser.Statement, instructionum ...int) (Instruc
 	case *parser.ChooseStmt:
 		return ChooseStmt(p, s)
 
-	case *parser.RepeatStmt:
-		return RepeatStmt(p, s)
-
 	case *parser.RandomStmt:
 		return RandomStmt(p, s)
 

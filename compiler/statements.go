@@ -62,9 +62,6 @@ func CompileStmt(stm parser.Statement, b *ir.Block) (value.Value, *ir.Block, err
 	case *parser.RoundStmt:
 		return CompileRound(s, b)
 
-	case *parser.RepeatStmt:
-		return CompileRepeat(s, b)
-
 	case *parser.RandomStmt:
 		return CompileRandom(s, b)
 

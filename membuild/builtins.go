@@ -3,7 +3,6 @@ package membuild
 import (
 	"fmt"
 	"math/rand"
-	"strings"
 
 	"github.com/Nv7-Github/bpp/parser"
 )
@@ -33,49 +32,6 @@ func ChooseStmt(p *Program, stm *parser.ChooseStmt) (Instruction, error) {
 			return arr[rand.Intn(len(arr))], nil
 		}
 		return NewBlankData(), fmt.Errorf("%v: parameter to CHOOSE must be STRING or ARRAY", stm.Pos())
-	}, nil
-}
-
-// RepeatStmt compiles a REPEAT statement
-func RepeatStmt(p *Program, stm *parser.RepeatStmt) (Instruction, error) {
-	val, err := BuildStmt(p, stm.Val)
-	if err != nil {
-		return nil, err
-	}
-	ind, err := BuildStmt(p, stm.Count)
-	if err != nil {
-		return nil, err
-	}
-	return func(p *Program) (Data, error) {
-		v, err := val(p)
-		if err != nil {
-			return NewBlankData(), err
-		}
-		i, err := ind(p)
-		if err != nil {
-			return NewBlankData(), err
-		}
-
-		str, ok := v.Value.(string)
-		if ok {
-			return Data{
-				Type:  parser.STRING,
-				Value: strings.Repeat(str, i.Value.(int)),
-			}, nil
-		}
-
-		arr, ok := v.Value.([]Data)
-		if ok {
-			repeated := make([]Data, len(arr)*i.Value.(int))
-			for j := 0; j < i.Value.(int); j++ {
-				for k := 0; k < len(arr); k++ {
-					repeated[j*len(arr)+k] = arr[k]
-				}
-			}
-			v.Value = repeated
-			return v, nil
-		}
-		return NewBlankData(), fmt.Errorf("%v: parameter 1 to REPEAT must be STRING or ARRAY", stm.Pos())
 	}, nil
 }
 

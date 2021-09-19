@@ -22,18 +22,6 @@ func (c *ConcatStmt) Type() DataType {
 	return STRING
 }
 
-// RepeatStmt is the equivalent of [REPEAT stmt.Val]
-type RepeatStmt struct {
-	*BasicStatement
-	Val   Statement
-	Count Statement
-}
-
-// Type gives the return type of a REPEAT statement (STRING)
-func (r *RepeatStmt) Type() DataType {
-	return STRING
-}
-
 // ImportStmt is the AST tree resulted of [IMPORT stmt.Filename]
 type ImportStmt struct {
 	*BasicStatement
@@ -66,17 +54,6 @@ func SetupOthers() {
 			}, nil
 		},
 		Signature: []DataType{ANY, VARIADIC},
-	}
-
-	parsers["REPEAT"] = StatementParser{
-		Parse: func(args []Statement, pos *Pos) (Statement, error) {
-			return &RepeatStmt{
-				Val:            args[0],
-				Count:          args[1],
-				BasicStatement: &BasicStatement{pos: pos},
-			}, nil
-		},
-		Signature: []DataType{STRING, INT},
 	}
 
 	parsers["NULL"] = StatementParser{
