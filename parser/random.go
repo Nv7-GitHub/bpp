@@ -38,7 +38,7 @@ func (c *ChooseStmt) Type() DataType {
 	return ANY
 }
 
-// SetupRandoms adds the RANDINT, RANDOM, CHOOSE, and CHOOSECHAR statements
+// SetupRandoms adds the RANDINT, RANDOM, and CHOOSE statements
 func SetupRandoms() {
 	parsers["RANDINT"] = StatementParser{
 		Parse: func(args []Statement, pos *Pos) (Statement, error) {
@@ -70,15 +70,5 @@ func SetupRandoms() {
 			}, nil
 		},
 		Signature: []DataType{STRING | ARRAY},
-	}
-
-	parsers["CHOOSECHAR"] = StatementParser{
-		Parse: func(args []Statement, pos *Pos) (Statement, error) {
-			return &ChooseStmt{
-				BasicStatement: &BasicStatement{pos: pos},
-				Data:           args[0],
-			}, nil
-		},
-		Signature: []DataType{STRING},
 	}
 }
