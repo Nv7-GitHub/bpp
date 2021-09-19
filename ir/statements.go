@@ -55,6 +55,12 @@ func (i *IR) AddStmt(stmt parser.Statement) (int, error) {
 	case *parser.ChooseStmt:
 		return i.addChoose(s)
 
+	case *parser.RandintStmt:
+		return i.addRandint(s)
+
+	case *parser.RandomStmt:
+		return i.addRandom(s)
+
 	default:
 		return 0, fmt.Errorf("%v: unknown statement type: %s", s.Pos(), reflect.TypeOf(s).String())
 	}

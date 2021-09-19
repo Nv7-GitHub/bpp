@@ -31,5 +31,51 @@ func (i *IR) addChoose(stmt *parser.ChooseStmt) (int, error) {
 
 	length := i.newLength(val)
 	zero := i.AddInstruction(&Const{Data: 0, typ: INT})
-	return i.newRandint(zero, length), nil
+	ind := i.newRandint(zero, length)
+	return i.newIndex(val, ind), nil
+}
+
+type RandFloat struct {
+	Min int
+	Max int
+}
+
+func (r *RandFloat) String() string {
+	return fmt.Sprintf("RandFloat: (%d, %d)", r.Min, r.Max)
+}
+
+func (r *RandFloat) Type() Type {
+	return FLOAT
+}
+
+func (i *IR) newRandfloat(min, max int) int {
+	return i.AddInstruction(&RandFloat{Min: min, Max: max})
+}
+
+func (i *IR) addRandom(stmt *parser.RandomStmt) (int, error) {
+	min, err := i.AddStmt(stmt.Lower)
+	if err != nil {
+		return 0, err
+	}
+
+	max, err := i.AddStmt(stmt.Upper)
+	if err != nil {
+		return 0, err
+	}
+
+	return i.newRandfloat(min, max), nil
+}
+
+func (i *IR) addRandint(stmt *parser.RandintStmt) (int, error) {
+	min, err := i.AddStmt(stmt.Lower)
+	if err != nil {
+		return 0, err
+	}
+
+	max, err := i.AddStmt(stmt.Upper)
+	if err != nil {
+		return 0, err
+	}
+
+	return i.newRandint(min, max), nil
 }
