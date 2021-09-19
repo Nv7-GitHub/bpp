@@ -53,6 +53,17 @@ func (i *IR) AddInstruction(instr Instruction) int {
 
 func (i *IR) String() string {
 	out := &strings.Builder{}
+	for fnName, fnId := range i.fns {
+		fn := i.Functions[fnId]
+		fmt.Fprintf(out, "%d [%s]:\n", fnId, fnName)
+		for j, instr := range fn.Instructions {
+			fmt.Fprintf(out, "\t%d: %s\n", j, instr)
+		}
+	}
+	if len(i.Functions) > 0 {
+		fmt.Fprintln(out)
+	}
+
 	for i, instr := range i.Instructions {
 		fmt.Fprintf(out, "%d: %s\n", i, instr.String())
 	}
