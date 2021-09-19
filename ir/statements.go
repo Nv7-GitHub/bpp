@@ -46,6 +46,9 @@ func (i *IR) AddStmt(stmt parser.Statement) (int, error) {
 	case *parser.ArrayStmt:
 		return i.addArray(s)
 
+	case *parser.IndexStmt:
+		return i.addIndex(s)
+
 	default:
 		return 0, fmt.Errorf("%v: unknown statement type: %s", s.Pos(), reflect.TypeOf(s).String())
 	}

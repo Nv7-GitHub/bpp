@@ -112,3 +112,61 @@ func (i *IR) addArray(stmt *parser.ArrayStmt) (int, error) {
 
 	return i.newArray(vals, typ), nil
 }
+
+// NOTE: Index is an instruction index
+type ArrayIndex struct {
+	Array int
+	Index int
+	typ   Type
+}
+
+func (i *ArrayIndex) Type() Type {
+	return i.typ
+}
+
+func (i *ArrayIndex) String() string {
+	return fmt.Sprintf("ArrayIndex<%s>: (%d, %d)", i.typ.String(), i.Array, i.Index)
+}
+
+// NOTE: Index is an instruction index
+type StringIndex struct {
+	Array int
+	Index int
+}
+
+func (i *StringIndex) Type() Type {
+	return STRING
+}
+
+func (i *StringIndex) String() string {
+	return fmt.Sprintf("StringIndex: (%d, %d)", i.Array, i.Index)
+}
+
+func (i *IR) newIndex(array int, index int) int {
+	typ := i.GetInstruction(array).Type()
+	if typ == ARRAY {
+		return i.AddInstruction(&ArrayIndex{
+			Array: array,
+			Index: index,
+			typ:   i.GetInstruction(array).(*Array).ValType,
+		})
+	}
+	return i.AddInstruction(&StringIndex{
+		Array: array,
+		Index: index,
+	})
+}
+
+func (i *IR) addIndex(stmt *parser.IndexStmt) (int, error) {
+	array, err := i.AddStmt(stmt.Value)
+	if err != nil {
+		return 0, err
+	}
+
+	ind, err := i.AddStmt(stmt.Index)
+	if err != nil {
+		return 0, err
+	}
+
+	return i.newIndex(array, ind), nil
+}
