@@ -76,6 +76,9 @@ func (i *IR) AddStmt(stmt parser.Statement) (int, error) {
 	case *parser.FunctionCallStmt:
 		return i.addFunctionCall(s)
 
+	case *parser.ImportStmt:
+		return i.addImport(s)
+
 	default:
 		return 0, fmt.Errorf("%v: unknown statement type: %s", s.Pos(), reflect.TypeOf(s).String())
 	}

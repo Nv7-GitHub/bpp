@@ -62,3 +62,19 @@ func (i *IR) addWhile(stmt *parser.WhileBlock) (int, error) {
 
 	return end, nil
 }
+
+func (i *IR) addImport(stmt *parser.ImportStmt) (int, error) {
+	for _, stm := range stmt.Statements {
+		_, ok := stm.(*parser.FunctionBlock)
+		if ok {
+			continue
+		}
+
+		if _, err := i.AddStmtTop(stm); err != nil {
+			return 0, err
+		}
+	}
+
+	null := i.AddInstruction(&Const{Typ: NULL})
+	return null, nil
+}

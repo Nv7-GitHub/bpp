@@ -14,10 +14,22 @@ func NewIR() *IR {
 	return ir
 }
 
-func CreateIR(prog *parser.Program) (*IR, error) {
-	ir := NewIR()
-	// Add functions
-	for i, stm := range prog.Statements {
+func removeIndex(stmts []parser.Statement, i int) []parser.Statement {
+	if len(stmts) == 1 {
+		return make([]parser.Statement, 0)
+	}
+	copy(stmts[i:], stmts[i+1:])
+	stmts = stmts[:len(stmts)-1]
+	return stmts
+}
+
+func (ir *IR) functionPass(stmts []parser.Statement) ([]parser.Statement, error) {
+	for i, stm := range stmts {
+		imp, ok := stm.(*parser.ImportStmt)
+		if ok {
+			ir.functionPass(imp.Statements)
+		}
+
 		f, ok := stm.(*parser.FunctionBlock)
 		if !ok {
 			continue
@@ -28,8 +40,19 @@ func CreateIR(prog *parser.Program) (*IR, error) {
 		}
 
 		// Remove from array
-		copy(prog.Statements[i:], prog.Statements[i+1:])
-		prog.Statements = prog.Statements[:len(prog.Statements)-1]
+		stmts = removeIndex(stmts, i)
+	}
+
+	return stmts, nil
+}
+
+func CreateIR(prog *parser.Program) (*IR, error) {
+	ir := NewIR()
+	// Add functions
+	var err error
+	prog.Statements, err = ir.functionPass(prog.Statements)
+	if err != nil {
+		return nil, err
 	}
 
 	// Add statements
