@@ -1,6 +1,9 @@
 package ir
 
-import "encoding/gob"
+import (
+	"encoding/gob"
+	"io"
+)
 
 func init() {
 	gob.Register(&FunctionCall{})
@@ -27,4 +30,12 @@ func init() {
 	gob.Register(&ArrayIndex{})
 	gob.Register(&StringIndex{})
 	gob.Register(&Array{})
+}
+
+func (i *IR) Save(f io.Writer) error {
+	return gob.NewEncoder(f).Encode(i)
+}
+
+func (i *IR) Load(f io.Reader) error {
+	return gob.NewDecoder(f).Decode(i)
 }

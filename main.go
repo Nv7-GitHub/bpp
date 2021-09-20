@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/gob"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -9,7 +8,6 @@ import (
 	"runtime/pprof"
 	"time"
 
-	"github.com/Nv7-Github/bpp/ir"
 	"github.com/Nv7-Github/bpp/parser"
 	arg "github.com/alexflint/go-arg"
 )
@@ -42,17 +40,24 @@ type Convert struct {
 	File   string `arg:"positional,-i,--input" help:"input Go program"`
 }
 
+// Tools defines the "tools" sub-command
+type Tool struct {
+	IR *IR `arg:"subcommand:ir" help:"generate B++ ir"`
+}
+
 // IR defines the "ir" sub-command
 type IR struct {
-	Files []string `arg:"positional,-i,--input" help:"input B++ program"`
+	Files  []string `arg:"positional,-i,--input" help:"input B++ program"`
+	Output string   `help:"output file for IR" arg:"-o"`
+	Text   bool     `help:"text format"`
 }
 
 // Args defines the program's arguments
 type Args struct {
 	Build   *Build   `arg:"subcommand:build" help:"compile a B++ program"`
 	Run     *Run     `arg:"subcommand:run" help:"run a B++ program"`
-	IR      *IR      `arg:"subcommand:ir" help:"generate B++ IR"`
 	Convert *Convert `arg:"subcommand:convert" help:"convert a go program to a B++ program"`
+	Tool    *Tool    `arg:"subcommand:tool" help:"run B++ individual tools"`
 	Time    bool     `help:"print timing for each stage" arg:"-t"`
 
 	CPUProf string `help:"CPU pprof statistics output file"`
@@ -87,24 +92,8 @@ func main() {
 		RunCmd(args, prog)
 	case args.Convert != nil:
 		ConvertCmd(args)
-	case args.IR != nil:
-		prog := ParseProg(args.Time, args.IR.Files)
-		ir_v, err := ir.CreateIR(prog)
-		handle(err)
-
-		out, err := os.Create("code.ir")
-		handle(err)
-		enc := gob.NewEncoder(out)
-		handle(enc.Encode(ir_v))
-		out.Close()
-
-		in, err := os.Open("code.ir")
-		handle(err)
-		dec := gob.NewDecoder(in)
-		var i *ir.IR
-		handle(dec.Decode(&i))
-
-		fmt.Println(i.String())
+	case args.Tool != nil:
+		processTools(args)
 	default:
 		p.WriteUsage(os.Stdout)
 	}
