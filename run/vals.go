@@ -7,8 +7,8 @@ import (
 	"github.com/Nv7-Github/bpp/ir"
 )
 
-func (r *Runnable) runConst(index int) {
-	r.registers[index] = r.ir.Instructions[index].(*ir.Const).Data
+func (r *Runnable) runConst() {
+	r.registers[r.Index] = r.ir.Instructions[r.Index].(*ir.Const).Data
 }
 
 func (r *Runnable) runPrint(print *ir.Print) error {
@@ -16,25 +16,25 @@ func (r *Runnable) runPrint(print *ir.Print) error {
 	return err
 }
 
-func (r *Runnable) runCast(index int, i *ir.Cast) error {
+func (r *Runnable) runCast(i *ir.Cast) error {
 	typ := r.ir.Instructions[i.Val].Type()
 	switch typ {
 	case ir.INT:
 		switch i.Typ {
 		case ir.FLOAT:
-			r.registers[index] = float64(r.registers[i.Val].(int))
+			r.registers[r.Index] = float64(r.registers[i.Val].(int))
 
 		case ir.STRING:
-			r.registers[index] = strconv.Itoa(r.registers[i.Val].(int))
+			r.registers[r.Index] = strconv.Itoa(r.registers[i.Val].(int))
 		}
 
 	case ir.FLOAT:
 		switch i.Typ {
 		case ir.INT:
-			r.registers[index] = int(r.registers[i.Val].(float64))
+			r.registers[r.Index] = int(r.registers[i.Val].(float64))
 
 		case ir.STRING:
-			r.registers[index] = fmt.Sprintf("%f", r.registers[i.Val].(float64))
+			r.registers[r.Index] = fmt.Sprintf("%f", r.registers[i.Val].(float64))
 		}
 
 	case ir.STRING:
@@ -44,14 +44,14 @@ func (r *Runnable) runCast(index int, i *ir.Cast) error {
 			if err != nil {
 				return err
 			}
-			r.registers[index] = v
+			r.registers[r.Index] = v
 
 		case ir.FLOAT:
 			v, err := strconv.ParseFloat(r.registers[i.Val].(string), 64)
 			if err != nil {
 				return err
 			}
-			r.registers[index] = v
+			r.registers[r.Index] = v
 		}
 	}
 

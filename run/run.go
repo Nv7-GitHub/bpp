@@ -8,6 +8,7 @@ import (
 
 type Runnable struct {
 	Stdout io.Writer
+	Index  int
 
 	ir        *ir.IR
 	registers []interface{}
@@ -28,6 +29,7 @@ func NewRunnable(ir *ir.IR) *Runnable {
 func (r *Runnable) Run(args []string) error {
 	r.args = args
 	for i := range r.ir.Instructions {
+		r.Index = i
 		if err := r.runInstruction(i); err != nil {
 			return err
 		}
