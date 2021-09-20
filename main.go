@@ -28,6 +28,12 @@ type Build struct {
 	Files  []string `arg:"positional,-i,--input" help:"input B++ program"`
 }
 
+// Membuild defines the "membuild" sub-command
+type Membuild struct {
+	Args  string   `help:"arguments for program, comma-seperated"`
+	Files []string `arg:"positional,-i,--input" help:"input B++ program"`
+}
+
 // Run defines the "run" sub-command
 type Run struct {
 	Args  string   `help:"arguments for program, comma-seperated"`
@@ -54,11 +60,12 @@ type IR struct {
 
 // Args defines the program's arguments
 type Args struct {
-	Build   *Build   `arg:"subcommand:build" help:"compile a B++ program"`
-	Run     *Run     `arg:"subcommand:run" help:"run a B++ program"`
-	Convert *Convert `arg:"subcommand:convert" help:"convert a go program to a B++ program"`
-	Tool    *Tool    `arg:"subcommand:tool" help:"run B++ individual tools"`
-	Time    bool     `help:"print timing for each stage" arg:"-t"`
+	Build    *Build    `arg:"subcommand:build" help:"compile a B++ program"`
+	Membuild *Membuild `arg:"subcommand:membuild" help:"run a B++ program using the legacy interpreter"`
+	Run      *Run      `arg:"subcommand:run" help:"run a B++ program"`
+	Convert  *Convert  `arg:"subcommand:convert" help:"convert a go program to a B++ program"`
+	Tool     *Tool     `arg:"subcommand:tool" help:"run B++ individual tools"`
+	Time     bool      `help:"print timing for each stage" arg:"-t"`
 
 	CPUProf string `help:"CPU pprof statistics output file"`
 	Memprof string `help:"heap pprof statistics output file"`
@@ -90,6 +97,12 @@ func main() {
 		}
 		prog := ParseProg(args.Time, args.Run.Files)
 		RunCmd(args, prog)
+	case args.Membuild != nil:
+		if len(args.Membuild.Files) < 1 {
+			handle(errors.New("you must supply at least one file"))
+		}
+		prog := ParseProg(args.Time, args.Membuild.Files)
+		MembuildCmd(args, prog)
 	case args.Convert != nil:
 		ConvertCmd(args)
 	case args.Tool != nil:
