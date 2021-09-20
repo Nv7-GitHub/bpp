@@ -11,6 +11,7 @@ type Runnable struct {
 
 	ir        *ir.IR
 	registers []interface{}
+	vars      map[int]interface{}
 
 	params []int
 	args   []string
@@ -20,6 +21,7 @@ func NewRunnable(ir *ir.IR) *Runnable {
 	return &Runnable{
 		ir:        ir,
 		registers: make([]interface{}, len(ir.Instructions)),
+		vars:      make(map[int]interface{}),
 	}
 }
 
