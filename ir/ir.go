@@ -9,7 +9,7 @@ import (
 func NewIR() *IR {
 	ir := &IR{
 		Functions: make([]Function, 0),
-		Fns:       make(map[string]int),
+		fns:       make(map[string]int),
 	}
 	return ir
 }

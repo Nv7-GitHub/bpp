@@ -36,8 +36,8 @@ type Instruction interface {
 type IR struct {
 	Instructions []Instruction
 	Functions    []Function
-	Fns          map[string]int
 
+	fns  map[string]int
 	vars map[string]varData
 }
 
@@ -53,9 +53,8 @@ func (i *IR) AddInstruction(instr Instruction) int {
 
 func (i *IR) String() string {
 	out := &strings.Builder{}
-	for fnName, fnId := range i.Fns {
-		fn := i.Functions[fnId]
-		fmt.Fprintf(out, "%d [%s] => %d:\n", fnId, fnName, fn.Ret)
+	for fnId, fn := range i.Functions {
+		fmt.Fprintf(out, "%d => %d:\n", fnId, fn.Ret)
 		for j, instr := range fn.Instructions {
 			fmt.Fprintf(out, "\t%d: %s\n", j, instr)
 		}
