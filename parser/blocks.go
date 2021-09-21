@@ -25,10 +25,10 @@ func (i *IfBlock) EndSignature() []DataType {
 }
 
 // End parses the end of an IFB statement
-func (i *IfBlock) End(kind string, _ []Statement, statements []Statement) bool {
+func (i *IfBlock) End(kind string, _ []Statement, statements []Statement) (bool, error) {
 	if kind == "ELSE" {
 		i.Body = statements
-		return false
+		return false, nil
 	}
 
 	if i.Body == nil {
@@ -36,7 +36,7 @@ func (i *IfBlock) End(kind string, _ []Statement, statements []Statement) bool {
 	} else {
 		i.Else = statements
 	}
-	return true
+	return true, nil
 }
 
 // SetupBlocks adds the IFB and WHILE functions
@@ -86,7 +86,7 @@ func (w *WhileBlock) EndSignature() []DataType {
 }
 
 // End parses the ending of a WHILE statement
-func (w *WhileBlock) End(kind string, _ []Statement, statements []Statement) bool {
+func (w *WhileBlock) End(kind string, _ []Statement, statements []Statement) (bool, error) {
 	w.Body = statements
-	return true
+	return true, nil
 }

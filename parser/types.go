@@ -34,7 +34,7 @@ type Block interface {
 
 	Keywords() []string
 	EndSignature() []DataType
-	End(keyword string, arguments []Statement, statements []Statement) bool // Returns whether closed or not
+	End(keyword string, arguments []Statement, statements []Statement) (bool, error) // Returns whether closed or not
 }
 
 // StatementParser defines the type for a statement parser - a cusotm function that can parse the statement and a signature of its parameters

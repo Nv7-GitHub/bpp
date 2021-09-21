@@ -28,9 +28,9 @@ func (p *Program) Keywords() []string {
 }
 
 // End is there to make a Program implement the Block interface
-func (p *Program) End(_ string, _ []Statement, stmts []Statement) bool {
+func (p *Program) End(_ string, _ []Statement, stmts []Statement) (bool, error) {
 	p.Statements = stmts
-	return true
+	return true, nil
 }
 
 // EndSignature is there to make a Program implement the Block interface
@@ -63,8 +63,8 @@ func Parse(filename, code string) (*Program, error) {
 	if !ok {
 		return nil, fmt.Errorf("unterminated block: %s", reflect.TypeOf(pScope.Block))
 	}
-	scopes.FinishScope("", make([]Statement, 0))
-	return p, nil
+	err := scopes.FinishScope("", make([]Statement, 0))
+	return p, err
 }
 
 // ParseFiles parses multiple B++ source code files, accepting the name of the main file and a map of filename to source code.
@@ -137,7 +137,7 @@ func ParseFiles(mainname string, files map[string]string) (*Program, error) {
 	if !ok {
 		return nil, fmt.Errorf("unterminated block: %s", reflect.TypeOf(pScope.Block))
 	}
-	scopes.FinishScope("", make([]Statement, 0))
+	err := scopes.FinishScope("", make([]Statement, 0))
 	delete(parsers, "IMPORT") // Remove IMPORT parser
-	return p, nil
+	return p, err
 }

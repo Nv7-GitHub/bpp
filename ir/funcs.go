@@ -27,7 +27,11 @@ func (i *IR) AddFunction(fn *parser.FunctionBlock) error {
 		return fmt.Errorf("%v: function \"%s\" already defined", fn.Pos(), fn.Name)
 	}
 	// Add fn name for recursion
-	i.fns[fn.Name] = len(i.Functions)
+	fnNum := len(i.Functions)
+	i.fns[fn.Name] = fnNum
+	i.Functions = append(i.Functions, Function{
+		RetType: getType(fn.Signature.ReturnType),
+	})
 
 	i.Instructions = make([]Instruction, 0)
 	i.vars = make(map[string]varData)
@@ -67,11 +71,12 @@ func (i *IR) AddFunction(fn *parser.FunctionBlock) error {
 	for ind, par := range fn.Signature.Signature {
 		parTypes[ind] = getType(par)
 	}
-	i.Functions = append(i.Functions, Function{
+	i.Functions[fnNum] = Function{
 		ParTypes:     parTypes,
 		Ret:          ret,
 		Instructions: i.Instructions,
-	})
+		RetType:      i.Instructions[ret].Type(),
+	}
 
 	return nil
 }
@@ -80,6 +85,7 @@ type Function struct {
 	ParTypes     []Type
 	Ret          int
 	Instructions []Instruction
+	RetType      Type
 }
 
 type FunctionCall struct {
@@ -118,6 +124,6 @@ func (i *IR) addFunctionCall(stmt *parser.FunctionCallStmt) (int, error) {
 	return i.AddInstruction(&FunctionCall{
 		Fn:     fn,
 		Params: pars,
-		Typ:    i.Functions[fn].Instructions[i.Functions[fn].Ret].Type(),
+		Typ:    i.Functions[fn].RetType,
 	}), nil
 }

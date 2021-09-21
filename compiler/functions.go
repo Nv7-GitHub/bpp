@@ -28,7 +28,7 @@ func AddFunction(fn *parser.FunctionBlock) error {
 	for i, par := range fn.Signature.Signature {
 		params[i] = ir.NewParam(fn.Signature.Names[i], paramTypeMap[par])
 	}
-	retType, exists := paramTypeMap[fn.Return.Type()]
+	retType, exists := paramTypeMap[fn.Signature.ReturnType]
 	if !exists {
 		return fmt.Errorf("%v: unknown return type", fn.Return.Pos())
 	}

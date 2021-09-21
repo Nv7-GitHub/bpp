@@ -182,7 +182,7 @@ Functions allow code to be put in blocks and run in a safe environment, for exam
 # Add the two numbers
 [DEFINE result [MATH [VAR a] + [VAR b]]]
 # Return the value
-[RETURN [INT [VAR result]]]
+[RETURN INT [VAR result]]
 ```
 Now, to add 1 and 2, using this function, you would just do
 ```bpp
@@ -191,7 +191,7 @@ Now, to add 1 and 2, using this function, you would just do
 
 Side note: You can use 
 ```bpp
-[RETURN [NULL]]
+[RETURN NULL [NULL]]
 ```
 To return a blank value.
 
@@ -214,7 +214,7 @@ B++ supports recursion too! For example, to make a factorial function:
 [ENDIF]
 
 # Return the result
-[RETURN [INT [VAR result]]]
+[RETURN INT [VAR result]]
 ```
 Now, just use
 ```bpp

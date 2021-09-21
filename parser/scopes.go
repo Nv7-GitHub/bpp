@@ -48,8 +48,11 @@ func (s *ScopeStack) AddScope(scope *Scope) {
 }
 
 // FinishScope pops a scope off of the end of the stack, after processing the ending of the block
-func (s *ScopeStack) FinishScope(keyword string, arguments []Statement) {
-	remove := s.scopes[0].Block.End(keyword, arguments, s.scopes[0].Statements)
+func (s *ScopeStack) FinishScope(keyword string, arguments []Statement) error {
+	remove, err := s.scopes[0].Block.End(keyword, arguments, s.scopes[0].Statements)
+	if err != nil {
+		return err
+	}
 	if remove {
 		if len(s.scopes) > 1 {
 			s.scopes[1].Statements = append(s.scopes[1].Statements, s.scopes[0].Block)
@@ -58,6 +61,7 @@ func (s *ScopeStack) FinishScope(keyword string, arguments []Statement) {
 	} else {
 		s.scopes[0].Statements = make([]Statement, 0)
 	}
+	return nil
 }
 
 // AddStatement adds a statement to the scope's statements

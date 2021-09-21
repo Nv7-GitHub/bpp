@@ -9,7 +9,7 @@ import (
 
 type empty struct{}
 
-var hasReturn map[string]empty
+var hasReturn = make(map[string]empty)
 
 var typeMap = map[string]string{
 	"string":  "STRING",
@@ -20,7 +20,7 @@ var typeMap = map[string]string{
 	"int":     "INT",
 }
 
-var fnRetTypes map[string]string
+var fnRetTypes = make(map[string]string)
 
 func (p *Program) addFuncDecl(fn *ast.FuncDecl) error {
 	name := strings.ToUpper(fn.Name.Name)
@@ -37,7 +37,6 @@ func (p *Program) addFuncDecl(fn *ast.FuncDecl) error {
 
 	p.WriteString("[FUNCTION ")
 	p.WriteString(name)
-	p.WriteString("]\n")
 
 	for _, arg := range fn.Type.Params.List {
 		var kind string
@@ -55,6 +54,7 @@ func (p *Program) addFuncDecl(fn *ast.FuncDecl) error {
 
 		fmt.Fprintf(p, " [PARAM %s %s]", arg.Names[0].Name, kind)
 	}
+	p.WriteString("]\n")
 
 	err := p.AddBlock(fn.Body.List)
 	if err != nil {
@@ -63,7 +63,7 @@ func (p *Program) addFuncDecl(fn *ast.FuncDecl) error {
 
 	_, exists := hasReturn[name]
 	if !exists {
-		p.WriteString("[RETURN [NULL]]\n")
+		p.WriteString("[RETURN NULL [NULL]]\n")
 	}
 	p.FuncName = ""
 	return nil
@@ -83,12 +83,13 @@ func (p *Program) AddBlock(args []ast.Stmt) error {
 }
 
 func (p *Program) addReturnStmt(s *ast.ReturnStmt) error {
-	p.WriteString("[RETURN [")
+	p.WriteString("[RETURN ")
 	kind, exists := fnRetTypes[p.FuncName]
 	if !exists {
 		return fmt.Errorf("%s: no return type", p.NodePos(s))
 	}
 	p.WriteString(kind)
+	p.WriteString(" ")
 
 	err := p.AddExpr(s.Results[0])
 	if err != nil {

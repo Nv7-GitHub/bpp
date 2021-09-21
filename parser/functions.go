@@ -45,16 +45,25 @@ func (f *FunctionBlock) Keywords() []string {
 
 // EndSignature gets the ending signature of a FUNCTION (ANY or NULL)
 func (f *FunctionBlock) EndSignature() []DataType {
-	return []DataType{ANY | NULL}
+	return []DataType{IDENTIFIER, ANY | NULL}
 }
 
 // End parses a function end (which would be a RETURN)
-func (f *FunctionBlock) End(_ string, args []Statement, statements []Statement) bool {
-	f.Return = args[0]
+func (f *FunctionBlock) End(_ string, args []Statement, statements []Statement) (bool, error) {
+	kind, ok := args[0].(*Data)
+	if !ok {
+		return true, fmt.Errorf("%v: parameter 1 to PARAM must be constant", f.Pos())
+	}
+	k, exists := dataTypes[kind.Data.(string)]
+	if !exists {
+		return true, fmt.Errorf("%v: parameter 1 to RETURN must be INT, FLOAT, NULL, STRING, or ARRAY", f.Pos())
+	}
+
+	f.Return = args[1]
 	f.Body = statements
-	f.Signature.ReturnType = f.Return.Type()
+	f.Signature.ReturnType = k
 	functionTypes[f.Name] = f.Signature
-	return true
+	return true, nil
 }
 
 var dataTypes = map[string]DataType{
@@ -62,6 +71,7 @@ var dataTypes = map[string]DataType{
 	"FLOAT":  FLOAT,
 	"STRING": STRING,
 	"ARRAY":  ARRAY,
+	"NULL":   NULL,
 }
 
 // SetupFunctions adds the PARAM statement and the FUNCTION block
@@ -80,7 +90,7 @@ func SetupFunctions() {
 
 			k, exists := dataTypes[kind.Data.(string)]
 			if !exists {
-				return nil, fmt.Errorf("%v: parameter 2 to PARAM must be INT, FLOAT, STRING, or ARRAY", pos)
+				return nil, fmt.Errorf("%v: parameter 2 to PARAM must be INT, FLOAT, NULL, STRING, or ARRAY", pos)
 			}
 
 			return &ParamStmt{

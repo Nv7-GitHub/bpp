@@ -126,9 +126,9 @@ func ParseStmt(line string, pos *Pos, scope ...*ScopeStack) (Statement, error) {
 				return nil, err
 			}
 
-			scope[0].FinishScope(funcName, argDat)
+			err := scope[0].FinishScope(funcName, argDat)
 
-			return nil, nil
+			return nil, err
 		}
 	}
 	return ParseData(line, pos), nil
