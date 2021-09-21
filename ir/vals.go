@@ -26,6 +26,12 @@ func createConst(val *parser.Data) (*Const, error) {
 			Data: val.Data,
 		}, nil
 
+	case val.Type().IsEqual(parser.NULL):
+		return &Const{
+			Typ:  NULL,
+			Data: val.Data,
+		}, nil
+
 	default:
 		return nil, fmt.Errorf("%v: unknown constant type", val.Pos())
 	}

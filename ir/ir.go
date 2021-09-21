@@ -14,16 +14,8 @@ func NewIR() *IR {
 	return ir
 }
 
-func removeIndex(stmts []parser.Statement, i int) []parser.Statement {
-	if len(stmts) == 1 {
-		return make([]parser.Statement, 0)
-	}
-	copy(stmts[i:], stmts[i+1:])
-	stmts = stmts[:len(stmts)-1]
-	return stmts
-}
-
 func (ir *IR) functionPass(stmts []parser.Statement) ([]parser.Statement, error) {
+	toRemove := make(map[int]empty)
 	for i, stm := range stmts {
 		imp, ok := stm.(*parser.ImportStmt)
 		if ok {
@@ -40,7 +32,17 @@ func (ir *IR) functionPass(stmts []parser.Statement) ([]parser.Statement, error)
 		}
 
 		// Remove from array
-		stmts = removeIndex(stmts, i)
+		toRemove[i] = empty{}
+	}
+	if len(toRemove) > 0 {
+		out := make([]parser.Statement, 0, len(stmts))
+		for i, stm := range stmts {
+			_, exists := toRemove[i]
+			if !exists {
+				out = append(out, stm)
+			}
+		}
+		stmts = out
 	}
 
 	return stmts, nil
