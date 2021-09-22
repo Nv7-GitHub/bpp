@@ -28,11 +28,11 @@ func NewRunnable(ir *ir.IR) *Runnable {
 
 func (r *Runnable) Run(args []string) error {
 	r.args = args
-	for i := range r.ir.Instructions {
-		r.Index = i
-		if err := r.runInstruction(i); err != nil {
+	for r.Index < len(r.ir.Instructions) {
+		if err := r.runInstruction(r.Index); err != nil {
 			return err
 		}
+		r.Index++
 	}
 	return nil
 }

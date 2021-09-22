@@ -48,6 +48,36 @@ func (r *Runnable) runInstruction(index int) error {
 	case *ir.Cast:
 		return r.runCast(i)
 
+	case *ir.GetArg:
+		return r.runGetArg(i)
+
+	case *ir.JmpPoint:
+		return nil
+
+	case *ir.Jmp:
+		r.runJmp(i)
+		return nil
+
+	case *ir.CondJmp:
+		r.runCondJmp(i)
+		return nil
+
+	case *ir.Compare:
+		r.runCompare(i)
+		return nil
+
+	case *ir.RandInt:
+		r.runRandInt(i)
+		return nil
+
+	case *ir.RandFloat:
+		r.runRandFloat(i)
+		return nil
+
+	case *ir.Concat:
+		r.runConcat(i)
+		return nil
+
 	default:
 		return fmt.Errorf("unknown instruction type: %s", reflect.TypeOf(i).String())
 	}

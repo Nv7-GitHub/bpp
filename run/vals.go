@@ -3,6 +3,7 @@ package run
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/Nv7-Github/bpp/ir"
 )
@@ -56,4 +57,17 @@ func (r *Runnable) runCast(i *ir.Cast) error {
 	}
 
 	return nil
+}
+
+func (r *Runnable) runConcat(i *ir.Concat) {
+	if len(i.Vals) == 2 {
+		r.registers[r.Index] = r.registers[i.Vals[0]].(string) + r.registers[i.Vals[1]].(string)
+		return
+	}
+
+	out := &strings.Builder{}
+	for _, val := range i.Vals {
+		out.WriteString(r.registers[val].(string))
+	}
+	r.registers[r.Index] = out.String()
 }
