@@ -20,16 +20,16 @@ func init() {
 	gob.Register(&Cast{})
 	gob.Register(&Math{})
 	gob.Register(&Concat{})
-	gob.Register(&PHI{}) // TODO
+	gob.Register(&PHI{})
 	gob.Register(&Jmp{})
 	gob.Register(&CondJmp{})
 	gob.Register(&JmpPoint{})
 	gob.Register(&Compare{})
 	gob.Register(&RandInt{})
 	gob.Register(&RandFloat{})
-	gob.Register(&ArrayIndex{})  // TODO
-	gob.Register(&StringIndex{}) // TODO
-	gob.Register(&Array{})       // TODO
+	gob.Register(&ArrayIndex{})
+	gob.Register(&StringIndex{})
+	gob.Register(&Array{})
 }
 
 func (i *IR) Save(f io.Writer) error {

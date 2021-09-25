@@ -64,6 +64,34 @@ func (c *Cast) String() string {
 }
 
 func (i *IR) newCast(val int, typ Type) int {
+	instr := i.GetInstruction(val)
+	if instr.Type() == ARRAY && typ == STRING {
+		comma := i.AddInstruction(&Const{Typ: STRING, Data: ", "})
+		var vals []int
+		arr := i.GetInstruction(val).(*Array)
+		if arr.ValType == STRING {
+			vals = arr.Vals
+		} else {
+			vals = make([]int, len(arr.Vals))
+			for j, val := range arr.Vals {
+				casted := i.newCast(val, STRING)
+				vals[j] = casted
+			}
+		}
+
+		v := make([]int, len(vals)+(len(vals)-1))
+		for i := range v {
+			if (i % 2) == 0 {
+				v[i] = vals[i/2]
+			} else {
+				v[i] = comma
+			}
+		}
+
+		str := i.newConcat(v)
+		return str
+	}
+
 	return i.AddInstruction(&Cast{
 		Val: val,
 		Typ: typ,

@@ -85,6 +85,22 @@ func (r *Runnable) runInstruction(index int) error {
 		r.runGetParam(i)
 		return nil
 
+	case *ir.Array:
+		r.runArray(i)
+		return nil
+
+	case *ir.ArrayIndex:
+		r.runArrayIndex(i)
+		return nil
+
+	case *ir.StringIndex:
+		r.runStringIndex(i)
+		return nil
+
+	case *ir.PHI:
+		r.runPHI(i)
+		return nil
+
 	default:
 		return fmt.Errorf("unknown instruction type: %s", reflect.TypeOf(i).String())
 	}

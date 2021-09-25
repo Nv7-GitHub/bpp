@@ -36,3 +36,12 @@ func (r *Runnable) runRandInt(i *ir.RandInt) {
 func (r *Runnable) runRandFloat(i *ir.RandFloat) {
 	r.registers[r.Index] = rand.Float64()*float64(i.Max-i.Min) + float64(i.Min)
 }
+
+func (r *Runnable) runPHI(i *ir.PHI) {
+	cond := r.registers[i.Cond].(int) == 1
+	if cond {
+		r.registers[r.Index] = r.registers[i.ValTrue]
+	} else {
+		r.registers[r.Index] = r.registers[i.ValFalse]
+	}
+}

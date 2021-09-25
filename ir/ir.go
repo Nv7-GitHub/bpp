@@ -96,7 +96,7 @@ func (i *IR) AddStmtTop(stmt parser.Statement) (int, error) {
 		case STRING:
 			i.newPrint(ind)
 
-		case INT, FLOAT:
+		case INT, FLOAT, ARRAY:
 			casted := i.newCast(ind, STRING)
 			i.newPrint(casted)
 		}

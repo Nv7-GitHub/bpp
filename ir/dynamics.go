@@ -72,7 +72,7 @@ func (i *ArrayIndex) String() string {
 
 // NOTE: Index is an instruction index
 type StringIndex struct {
-	Array int
+	Val   int
 	Index int
 }
 
@@ -81,7 +81,7 @@ func (i *StringIndex) Type() Type {
 }
 
 func (i *StringIndex) String() string {
-	return fmt.Sprintf("StringIndex: (%d, %d)", i.Array, i.Index)
+	return fmt.Sprintf("StringIndex: (%d, %d)", i.Val, i.Index)
 }
 
 func (i *IR) newIndex(array int, index int) int {
@@ -94,7 +94,7 @@ func (i *IR) newIndex(array int, index int) int {
 		})
 	}
 	return i.AddInstruction(&StringIndex{
-		Array: array,
+		Val:   array,
 		Index: index,
 	})
 }
