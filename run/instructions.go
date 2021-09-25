@@ -78,6 +78,13 @@ func (r *Runnable) runInstruction(index int) error {
 		r.runConcat(i)
 		return nil
 
+	case *ir.FunctionCall:
+		return r.runFunctionCall(i)
+
+	case *ir.GetParam:
+		r.runGetParam(i)
+		return nil
+
 	default:
 		return fmt.Errorf("unknown instruction type: %s", reflect.TypeOf(i).String())
 	}

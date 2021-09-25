@@ -56,7 +56,7 @@ func (i *IR) AddFunction(fn *parser.FunctionBlock) error {
 	}
 
 	for _, stmt := range fn.Body {
-		_, err := i.AddStmt(stmt)
+		_, err := i.AddStmtTop(stmt)
 		if err != nil {
 			return err
 		}

@@ -14,7 +14,7 @@ type Runnable struct {
 	registers []interface{}
 	vars      map[int]interface{}
 
-	params []int
+	params []interface{}
 	args   []string
 }
 

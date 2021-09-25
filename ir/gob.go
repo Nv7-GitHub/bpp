@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	gob.Register(&FunctionCall{}) // TODO
+	gob.Register(&FunctionCall{})
 	gob.Register(&Print{})
 	gob.Register(&Const{})
 	gob.Register(&AllocStatic{})
@@ -16,7 +16,7 @@ func init() {
 	gob.Register(&GetMemory{})
 	gob.Register(&GetMemoryDynamic{})
 	gob.Register(&GetArg{})
-	gob.Register(&GetParam{}) // TODO
+	gob.Register(&GetParam{})
 	gob.Register(&Cast{})
 	gob.Register(&Math{})
 	gob.Register(&Concat{})
