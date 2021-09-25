@@ -96,6 +96,8 @@ func (p *Program) addReturnStmt(s *ast.ReturnStmt) error {
 		return err
 	}
 
+	p.WriteString("]")
+
 	hasReturn[p.FuncName] = empty{}
 
 	return nil
