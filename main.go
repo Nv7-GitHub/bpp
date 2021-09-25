@@ -58,14 +58,19 @@ type IR struct {
 	Text   bool     `help:"text format"`
 }
 
+// Old defines the "old" sub-command
+type Old struct {
+	Membuild *Membuild `arg:"subcommand:membuild" help:"run a B++ program using the legacy interpreter"`
+	Build    *Build    `arg:"subcommand:build" help:"compile a B++ program using the legacy compiler"`
+}
+
 // Args defines the program's arguments
 type Args struct {
-	Build    *Build    `arg:"subcommand:build" help:"compile a B++ program"`
-	Membuild *Membuild `arg:"subcommand:membuild" help:"run a B++ program using the legacy interpreter"`
-	Run      *Run      `arg:"subcommand:run" help:"run a B++ program"`
-	Convert  *Convert  `arg:"subcommand:convert" help:"convert a go program to a B++ program"`
-	Tool     *Tool     `arg:"subcommand:tool" help:"run B++ individual tools"`
-	Time     bool      `help:"print timing for each stage" arg:"-t"`
+	Run     *Run     `arg:"subcommand:run" help:"run a B++ program"`
+	Convert *Convert `arg:"subcommand:convert" help:"convert a go program to a B++ program"`
+	Tool    *Tool    `arg:"subcommand:tool" help:"run B++ individual tools"`
+	Old     *Old     `arg:"subcommand:old" help:"run a legacy B++ tool"`
+	Time    bool     `help:"print timing for each stage" arg:"-t"`
 
 	CPUProf string `help:"CPU pprof statistics output file"`
 	Memprof string `help:"heap pprof statistics output file"`
@@ -85,24 +90,15 @@ func main() {
 	}
 
 	switch {
-	case args.Build != nil:
-		if len(args.Build.Files) < 1 {
-			handle(errors.New("you must supply at least one file"))
-		}
-		prog := ParseProg(args.Time, args.Build.Files)
-		CompileCmd(args, prog)
+	case args.Old != nil:
+		OldCmd(args)
+
 	case args.Run != nil:
 		if len(args.Run.Files) < 1 {
 			handle(errors.New("you must supply at least one file"))
 		}
 		prog := ParseProg(args.Time, args.Run.Files)
 		RunCmd(args, prog)
-	case args.Membuild != nil:
-		if len(args.Membuild.Files) < 1 {
-			handle(errors.New("you must supply at least one file"))
-		}
-		prog := ParseProg(args.Time, args.Membuild.Files)
-		MembuildCmd(args, prog)
 	case args.Convert != nil:
 		ConvertCmd(args)
 	case args.Tool != nil:
