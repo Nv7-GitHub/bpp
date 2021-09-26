@@ -22,6 +22,9 @@ type builder struct {
 	stdlib    map[string]*llir.Func
 
 	formatter value.Value
+
+	autofreeCnt int
+	autofree    map[int]DynamicValue
 }
 
 func Build(ir *ir.IR) (string, error) {
@@ -44,6 +47,7 @@ func Build(ir *ir.IR) (string, error) {
 		stdlib:    make(map[string]*llir.Func),
 
 		formatter: ptr,
+		autofree:  make(map[int]DynamicValue),
 	}
 	err := builder.build()
 	if err != nil {
@@ -60,6 +64,9 @@ func (b *builder) build() error {
 			return err
 		}
 		b.index++
+	}
+	for _, val := range b.autofree {
+		val.Free(b)
 	}
 	b.block.NewRet(constant.NewInt(types.I32, 0))
 	return nil

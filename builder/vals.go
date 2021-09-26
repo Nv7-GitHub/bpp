@@ -28,7 +28,7 @@ func (b *builder) addConst(s *ir.Const) error {
 		ptr := b.block.NewGetElementPtr(types.NewArray(uint64(len(str)), types.I8), globVal, constant.NewInt(types.I64, 0), constant.NewInt(types.I64, 0))
 		mem := b.block.NewCall(b.stdFn("malloc"), constant.NewInt(types.I64, int64(len(str))))
 		b.block.NewCall(b.stdFn("memcpy"), mem, ptr, constant.NewInt(types.I64, int64(len(str))))
-		b.registers[b.index] = newString(b.block, len(str), mem)
+		b.registers[b.index] = newString(b.block, len(str), mem, b)
 		return nil
 
 	default:
@@ -45,6 +45,7 @@ type DynamicValue interface {
 	Value
 
 	Free(*builder)
+	Own(*builder)
 }
 
 type Int struct {
@@ -74,7 +75,8 @@ func (f *Float) Value() value.Value {
 var stringType = types.NewStruct(types.I8Ptr, types.I64)
 
 type String struct {
-	Val value.Value
+	Val     value.Value
+	freeind int
 }
 
 func (s *String) Type() ir.Type {
@@ -99,7 +101,11 @@ func (s *String) Length(b *builder) value.Value {
 	return b.block.NewLoad(types.I64, len)
 }
 
-func newString(b *llir.Block, length int, mem value.Value) *String {
+func (s *String) Own(b *builder) {
+	delete(b.autofree, s.freeind)
+}
+
+func newString(b *llir.Block, length int, mem value.Value, bld *builder) *String {
 	str := b.NewAlloca(stringType)
 	valPtr := b.NewGetElementPtr(stringType, str, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))
 	b.NewStore(mem, valPtr)
@@ -107,7 +113,12 @@ func newString(b *llir.Block, length int, mem value.Value) *String {
 	lenPtr := b.NewGetElementPtr(stringType, str, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 1))
 	b.NewStore(constant.NewInt(types.I64, int64(length)), lenPtr)
 
-	return &String{Val: str}
+	v := &String{Val: str}
+	v.freeind = bld.autofreeCnt
+	bld.autofreeCnt++
+
+	bld.autofree[v.freeind] = v
+	return v
 }
 
 func (b *builder) addPrint(s *ir.Print) {
