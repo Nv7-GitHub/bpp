@@ -32,6 +32,10 @@ func (b *builder) addInstruction(instr ir.Instruction) error {
 		b.addPrint(i)
 		return nil
 
+	case *ir.Concat:
+		b.addConcat(i)
+		return nil
+
 	default:
 		return fmt.Errorf("unknown instruction type: %s", reflect.TypeOf(i).String())
 	}
