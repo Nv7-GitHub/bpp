@@ -11,8 +11,10 @@ var arrayType = types.NewStruct(types.I8Ptr, types.I64, types.I64) // Data, len,
 
 type Array struct {
 	Val     value.Value
-	Vals    []value.Value
 	freeind int
+
+	isDynamic   bool
+	dynamicType ir.Type
 }
 
 func (a *Array) Type() ir.Type {
@@ -38,6 +40,7 @@ func (a *Array) ElemSize(b *builder) value.Value {
 	return b.block.NewLoad(types.I64, len)
 }
 
+// TODO: If dynamic, go through values in for loop (LLVM-side) and free them, free based on the dynamicTypes
 func (a *Array) Free(b *builder) {
 	b.block.NewCall(b.stdFn("free"), a.Data(b))
 }
@@ -68,7 +71,7 @@ func (a *Array) Duplicate(b *builder) DynamicValue {
 
 	freeind := b.autofreeCnt
 	b.autofreeCnt++
-	arrV := &Array{Val: newArr, freeind: freeind} // TODO: Put Vals object, so that freeing works
+	arrV := &Array{Val: newArr, freeind: freeind}
 
 	b.autofree[freeind] = arrV
 
