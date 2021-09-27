@@ -40,7 +40,7 @@ func (a *Array) ElemSize(b *builder) value.Value {
 	return b.block.NewLoad(types.I64, len)
 }
 
-// TODO: If dynamic, go through values in for loop (LLVM-side) and free them, free based on the dynamicTypes
+// TODO: If dynamic, go through values in for loop (LLVM-side) and free them, free based on the dynamicTypes, for Array make sure to recursively free
 func (a *Array) Free(b *builder) {
 	b.block.NewCall(b.stdFn("free"), a.Data(b))
 }
