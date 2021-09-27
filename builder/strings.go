@@ -41,6 +41,16 @@ func (s *String) Own(b *builder) {
 	delete(b.autofree, s.freeind)
 }
 
+func (s *String) Duplicate(b *builder) DynamicValue {
+	str := s.StringVal(b)
+	len := s.Length(b)
+
+	new := b.block.NewCall(b.stdFn("malloc"), len)
+	b.block.NewCall(b.stdFn("memcpy"), new, str, len)
+
+	return newString(b.block, len, new, b)
+}
+
 func newString(b *llir.Block, length value.Value, mem value.Value, bld *builder) *String {
 	str := b.NewAlloca(stringType)
 	valPtr := b.NewGetElementPtr(stringType, str, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))

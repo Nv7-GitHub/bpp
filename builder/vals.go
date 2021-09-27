@@ -45,6 +45,7 @@ type DynamicValue interface {
 
 	Free(*builder)
 	Own(*builder)
+	Duplicate(*builder) DynamicValue
 }
 
 type Int struct {
