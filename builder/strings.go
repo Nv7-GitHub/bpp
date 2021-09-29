@@ -8,11 +8,15 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
+type empty struct{}
+
 var stringType = types.NewStruct(types.I8Ptr, types.I64)
 
 type String struct {
-	Val     value.Value
+	Val value.Value
+
 	freeind int
+	owners  map[int]empty
 }
 
 func (s *String) Type() ir.Type {
@@ -23,8 +27,11 @@ func (s *String) Value() value.Value {
 	return s.Val
 }
 
-func (s *String) Free(b *builder) {
-	b.block.NewCall(b.stdFn("free"), s.StringVal(b))
+func (s *String) Free(b *builder, owner int) {
+	delete(s.owners, owner)
+	if len(s.owners) == 0 {
+		b.block.NewCall(b.stdFn("free"), s.StringVal(b))
+	}
 }
 
 func (s *String) StringVal(b *builder) value.Value {
@@ -37,18 +44,12 @@ func (s *String) Length(b *builder) value.Value {
 	return b.block.NewLoad(types.I64, len)
 }
 
-func (s *String) Own(b *builder) {
-	delete(b.autofree, s.freeind)
-}
-
-func (s *String) Duplicate(b *builder) DynamicValue {
-	str := s.StringVal(b)
-	len := s.Length(b)
-
-	new := b.block.NewCall(b.stdFn("malloc"), len)
-	b.block.NewCall(b.stdFn("memcpy"), new, str, len)
-
-	return newString(b.block, len, new, b)
+func (s *String) Own(b *builder, index int) {
+	if s.freeind != -1 {
+		delete(b.autofree, s.freeind)
+		s.freeind = -1
+	}
+	s.owners[index] = empty{}
 }
 
 func newString(b *llir.Block, length value.Value, mem value.Value, bld *builder) *String {
@@ -59,7 +60,7 @@ func newString(b *llir.Block, length value.Value, mem value.Value, bld *builder)
 	lenPtr := b.NewGetElementPtr(stringType, str, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 1))
 	b.NewStore(length, lenPtr)
 
-	v := &String{Val: str}
+	v := &String{Val: str, owners: make(map[int]empty)}
 	v.freeind = bld.autofreeCnt
 	bld.autofreeCnt++
 

@@ -43,9 +43,8 @@ type Value interface {
 type DynamicValue interface {
 	Value
 
-	Free(*builder)
-	Own(*builder)
-	Duplicate(*builder) DynamicValue
+	Free(b *builder, ownder int)
+	Own(b *builder, index int)
 }
 
 type Int struct {

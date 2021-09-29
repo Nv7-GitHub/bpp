@@ -40,6 +40,14 @@ func (b *builder) addInstruction(instr ir.Instruction) error {
 		b.addArray(i)
 		return nil
 
+	case *ir.AllocDynamic:
+		b.addAllocDynamic(i)
+		return nil
+
+	case *ir.SetMemoryDynamic:
+		b.addSetMemoryDynamic(i)
+		return nil
+
 	default:
 		return fmt.Errorf("unknown instruction type: %s", reflect.TypeOf(i).String())
 	}

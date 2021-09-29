@@ -33,7 +33,7 @@ func (i *IR) addDefine(stmt *parser.DefineStmt) (int, error) {
 		if !exists {
 			mem = i.newAllocStatic(typ)
 		} else {
-			mem = i.newAllocDynamic(valind)
+			mem = i.newAllocDynamic(typ)
 		}
 		i.vars[name] = varData{
 			Mem: mem,
@@ -127,7 +127,6 @@ func (i *IR) newGetMemory(mem int, typ Type) int {
 
 // Dynamic types
 type AllocDynamic struct {
-	Val int
 	Typ Type
 }
 
@@ -136,14 +135,12 @@ func (a *AllocDynamic) Type() Type {
 }
 
 func (a *AllocDynamic) String() string {
-	return fmt.Sprintf("AllocDynamic<%s>: %d", a.Type().String(), a.Val)
+	return fmt.Sprintf("AllocDynamic<%s>", a.Type().String())
 }
 
-func (i *IR) newAllocDynamic(val int) int {
-	v := i.GetInstruction(val)
+func (i *IR) newAllocDynamic(typ Type) int {
 	instr := &AllocDynamic{
-		Val: val,
-		Typ: v.Type(),
+		Typ: typ,
 	}
 	return i.AddInstruction(instr)
 }

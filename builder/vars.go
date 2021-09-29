@@ -11,6 +11,13 @@ type Mem struct {
 	Type ir.Type
 }
 
+type DynamicMem struct {
+	Val   DynamicValue
+	Type  ir.Type
+	Mem   value.Value
+	Index int
+}
+
 func (b *builder) addAllocStatic(s *ir.AllocStatic) {
 	var mem value.Value
 	switch s.Type() {
@@ -39,4 +46,37 @@ func (b *builder) addGetMemory(s *ir.GetMemory) {
 	case ir.FLOAT:
 		b.registers[b.index] = &Float{Val: b.block.NewLoad(types.Double, mem.Val)}
 	}
+}
+
+func (b *builder) addAllocDynamic(s *ir.AllocDynamic) {
+	var mem value.Value
+	switch s.Type() {
+	case ir.STRING:
+		mem = b.block.NewAlloca(stringType)
+
+	case ir.ARRAY:
+		mem = b.block.NewAlloca(arrayType)
+	}
+	b.registers[b.index] = DynamicMem{Val: nil, Type: s.Type(), Mem: mem, Index: b.index}
+	b.autofreeMem[b.index] = empty{}
+}
+
+func (b *builder) addSetMemoryDynamic(s *ir.SetMemoryDynamic) {
+	mem := b.registers[s.Mem].(DynamicMem)
+	if mem.Val != nil {
+		mem.Val.Free(b, mem.Index)
+	}
+
+	val := b.registers[s.Value].(DynamicValue)
+	val.Own(b, mem.Index)
+	mem.Val = val
+
+	v := val.Value()
+	size := b.sizeof(v)
+
+	ptr1 := b.block.NewBitCast(v, types.I8Ptr)
+	ptr2 := b.block.NewBitCast(mem.Mem, types.I8Ptr)
+	b.block.NewCall(b.stdFn("memcpy"), ptr2, ptr1, size)
+
+	b.registers[mem.Index] = mem
 }
