@@ -38,6 +38,7 @@ func (b *builder) addConst(s *ir.Const) error {
 type Value interface {
 	Type() ir.Type
 	Value() value.Value
+	Size(b *builder) value.Value
 }
 
 type DynamicValue interface {
@@ -59,6 +60,10 @@ func (i *Int) Value() value.Value {
 	return i.Val
 }
 
+func (i *Int) Size(b *builder) value.Value {
+	return constant.NewInt(types.I64, 8)
+}
+
 type Float struct {
 	Val value.Value
 }
@@ -69,4 +74,8 @@ func (f *Float) Type() ir.Type {
 
 func (f *Float) Value() value.Value {
 	return f.Val
+}
+
+func (f *Float) Size(b *builder) value.Value {
+	return constant.NewInt(types.I64, 8)
 }

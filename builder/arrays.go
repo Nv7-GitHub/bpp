@@ -70,7 +70,7 @@ func (b *builder) addArray(i *ir.Array) {
 	valPtr := b.block.NewGetElementPtr(arrayType, arr, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))
 
 	firstVal := b.registers[i.Vals[0]].(Value)
-	size := b.sizeof(firstVal.Value())
+	size := firstVal.Size(b)
 	mem := b.block.NewCall(b.stdFn("malloc"), b.block.NewMul(size, constant.NewInt(types.I64, int64(len(i.Vals)))))
 	for j, val := range i.Vals {
 		v := b.registers[val].(Value)
@@ -102,10 +102,8 @@ func (b *builder) addArray(i *ir.Array) {
 	b.registers[b.index] = arrV
 }
 
-func (b *builder) sizeof(val value.Value) value.Value {
-	typ := val.Type()
-	sizePtr := b.block.NewGetElementPtr(typ, constant.NewNull(types.NewPointer(typ)), constant.NewInt(types.I32, 1))
-	return b.block.NewPtrToInt(sizePtr, types.I64)
+func (a *Array) Size(b *builder) value.Value {
+	return constant.NewInt(types.I64, 16)
 }
 
 func (b *builder) staticPtr(val Value) value.Value {

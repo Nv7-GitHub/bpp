@@ -72,7 +72,7 @@ func (b *builder) addSetMemoryDynamic(s *ir.SetMemoryDynamic) {
 	mem.Val = val
 
 	v := val.Value()
-	size := b.sizeof(v)
+	size := val.Size(b)
 
 	ptr1 := b.block.NewBitCast(v, types.I8Ptr)
 	ptr2 := b.block.NewBitCast(mem.Mem, types.I8Ptr)

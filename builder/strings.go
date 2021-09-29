@@ -52,6 +52,10 @@ func (s *String) Own(b *builder, index int) {
 	s.owners[index] = empty{}
 }
 
+func (s *String) Size(b *builder) value.Value {
+	return constant.NewInt(types.I64, 16)
+}
+
 func newString(b *llir.Block, length value.Value, mem value.Value, bld *builder) *String {
 	str := b.NewAlloca(stringType)
 	valPtr := b.NewGetElementPtr(stringType, str, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))

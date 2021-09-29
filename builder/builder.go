@@ -22,6 +22,7 @@ type builder struct {
 	stdlib    map[string]*llir.Func
 
 	formatter value.Value
+	ptr2      value.Value
 
 	autofreeCnt int
 	autofree    map[int]DynamicValue
@@ -33,7 +34,9 @@ func Build(ir *ir.IR) (string, error) {
 	fn := m.NewFunc("main", types.I32, llir.NewParam("argc", types.I32), llir.NewParam("argv", types.NewPointer(types.I8Ptr)))
 	b := fn.NewBlock("")
 	formatter := m.NewGlobalDef("format", irutil.NewCString("%s\n"))
+	formatter2 := m.NewGlobalDef("format2", irutil.NewCString("%d\n"))
 	ptr := b.NewGetElementPtr(types.NewArray(4, types.I8), formatter, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))
+	ptr2 := b.NewGetElementPtr(types.NewArray(4, types.I8), formatter2, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))
 
 	builder := &builder{
 		mod:   m,
@@ -48,6 +51,7 @@ func Build(ir *ir.IR) (string, error) {
 		stdlib:    make(map[string]*llir.Func),
 
 		formatter:   ptr,
+		ptr2:        ptr2,
 		autofree:    make(map[int]DynamicValue),
 		autofreeMem: make(map[int]empty),
 	}
