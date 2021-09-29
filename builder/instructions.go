@@ -48,6 +48,10 @@ func (b *builder) addInstruction(instr ir.Instruction) error {
 		b.addSetMemoryDynamic(i)
 		return nil
 
+	case *ir.GetMemoryDynamic:
+		b.addGetMemoryDynamic(i)
+		return nil
+
 	default:
 		return fmt.Errorf("unknown instruction type: %s", reflect.TypeOf(i).String())
 	}

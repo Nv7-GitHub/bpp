@@ -60,7 +60,11 @@ func newString(b *llir.Block, length value.Value, mem value.Value, bld *builder)
 	lenPtr := b.NewGetElementPtr(stringType, str, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 1))
 	b.NewStore(length, lenPtr)
 
-	v := &String{Val: str, owners: make(map[int]empty)}
+	return newStringFromStruct(str, bld)
+}
+
+func newStringFromStruct(val value.Value, bld *builder) *String {
+	v := &String{Val: val, owners: make(map[int]empty)}
 	v.freeind = bld.autofreeCnt
 	bld.autofreeCnt++
 
