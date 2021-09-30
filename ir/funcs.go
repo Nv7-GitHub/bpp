@@ -42,7 +42,7 @@ func (i *IR) AddFunction(fn *parser.FunctionBlock) error {
 		var mem int
 		_, exists := dynamics[typ]
 		if exists {
-			mem = i.newAllocDynamic(typ)
+			mem = i.newAllocDynamic(val)
 			i.newSetMemoryDynamic(mem, val)
 		} else {
 			mem = i.newAllocStatic(typ)

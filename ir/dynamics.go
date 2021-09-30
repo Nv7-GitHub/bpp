@@ -87,10 +87,17 @@ func (i *StringIndex) String() string {
 func (i *IR) newIndex(array int, index int) int {
 	typ := i.GetInstruction(array).Type()
 	if typ == ARRAY {
+		var valType Type
+		arr, ok := i.GetInstruction(array).(*Array)
+		if ok {
+			valType = arr.ValType
+		} else {
+			valType = i.GetInstruction(array).(*GetMemoryDynamic).ValType
+		}
 		return i.AddInstruction(&ArrayIndex{
 			Array: array,
 			Index: index,
-			typ:   i.GetInstruction(array).(*Array).ValType,
+			typ:   valType,
 		})
 	}
 	return i.AddInstruction(&StringIndex{
