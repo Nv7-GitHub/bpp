@@ -52,6 +52,10 @@ func (b *builder) addInstruction(instr ir.Instruction) error {
 		b.addGetMemoryDynamic(i)
 		return nil
 
+	case *ir.ArrayLength:
+		b.addArrayLength(i)
+		return nil
+
 	default:
 		return fmt.Errorf("unknown instruction type: %s", reflect.TypeOf(i).String())
 	}

@@ -94,12 +94,19 @@ func (b *builder) addArray(i *ir.Array) {
 	elemSizePtr := b.block.NewGetElementPtr(arrayType, arr, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 2))
 	b.block.NewStore(size, elemSizePtr)
 
-	freeind := b.autofreeCnt
-	b.autofreeCnt++
+	b.registers[b.index] = newArrayFromStruct(arr, b, true)
+}
 
-	arrV := &Array{Val: arr, freeind: freeind, owners: make(map[int]empty), index: b.index}
-	b.autofree[freeind] = arrV
-	b.registers[b.index] = arrV
+func newArrayFromStruct(val value.Value, b *builder, autofree bool) *Array {
+	arrV := &Array{Val: val, owners: make(map[int]empty), index: b.index}
+	if autofree {
+		freeind := b.autofreeCnt
+		b.autofreeCnt++
+		b.autofree[freeind] = arrV
+		b.registers[b.index] = arrV
+		arrV.freeind = freeind
+	}
+	return arrV
 }
 
 func (a *Array) Size(b *builder) value.Value {
@@ -118,4 +125,8 @@ func (b *builder) staticPtr(val Value) value.Value {
 	b.block.NewStore(val.Value(), mem)
 	ptr := b.block.NewBitCast(mem, types.I8Ptr)
 	return ptr
+}
+
+func (b *builder) addArrayLength(s *ir.ArrayLength) {
+	b.registers[b.index] = &Int{Val: b.registers[s.Val].(*Array).Length(b)}
 }
