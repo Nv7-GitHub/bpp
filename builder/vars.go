@@ -85,6 +85,6 @@ func (b *builder) addGetMemoryDynamic(s *ir.GetMemoryDynamic) {
 	mem := b.registers[s.Mem].(DynamicMem)
 	switch mem.Type {
 	case ir.STRING:
-		b.registers[b.index] = newStringFromStruct(mem.Mem, b)
+		b.registers[b.index] = newStringFromStruct(mem.Mem, b, false)
 	}
 }
