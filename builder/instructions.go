@@ -56,6 +56,10 @@ func (b *builder) addInstruction(instr ir.Instruction) error {
 		b.addArrayLength(i)
 		return nil
 
+	case *ir.Cast:
+		b.addCast(i)
+		return nil
+
 	default:
 		return fmt.Errorf("unknown instruction type: %s", reflect.TypeOf(i).String())
 	}

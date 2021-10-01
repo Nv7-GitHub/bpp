@@ -85,7 +85,7 @@ func (b *builder) addPrint(s *ir.Print) {
 	len := str.Length(b)
 	cstr := b.block.NewCall(b.stdFn("calloc"), constant.NewInt(types.I64, 0), b.block.NewAdd(len, constant.NewInt(types.I64, 1)))
 	b.block.NewCall(b.stdFn("memcpy"), cstr, strVal, len)
-	b.block.NewCall(b.stdFn("printf"), b.formatter, cstr)
+	b.block.NewCall(b.stdFn("printf"), b.stdV("fmt"), cstr)
 	b.block.NewCall(b.stdFn("free"), cstr)
 }
 
