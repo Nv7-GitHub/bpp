@@ -90,10 +90,11 @@ func (b *builder) addCast(s *ir.Cast) {
 			b.block.NewCall(b.stdFn("sprintf"), res, b.stdV("intfmt"), v.Value())
 
 			// remove null terminator
-			newV := b.block.NewCall(b.stdFn("malloc"), constant.NewInt(types.I64, 20))
-			b.block.NewCall(b.stdFn("memcpy"), newV, res, constant.NewInt(types.I64, 20))
+			length := b.block.NewCall(b.stdFn("strlen"), res)
+			newV := b.block.NewCall(b.stdFn("malloc"), length)
+			b.block.NewCall(b.stdFn("memcpy"), newV, res, length)
 
-			str := newString(b.block, constant.NewInt(types.I64, 20), newV, b)
+			str := newString(b.block, length, newV, b)
 			b.registers[b.index] = str
 			b.block.NewCall(b.stdFn("free"), res) // Free sprintf output
 
@@ -110,10 +111,11 @@ func (b *builder) addCast(s *ir.Cast) {
 			res := b.block.NewCall(b.stdFn("malloc"), constant.NewInt(types.I64, 17))
 			b.block.NewCall(b.stdFn("gcvt"), v.Value(), constant.NewInt(types.I32, 17), res)
 
-			newV := b.block.NewCall(b.stdFn("malloc"), constant.NewInt(types.I64, 16))
-			b.block.NewCall(b.stdFn("memcpy"), newV, res, constant.NewInt(types.I64, 16))
+			length := b.block.NewCall(b.stdFn("strlen"), res)
+			newV := b.block.NewCall(b.stdFn("malloc"), length)
+			b.block.NewCall(b.stdFn("memcpy"), newV, res, length)
 
-			str := newString(b.block, constant.NewInt(types.I64, 16), newV, b)
+			str := newString(b.block, length, newV, b)
 			b.registers[b.index] = str
 			b.block.NewCall(b.stdFn("free"), res) // Free gcvt output
 
