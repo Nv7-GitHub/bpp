@@ -15,11 +15,17 @@ type Value interface {
 	Size(b *builder) value.Value
 }
 
+type Parent interface {
+	Own(index int)
+	Free(index int)
+}
+
 type DynamicValue interface {
 	Value
 
 	Free(b *builder, ownder int)
 	Own(b *builder, index int)
+	AddParent(Parent)
 }
 
 type Int struct {

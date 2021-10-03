@@ -17,6 +17,8 @@ type String struct {
 
 	freeind int
 	owners  map[int]empty
+
+	parent Parent
 }
 
 func (s *String) Type() ir.Type {
@@ -31,6 +33,9 @@ func (s *String) Free(b *builder, owner int) {
 	delete(s.owners, owner)
 	if len(s.owners) == 0 {
 		b.block.NewCall(b.stdFn("free"), s.StringVal(b))
+	}
+	if s.parent != nil {
+		s.parent.Free(owner)
 	}
 }
 
@@ -50,6 +55,13 @@ func (s *String) Own(b *builder, index int) {
 		s.freeind = -1
 	}
 	s.owners[index] = empty{}
+	if s.parent != nil {
+		s.parent.Own(index)
+	}
+}
+
+func (s *String) AddParent(p Parent) {
+	s.parent = p
 }
 
 func (s *String) Size(_ *builder) value.Value {

@@ -17,6 +17,8 @@ type Array struct {
 	owners map[int]empty
 	index  int
 	ValTyp ir.Type
+
+	parent Parent
 }
 
 func (a *Array) Type() ir.Type {
@@ -55,6 +57,9 @@ func (a *Array) Free(b *builder, index int) {
 			}
 		}
 	}
+	if a.parent != nil {
+		a.parent.Free(index)
+	}
 }
 
 func (a *Array) Own(b *builder, owner int) {
@@ -63,6 +68,13 @@ func (a *Array) Own(b *builder, owner int) {
 		a.freeind = -1
 	}
 	a.owners[owner] = empty{}
+	if a.parent != nil {
+		a.parent.Own(owner)
+	}
+}
+
+func (a *Array) AddParent(p Parent) {
+	a.parent = p
 }
 
 func (b *builder) addArray(i *ir.Array) {

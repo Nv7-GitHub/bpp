@@ -1,6 +1,8 @@
 package builder
 
 import (
+	"fmt"
+
 	"github.com/llir/irutil"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
@@ -69,13 +71,18 @@ func (b *builder) stdV(name string) value.Value {
 		b.newStdval("fmt", "%s\n")
 	case "intfmt":
 		b.newStdval("intfmt", "%d")
+	case "ptrfmt":
+		b.newStdval("ptrfmt", "%p\n")
+	case "intprint":
+		b.newStdval("intprint", "%d\n")
 	}
 
 	return b.stdv[name]
 }
 
 func (b *builder) newStdval(name string, val string) {
-	glob := b.mod.NewGlobalDef(name, irutil.NewCString(val))
+	glob := b.mod.NewGlobalDef(fmt.Sprintf("%s%d", name, b.tmpCount), irutil.NewCString(val))
+	b.tmpCount++
 	v := b.block.NewGetElementPtr(types.NewArray(uint64(len(val)+1), types.I8), glob, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))
 	b.stdv[name] = v
 }

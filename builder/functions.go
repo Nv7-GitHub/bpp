@@ -3,6 +3,7 @@ package builder
 import (
 	"errors"
 	"fmt"
+
 	"github.com/Nv7-Github/bpp/ir"
 	llir "github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
@@ -38,14 +39,14 @@ func (b *builder) addFn(index int) error {
 		b.index++
 	}
 
-	b.cleanup()
-
 	ret := b.registers[fn.Ret].(Value)
 	_, ok := ret.(DynamicValue)
 	if ok {
 		ret.(DynamicValue).Own(b, -1)
+		b.cleanup()
 		b.block.NewRet(b.block.NewLoad(stringType, ret.Value())) // String is only dynamic value returnable, so can assume
 	} else {
+		b.cleanup()
 		b.block.NewRet(ret.Value())
 	}
 
@@ -57,6 +58,7 @@ func (b *builder) setup(instrcount int) {
 	b.autofree = make(map[int]DynamicValue)
 	b.autofreeMem = make(map[int]empty)
 	b.registers = make([]interface{}, instrcount)
+	b.stdv = make(map[string]value.Value)
 }
 
 func (b *builder) addGetParam(i *ir.GetParam) error {

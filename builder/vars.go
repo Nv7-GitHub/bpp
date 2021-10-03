@@ -16,6 +16,16 @@ type DynamicMem struct {
 	Type  ir.Type
 	Mem   value.Value
 	Index int
+
+	Owners map[int]empty
+}
+
+func (d *DynamicMem) Own(owner int) {
+	d.Owners[owner] = empty{}
+}
+
+func (d *DynamicMem) Free(owner int) {
+	delete(d.Owners, owner)
 }
 
 func (b *builder) addAllocStatic(s *ir.AllocStatic) {
@@ -57,12 +67,12 @@ func (b *builder) addAllocDynamic(s *ir.AllocDynamic) {
 	case ir.ARRAY:
 		mem = b.block.NewAlloca(arrayType)
 	}
-	b.registers[b.index] = DynamicMem{Val: nil, Type: s.Type(), Mem: mem, Index: b.index}
+	b.registers[b.index] = &DynamicMem{Val: nil, Type: s.Type(), Mem: mem, Index: b.index, Owners: make(map[int]empty)}
 	b.autofreeMem[b.index] = empty{}
 }
 
 func (b *builder) addSetMemoryDynamic(s *ir.SetMemoryDynamic) {
-	mem := b.registers[s.Mem].(DynamicMem)
+	mem := b.registers[s.Mem].(*DynamicMem)
 	if mem.Val != nil {
 		mem.Val.Free(b, mem.Index)
 	}
@@ -82,7 +92,7 @@ func (b *builder) addSetMemoryDynamic(s *ir.SetMemoryDynamic) {
 }
 
 func (b *builder) addGetMemoryDynamic(s *ir.GetMemoryDynamic) {
-	mem := b.registers[s.Mem].(DynamicMem)
+	mem := b.registers[s.Mem].(*DynamicMem)
 	switch mem.Type {
 	case ir.STRING:
 		b.registers[b.index] = newStringFromStruct(mem.Mem, b, false)
@@ -90,4 +100,5 @@ func (b *builder) addGetMemoryDynamic(s *ir.GetMemoryDynamic) {
 	case ir.ARRAY:
 		b.registers[b.index] = newArrayFromStruct(mem.Mem, b, mem.Val.(*Array).toFree, mem.Val.(*Array).ValTyp, false)
 	}
+	b.registers[b.index].(DynamicValue).AddParent(mem)
 }
