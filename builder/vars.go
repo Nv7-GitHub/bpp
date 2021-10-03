@@ -88,6 +88,6 @@ func (b *builder) addGetMemoryDynamic(s *ir.GetMemoryDynamic) {
 		b.registers[b.index] = newStringFromStruct(mem.Mem, b, false)
 
 	case ir.ARRAY:
-		b.registers[b.index] = newArrayFromStruct(mem.Mem, b, false)
+		b.registers[b.index] = newArrayFromStruct(mem.Mem, b, mem.Val.(*Array).toFree, false)
 	}
 }
