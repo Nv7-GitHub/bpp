@@ -130,3 +130,7 @@ func (b *builder) addStringIndex(i *ir.StringIndex) {
 
 	b.registers[b.index] = newString(b.block, constant.NewInt(types.I64, 1), char, b)
 }
+
+func (b *builder) addStringLength(s *ir.StringLength) {
+	b.registers[b.index] = &Int{Val: b.registers[s.Val].(*String).Length(b)}
+}

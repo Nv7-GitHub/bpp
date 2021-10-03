@@ -29,6 +29,8 @@ func init() {
 	gob.Register(&RandFloat{}) // TODO
 	gob.Register(&ArrayIndex{})
 	gob.Register(&StringIndex{})
+	gob.Register(&ArrayLength{})
+	gob.Register(&StringLength{})
 	gob.Register(&Array{})
 }
 

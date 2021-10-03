@@ -24,28 +24,26 @@ type builder struct {
 	autofreeCnt int
 	autofree    map[int]DynamicValue
 	autofreeMem map[int]empty
+
+	fns      []*llir.Func
+	params   []*llir.Param
+	parTypes []ir.Type
 }
 
 func Build(ir *ir.IR) (string, error) {
 	m := llir.NewModule()
-	fn := m.NewFunc("main", types.I32, llir.NewParam("argc", types.I32), llir.NewParam("argv", types.NewPointer(types.I8Ptr)))
-	b := fn.NewBlock("")
 
 	builder := &builder{
-		mod:   m,
-		fn:    fn,
-		block: b,
+		mod: m,
 
 		tmpCount: 0,
 		index:    0,
 
-		registers: make([]interface{}, len(ir.Instructions)),
-		ir:        ir,
-		stdlib:    make(map[string]*llir.Func),
-		stdv:      make(map[string]value.Value),
+		ir:     ir,
+		stdlib: make(map[string]*llir.Func),
+		stdv:   make(map[string]value.Value),
 
-		autofree:    make(map[int]DynamicValue),
-		autofreeMem: make(map[int]empty),
+		fns: make([]*llir.Func, len(ir.Functions)),
 	}
 	err := builder.build()
 	if err != nil {
@@ -67,6 +65,20 @@ func (b *builder) cleanup() {
 }
 
 func (b *builder) build() error {
+	for i := range b.ir.Functions {
+		err := b.addFn(i)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Set up main func
+	b.setup(len(b.ir.Instructions))
+	fn := b.mod.NewFunc("main", types.I32, llir.NewParam("argc", types.I32), llir.NewParam("argv", types.NewPointer(types.I8Ptr)))
+	blk := fn.NewBlock("")
+	b.fn = fn
+	b.block = blk
+
 	for _, instr := range b.ir.Instructions {
 		err := b.addInstruction(instr)
 		if err != nil {
