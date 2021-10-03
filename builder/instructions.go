@@ -84,6 +84,10 @@ func (b *builder) addInstruction(instr ir.Instruction) error {
 		b.addStringIndex(i)
 		return nil
 
+	case *ir.ArrayIndex:
+		b.addArrayIndex(i)
+		return nil
+
 	default:
 		return fmt.Errorf("unknown instruction type: %s", reflect.TypeOf(i).String())
 	}

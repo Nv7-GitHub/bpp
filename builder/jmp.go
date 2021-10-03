@@ -73,7 +73,7 @@ func (b *builder) addPHI(s *ir.PHI) {
 		val2.(DynamicValue).Own(b, b.index)
 
 	case ir.ARRAY:
-		out = newArrayFromStruct(val, b, make([]Value, 0), true)
+		out = newArrayFromStruct(val, b, make([]Value, 0), val1.(*Array).ValTyp, true)
 		val1.(DynamicValue).Own(b, b.index)
 		val2.(DynamicValue).Own(b, b.index)
 	}

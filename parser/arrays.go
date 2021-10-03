@@ -43,7 +43,7 @@ func SetupArrays() {
 				BasicStatement: &BasicStatement{pos: pos},
 			}, nil
 		},
-		Signature: []DataType{ANY, VARIADIC},
+		Signature: []DataType{INT | FLOAT | STRING, VARIADIC},
 	}
 
 	parsers["INDEX"] = StatementParser{

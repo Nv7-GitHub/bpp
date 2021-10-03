@@ -16,6 +16,7 @@ type Array struct {
 	toFree []Value
 	owners map[int]empty
 	index  int
+	ValTyp ir.Type
 }
 
 func (a *Array) Type() ir.Type {
@@ -96,11 +97,11 @@ func (b *builder) addArray(i *ir.Array) {
 	elemSizePtr := b.block.NewGetElementPtr(arrayType, arr, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 2))
 	b.block.NewStore(size, elemSizePtr)
 
-	b.registers[b.index] = newArrayFromStruct(arr, b, toFree, true)
+	b.registers[b.index] = newArrayFromStruct(arr, b, toFree, i.ValType, true)
 }
 
-func newArrayFromStruct(val value.Value, b *builder, toFree []Value, autofree bool) *Array {
-	arrV := &Array{Val: val, owners: make(map[int]empty), toFree: toFree, index: b.index, freeind: -1}
+func newArrayFromStruct(val value.Value, b *builder, toFree []Value, typ ir.Type, autofree bool) *Array {
+	arrV := &Array{Val: val, owners: make(map[int]empty), toFree: toFree, index: b.index, freeind: -1, ValTyp: typ}
 	if autofree {
 		freeind := b.autofreeCnt
 		b.autofreeCnt++
@@ -112,7 +113,7 @@ func newArrayFromStruct(val value.Value, b *builder, toFree []Value, autofree bo
 }
 
 func (a *Array) Size(_ *builder) value.Value {
-	return constant.NewInt(types.I64, 16)
+	return constant.NewInt(types.I64, 32)
 }
 
 func (b *builder) staticPtr(val Value) value.Value {
@@ -131,4 +132,43 @@ func (b *builder) staticPtr(val Value) value.Value {
 
 func (b *builder) addArrayLength(s *ir.ArrayLength) {
 	b.registers[b.index] = &Int{Val: b.registers[s.Val].(*Array).Length(b)}
+}
+
+func (b *builder) addArrayIndex(s *ir.ArrayIndex) {
+	arr := b.registers[s.Array].(*Array)
+	dat := arr.Data(b)
+	sz := arr.ElemSize(b)
+	ind := b.registers[s.Index].(*Int)
+
+	ptr := b.block.NewGetElementPtr(types.I8, dat, b.block.NewMul(sz, ind.Value()))
+	var typ types.Type
+	switch arr.ValTyp {
+	case ir.INT:
+		typ = types.I64
+
+	case ir.FLOAT:
+		typ = types.Double
+
+	case ir.STRING:
+		typ = stringType
+	}
+
+	dat = b.block.NewAlloca(typ)
+
+	dPtr := b.block.NewBitCast(dat, types.I8Ptr)
+	b.block.NewCall(b.stdFn("memcpy"), dPtr, ptr, sz)
+
+	var v Value
+	switch arr.ValTyp {
+	case ir.INT:
+		v = &Int{Val: b.block.NewLoad(types.I64, dat)}
+
+	case ir.FLOAT:
+		v = &Float{Val: b.block.NewLoad(types.I64, dat)}
+
+	case ir.STRING:
+		v = newStringFromStruct(dat, b, false)
+	}
+
+	b.registers[b.index] = v
 }
