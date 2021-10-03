@@ -64,7 +64,6 @@ func (a *Array) Own(b *builder, owner int) {
 	a.owners[owner] = empty{}
 }
 
-// TODO: Duplicate dynamic values, and own them
 func (b *builder) addArray(i *ir.Array) {
 	arr := b.block.NewAlloca(arrayType)
 	valPtr := b.block.NewGetElementPtr(arrayType, arr, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))
@@ -72,6 +71,7 @@ func (b *builder) addArray(i *ir.Array) {
 	firstVal := b.registers[i.Vals[0]].(Value)
 	size := firstVal.Size(b)
 	mem := b.block.NewCall(b.stdFn("malloc"), b.block.NewMul(size, constant.NewInt(types.I64, int64(len(i.Vals)))))
+	toFree := make([]Value, 0)
 	for j, val := range i.Vals {
 		v := b.registers[val].(Value)
 
@@ -79,6 +79,8 @@ func (b *builder) addArray(i *ir.Array) {
 		_, dynamic := v.(DynamicValue)
 		if dynamic {
 			vPtr = b.block.NewBitCast(v.Value(), types.I8Ptr)
+			v.(DynamicValue).Own(b, b.index)
+			toFree = append(toFree, v)
 		} else {
 			vPtr = b.staticPtr(v)
 		}
@@ -94,11 +96,11 @@ func (b *builder) addArray(i *ir.Array) {
 	elemSizePtr := b.block.NewGetElementPtr(arrayType, arr, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 2))
 	b.block.NewStore(size, elemSizePtr)
 
-	b.registers[b.index] = newArrayFromStruct(arr, b, true)
+	b.registers[b.index] = newArrayFromStruct(arr, b, toFree, true)
 }
 
-func newArrayFromStruct(val value.Value, b *builder, autofree bool) *Array {
-	arrV := &Array{Val: val, owners: make(map[int]empty), index: b.index}
+func newArrayFromStruct(val value.Value, b *builder, toFree []Value, autofree bool) *Array {
+	arrV := &Array{Val: val, owners: make(map[int]empty), toFree: toFree, index: b.index}
 	if autofree {
 		freeind := b.autofreeCnt
 		b.autofreeCnt++
