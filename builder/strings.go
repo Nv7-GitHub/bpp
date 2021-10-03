@@ -117,3 +117,16 @@ func (b *builder) addConcat(s *ir.Concat) {
 
 	b.registers[b.index] = newString(b.block, length, out, b)
 }
+
+func (b *builder) addStringIndex(i *ir.StringIndex) {
+	v := b.registers[i.Val].(*String)
+	ind := b.registers[i.Index].(*Int)
+
+	char := b.block.NewCall(b.stdFn("malloc"), constant.NewInt(types.I64, 1))
+
+	str := v.StringVal(b)
+	ptr := b.block.NewGetElementPtr(types.I8, str, ind.Value())
+	b.block.NewCall(b.stdFn("memcpy"), char, ptr, constant.NewInt(types.I64, 1))
+
+	b.registers[b.index] = newString(b.block, constant.NewInt(types.I64, 1), char, b)
+}
