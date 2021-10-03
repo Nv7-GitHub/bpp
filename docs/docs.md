@@ -3,7 +3,7 @@ B++ is a programming language initially developed by the developers for The Brai
 
 ## Table of contents
 - [Introduction](#introduction)
-- [Hello, World!](#hello-world!)
+- [Hello, World!](#hello,-world!)
 - [Variables](#variables)
 - [Basic Functions](#basic-functions)
 - [Comparison](#comparison)
@@ -140,7 +140,7 @@ If statements are ternary. Simply just do:
 ```bpp
 [IF [COMPARE 6 != 4] "6 is not 4" "6 is 4"]
 ```
-To make an if statement. To have more than one instruction in an IF statement, check out [GOTOs](#goto-statements).
+To have multiline IF statements, check out [the `IFB` block](#block-if-statements).
 
 ## Blocks
 Blocks allow block if statements, loops, and functions!
