@@ -100,7 +100,7 @@ func (b *builder) addArray(i *ir.Array) {
 }
 
 func newArrayFromStruct(val value.Value, b *builder, toFree []Value, autofree bool) *Array {
-	arrV := &Array{Val: val, owners: make(map[int]empty), toFree: toFree, index: b.index}
+	arrV := &Array{Val: val, owners: make(map[int]empty), toFree: toFree, index: b.index, freeind: -1}
 	if autofree {
 		freeind := b.autofreeCnt
 		b.autofreeCnt++

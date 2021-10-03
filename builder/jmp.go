@@ -19,6 +19,9 @@ func (b *builder) addJmp(s *ir.Jmp) {
 	b.checkJmpPoint(s.Target)
 
 	blk := b.registers[s.Target].(*llir.Block)
+	if s.Target < b.index {
+		b.cleanup() // Jumping above, requires cleaning up memory
+	}
 	b.block.NewBr(blk)
 }
 
@@ -35,7 +38,6 @@ func (b *builder) addCondJmp(s *ir.CondJmp) {
 func (b *builder) addJmpPoint() {
 	b.checkJmpPoint(b.index)
 
-	b.cleanup()
 	b.block = b.registers[b.index].(*llir.Block)
 }
 
@@ -66,10 +68,14 @@ func (b *builder) addPHI(s *ir.PHI) {
 		out = &Float{Val: val}
 
 	case ir.STRING:
-		out = newStringFromStruct(val, b, false)
+		out = newStringFromStruct(val, b, true)
+		val1.(DynamicValue).Own(b, b.index)
+		val2.(DynamicValue).Own(b, b.index)
 
 	case ir.ARRAY:
-		out = newArrayFromStruct(val, b, make([]Value, 0), false)
+		out = newArrayFromStruct(val, b, make([]Value, 0), true)
+		val1.(DynamicValue).Own(b, b.index)
+		val2.(DynamicValue).Own(b, b.index)
 	}
 	b.registers[b.index] = out
 }

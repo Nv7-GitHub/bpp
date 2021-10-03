@@ -68,7 +68,7 @@ func newString(b *llir.Block, length value.Value, mem value.Value, bld *builder)
 }
 
 func newStringFromStruct(val value.Value, bld *builder, autofree bool) *String {
-	v := &String{Val: val, owners: make(map[int]empty)}
+	v := &String{Val: val, owners: make(map[int]empty), freeind: -1}
 	if autofree {
 		v.freeind = bld.autofreeCnt
 		bld.autofreeCnt++
