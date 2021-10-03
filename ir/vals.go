@@ -68,28 +68,59 @@ func (i *IR) newCast(val int, typ Type) int {
 	if instr.Type() == ARRAY && typ == STRING {
 		comma := i.AddInstruction(&Const{Typ: STRING, Data: ", "})
 		var vals []int
-		arr := i.GetInstruction(val).(*Array)
-		if arr.ValType == STRING {
-			vals = arr.Vals
-		} else {
-			vals = make([]int, len(arr.Vals))
-			for j, val := range arr.Vals {
-				casted := i.newCast(val, STRING)
-				vals[j] = casted
-			}
-		}
-
-		v := make([]int, len(vals)+(len(vals)-1))
-		for i := range v {
-			if (i % 2) == 0 {
-				v[i] = vals[i/2]
+		arr, ok := i.GetInstruction(val).(*Array)
+		if ok {
+			// Raw array, can print it like this
+			if arr.ValType == STRING {
+				vals = arr.Vals
 			} else {
-				v[i] = comma
+				vals = make([]int, len(arr.Vals))
+				for j, val := range arr.Vals {
+					casted := i.newCast(val, STRING)
+					vals[j] = casted
+				}
 			}
-		}
 
-		str := i.newConcat(v)
-		return str
+			v := make([]int, len(vals)+(len(vals)-1))
+			for i := range v {
+				if (i % 2) == 0 {
+					v[i] = vals[i/2]
+				} else {
+					v[i] = comma
+				}
+			}
+			str := i.newConcat(v)
+			return str
+		}
+		// need to loop through vals
+		blank := i.AddInstruction(&Const{Typ: STRING, Data: ""})
+		out := i.newAllocDynamic(blank)
+		i.newSetMemoryDynamic(out, blank)
+		length := i.newLength(val)
+		one := i.AddInstruction(&Const{Typ: INT, Data: 1})
+		subbed := i.AddInstruction(&Math{parser.SUBTRACTION, length, one, INT})
+
+		iter := i.newAllocStatic(INT)
+		zer := i.AddInstruction(&Const{Typ: INT, Data: 0})
+		i.newSetMemory(iter, zer)
+
+		start := i.newJmpPoint()
+		cond := i.newCompare(parser.LESS, iter, subbed, INT)
+		condJmp := i.newCondJmp(cond)
+
+		begin := i.newJmpPoint()
+		v := i.newGetMemoryDynamic(out, STRING)
+		ind := i.newIndex(val, iter)
+		concated := i.newConcat([]int{v, ind, comma})
+		i.newSetMemoryDynamic(out, concated)
+
+		topJmp := i.newJmp()
+		i.SetJmpPoint(topJmp, start)
+		end := i.newJmpPoint()
+		i.SetCondJmpPoint(condJmp, begin, end)
+
+		lastInd := i.newIndex(val, subbed)
+		return i.newConcat([]int{out, lastInd})
 	}
 
 	return i.AddInstruction(&Cast{

@@ -9,6 +9,51 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
+type Value interface {
+	Type() ir.Type
+	Value() value.Value
+	Size(b *builder) value.Value
+}
+
+type DynamicValue interface {
+	Value
+
+	Free(b *builder, ownder int)
+	Own(b *builder, index int)
+}
+
+type Int struct {
+	Val value.Value
+}
+
+func (i *Int) Type() ir.Type {
+	return ir.INT
+}
+
+func (i *Int) Value() value.Value {
+	return i.Val
+}
+
+func (i *Int) Size(b *builder) value.Value {
+	return constant.NewInt(types.I64, 8)
+}
+
+type Float struct {
+	Val value.Value
+}
+
+func (f *Float) Type() ir.Type {
+	return ir.FLOAT
+}
+
+func (f *Float) Value() value.Value {
+	return f.Val
+}
+
+func (f *Float) Size(b *builder) value.Value {
+	return constant.NewInt(types.I64, 8)
+}
+
 func (b *builder) addConst(s *ir.Const) error {
 	switch s.Type() {
 	case ir.INT:
@@ -35,38 +80,68 @@ func (b *builder) addConst(s *ir.Const) error {
 	}
 }
 
-type Value interface {
-	Type() ir.Type
-	Value() value.Value
-}
+func (b *builder) addCast(s *ir.Cast) {
+	v := b.registers[s.Val].(Value)
+	switch v.Type() {
+	case ir.INT:
+		switch s.Type() {
+		case ir.STRING:
+			res := b.block.NewCall(b.stdFn("malloc"), constant.NewInt(types.I64, 21))
+			b.block.NewCall(b.stdFn("sprintf"), res, b.stdV("intfmt"), v.Value())
 
-type DynamicValue interface {
-	Value
+			// remove null terminator
+			length := b.block.NewCall(b.stdFn("strlen"), res)
+			newV := b.block.NewCall(b.stdFn("malloc"), length)
+			b.block.NewCall(b.stdFn("memcpy"), newV, res, length)
 
-	Free(*builder)
-	Own(*builder)
-}
+			str := newString(b.block, length, newV, b)
+			b.registers[b.index] = str
+			b.block.NewCall(b.stdFn("free"), res) // Free sprintf output
 
-type Int struct {
-	Val value.Value
-}
+		case ir.FLOAT:
+			b.registers[b.index] = &Float{Val: b.block.NewSIToFP(v.Value(), types.Double)}
 
-func (i *Int) Type() ir.Type {
-	return ir.INT
-}
+		case ir.INT:
+			b.registers[b.index] = v
+		}
 
-func (i *Int) Value() value.Value {
-	return i.Val
-}
+	case ir.FLOAT:
+		switch s.Type() {
+		case ir.STRING:
+			res := b.block.NewCall(b.stdFn("malloc"), constant.NewInt(types.I64, 17))
+			b.block.NewCall(b.stdFn("gcvt"), v.Value(), constant.NewInt(types.I32, 17), res)
 
-type Float struct {
-	Val value.Value
-}
+			length := b.block.NewCall(b.stdFn("strlen"), res)
+			newV := b.block.NewCall(b.stdFn("malloc"), length)
+			b.block.NewCall(b.stdFn("memcpy"), newV, res, length)
 
-func (f *Float) Type() ir.Type {
-	return ir.FLOAT
-}
+			str := newString(b.block, length, newV, b)
+			b.registers[b.index] = str
+			b.block.NewCall(b.stdFn("free"), res) // Free gcvt output
 
-func (f *Float) Value() value.Value {
-	return f.Val
+		case ir.INT:
+			b.registers[b.index] = &Int{Val: b.block.NewFPToSI(v.Value(), types.I64)}
+
+		case ir.FLOAT:
+			b.registers[b.index] = v
+		}
+
+	case ir.STRING:
+		switch s.Type() {
+		case ir.STRING:
+			b.registers[b.index] = v
+
+		case ir.INT:
+			str := v.(*String)
+			nullstr := constant.NewNull(types.NewPointer(types.I8Ptr))
+			out := b.block.NewCall(b.stdFn("strtol"), str.StringVal(b), nullstr, constant.NewInt(types.I32, 10))
+			b.registers[b.index] = &Int{Val: out}
+
+		case ir.FLOAT:
+			str := v.(*String)
+			nullstr := constant.NewNull(types.NewPointer(types.I8Ptr))
+			out := b.block.NewCall(b.stdFn("strtod"), str.StringVal(b), nullstr)
+			b.registers[b.index] = &Float{Val: out}
+		}
+	}
 }

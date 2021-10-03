@@ -2,7 +2,6 @@ package builder
 
 import (
 	"github.com/Nv7-Github/bpp/ir"
-	"github.com/llir/irutil"
 	llir "github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
@@ -20,19 +19,17 @@ type builder struct {
 	registers []interface{}
 	ir        *ir.IR
 	stdlib    map[string]*llir.Func
-
-	formatter value.Value
+	stdv      map[string]value.Value
 
 	autofreeCnt int
 	autofree    map[int]DynamicValue
+	autofreeMem map[int]empty
 }
 
 func Build(ir *ir.IR) (string, error) {
 	m := llir.NewModule()
 	fn := m.NewFunc("main", types.I32, llir.NewParam("argc", types.I32), llir.NewParam("argv", types.NewPointer(types.I8Ptr)))
 	b := fn.NewBlock("")
-	formatter := m.NewGlobalDef("format", irutil.NewCString("%s\n"))
-	ptr := b.NewGetElementPtr(types.NewArray(4, types.I8), formatter, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))
 
 	builder := &builder{
 		mod:   m,
@@ -45,9 +42,10 @@ func Build(ir *ir.IR) (string, error) {
 		registers: make([]interface{}, len(ir.Instructions)),
 		ir:        ir,
 		stdlib:    make(map[string]*llir.Func),
+		stdv:      make(map[string]value.Value),
 
-		formatter: ptr,
-		autofree:  make(map[int]DynamicValue),
+		autofree:    make(map[int]DynamicValue),
+		autofreeMem: make(map[int]empty),
 	}
 	err := builder.build()
 	if err != nil {
@@ -55,6 +53,17 @@ func Build(ir *ir.IR) (string, error) {
 	}
 
 	return builder.mod.String(), nil
+}
+
+// CALL THIS BEFORE JUMPS
+func (b *builder) cleanup() {
+	for _, val := range b.autofree {
+		val.Free(b, -1)
+	}
+	for ind := range b.autofreeMem {
+		mem := b.registers[ind].(DynamicMem)
+		mem.Val.Free(b, mem.Index)
+	}
 }
 
 func (b *builder) build() error {
@@ -65,9 +74,7 @@ func (b *builder) build() error {
 		}
 		b.index++
 	}
-	for _, val := range b.autofree {
-		val.Free(b)
-	}
+	b.cleanup()
 	b.block.NewRet(constant.NewInt(types.I32, 0))
 	return nil
 }

@@ -8,11 +8,15 @@ import (
 	"github.com/llir/llvm/ir/value"
 )
 
+type empty struct{}
+
 var stringType = types.NewStruct(types.I8Ptr, types.I64)
 
 type String struct {
-	Val     value.Value
+	Val value.Value
+
 	freeind int
+	owners  map[int]empty
 }
 
 func (s *String) Type() ir.Type {
@@ -23,8 +27,11 @@ func (s *String) Value() value.Value {
 	return s.Val
 }
 
-func (s *String) Free(b *builder) {
-	b.block.NewCall(b.stdFn("free"), s.StringVal(b))
+func (s *String) Free(b *builder, owner int) {
+	delete(s.owners, owner)
+	if len(s.owners) == 0 {
+		b.block.NewCall(b.stdFn("free"), s.StringVal(b))
+	}
 }
 
 func (s *String) StringVal(b *builder) value.Value {
@@ -37,8 +44,16 @@ func (s *String) Length(b *builder) value.Value {
 	return b.block.NewLoad(types.I64, len)
 }
 
-func (s *String) Own(b *builder) {
-	delete(b.autofree, s.freeind)
+func (s *String) Own(b *builder, index int) {
+	if s.freeind != -1 {
+		delete(b.autofree, s.freeind)
+		s.freeind = -1
+	}
+	s.owners[index] = empty{}
+}
+
+func (s *String) Size(b *builder) value.Value {
+	return constant.NewInt(types.I64, 16)
 }
 
 func newString(b *llir.Block, length value.Value, mem value.Value, bld *builder) *String {
@@ -49,11 +64,17 @@ func newString(b *llir.Block, length value.Value, mem value.Value, bld *builder)
 	lenPtr := b.NewGetElementPtr(stringType, str, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 1))
 	b.NewStore(length, lenPtr)
 
-	v := &String{Val: str}
-	v.freeind = bld.autofreeCnt
-	bld.autofreeCnt++
+	return newStringFromStruct(str, bld, true)
+}
 
-	bld.autofree[v.freeind] = v
+func newStringFromStruct(val value.Value, bld *builder, autofree bool) *String {
+	v := &String{Val: val, owners: make(map[int]empty)}
+	if autofree {
+		v.freeind = bld.autofreeCnt
+		bld.autofreeCnt++
+
+		bld.autofree[v.freeind] = v
+	}
 	return v
 }
 
@@ -64,7 +85,7 @@ func (b *builder) addPrint(s *ir.Print) {
 	len := str.Length(b)
 	cstr := b.block.NewCall(b.stdFn("calloc"), constant.NewInt(types.I64, 0), b.block.NewAdd(len, constant.NewInt(types.I64, 1)))
 	b.block.NewCall(b.stdFn("memcpy"), cstr, strVal, len)
-	b.block.NewCall(b.stdFn("printf"), b.formatter, cstr)
+	b.block.NewCall(b.stdFn("printf"), b.stdV("fmt"), cstr)
 	b.block.NewCall(b.stdFn("free"), cstr)
 }
 

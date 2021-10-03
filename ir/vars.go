@@ -127,8 +127,9 @@ func (i *IR) newGetMemory(mem int, typ Type) int {
 
 // Dynamic types
 type AllocDynamic struct {
-	Val int
 	Typ Type
+
+	ValType Type // For arrays
 }
 
 func (a *AllocDynamic) Type() Type {
@@ -136,13 +137,33 @@ func (a *AllocDynamic) Type() Type {
 }
 
 func (a *AllocDynamic) String() string {
-	return fmt.Sprintf("AllocDynamic<%s>: %d", a.Type().String(), a.Val)
+	return fmt.Sprintf("AllocDynamic<%s>", a.Type().String())
 }
 
 func (i *IR) newAllocDynamic(val int) int {
+	var instr *AllocDynamic
+
 	v := i.GetInstruction(val)
-	instr := &AllocDynamic{
-		Val: val,
+	if v.Type() == ARRAY {
+		_, ok := v.(*Array)
+		if ok {
+			instr = &AllocDynamic{
+				Typ:     ARRAY,
+				ValType: v.(*Array).ValType,
+			}
+			return i.AddInstruction(instr)
+		}
+		_, ok = v.(*GetMemoryDynamic)
+		if ok && v.Type() == ARRAY {
+			instr = &AllocDynamic{
+				Typ:     ARRAY,
+				ValType: v.(*GetMemoryDynamic).ValType,
+			}
+			return i.AddInstruction(instr)
+		}
+	}
+
+	instr = &AllocDynamic{
 		Typ: v.Type(),
 	}
 	return i.AddInstruction(instr)
@@ -174,7 +195,8 @@ func (i *IR) newSetMemoryDynamic(mem int, val int) int {
 type GetMemoryDynamic struct {
 	Mem int
 
-	Typ Type
+	Typ     Type
+	ValType Type
 }
 
 func (s *GetMemoryDynamic) Type() Type {
@@ -186,6 +208,14 @@ func (s *GetMemoryDynamic) String() string {
 }
 
 func (i *IR) newGetMemoryDynamic(mem int, typ Type) int {
+	if typ == ARRAY {
+		m := i.GetInstruction(mem).(*AllocDynamic)
+		return i.AddInstruction(&GetMemoryDynamic{
+			Mem:     mem,
+			Typ:     typ,
+			ValType: m.ValType,
+		})
+	}
 	return i.AddInstruction(&GetMemoryDynamic{
 		Mem: mem,
 		Typ: typ,

@@ -1,8 +1,11 @@
 package builder
 
 import (
+	"github.com/llir/irutil"
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
+	"github.com/llir/llvm/ir/value"
 )
 
 func (b *builder) stdFn(name string) *ir.Func {
@@ -30,8 +33,46 @@ func (b *builder) stdFn(name string) *ir.Func {
 
 	case "calloc":
 		fn = b.mod.NewFunc("calloc", types.I8Ptr, ir.NewParam("num", types.I64), ir.NewParam("size", types.I64))
+
+	case "sprintf":
+		fn = b.mod.NewFunc("sprintf", types.I32, ir.NewParam("dst", types.I8Ptr), ir.NewParam("format", types.I8Ptr))
+		fn.Sig.Variadic = true
+
+	case "gcvt":
+		fn = b.mod.NewFunc("gcvt", types.I8Ptr, ir.NewParam("input", types.Double), ir.NewParam("length", types.I32), ir.NewParam("out", types.I8Ptr))
+
+	case "strtol":
+		fn = b.mod.NewFunc("strtol", types.I64, ir.NewParam("input", types.I8Ptr), ir.NewParam("remaining", types.NewPointer(types.I8Ptr)), ir.NewParam("base", types.I32))
+
+	case "strtod":
+		fn = b.mod.NewFunc("strtod", types.Double, ir.NewParam("input", types.I8Ptr), ir.NewParam("remaining", types.NewPointer(types.I8Ptr)))
+
+	case "strlen":
+		fn = b.mod.NewFunc("strlen", types.I64, ir.NewParam("src", types.I8Ptr))
 	}
 
 	b.stdlib[name] = fn
 	return fn
+}
+
+func (b *builder) stdV(name string) value.Value {
+	v, exists := b.stdv[name]
+	if exists {
+		return v
+	}
+
+	switch name {
+	case "fmt":
+		b.newStdval("fmt", "%s\n")
+	case "intfmt":
+		b.newStdval("intfmt", "%d")
+	}
+
+	return b.stdv[name]
+}
+
+func (b *builder) newStdval(name string, val string) {
+	glob := b.mod.NewGlobalDef(name, irutil.NewCString(val))
+	v := b.block.NewGetElementPtr(types.NewArray(uint64(len(val)+1), types.I8), glob, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))
+	b.stdv[name] = v
 }

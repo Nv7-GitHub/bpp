@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	gob.Register(&FunctionCall{})
+	gob.Register(&FunctionCall{}) // TODO
 	gob.Register(&Print{})
 	gob.Register(&Const{})
 	gob.Register(&AllocStatic{})
@@ -15,20 +15,20 @@ func init() {
 	gob.Register(&SetMemoryDynamic{})
 	gob.Register(&GetMemory{})
 	gob.Register(&GetMemoryDynamic{})
-	gob.Register(&GetArg{})
-	gob.Register(&GetParam{})
+	gob.Register(&GetArg{})   // TODO
+	gob.Register(&GetParam{}) // TODO
 	gob.Register(&Cast{})
 	gob.Register(&Math{})
 	gob.Register(&Concat{})
-	gob.Register(&PHI{})
-	gob.Register(&Jmp{})
-	gob.Register(&CondJmp{})
-	gob.Register(&JmpPoint{})
-	gob.Register(&Compare{})
-	gob.Register(&RandInt{})
-	gob.Register(&RandFloat{})
-	gob.Register(&ArrayIndex{})
-	gob.Register(&StringIndex{})
+	gob.Register(&PHI{})         // TODO
+	gob.Register(&Jmp{})         // TODO
+	gob.Register(&CondJmp{})     // TODO
+	gob.Register(&JmpPoint{})    // TODO
+	gob.Register(&Compare{})     // TODO
+	gob.Register(&RandInt{})     // TODO
+	gob.Register(&RandFloat{})   // TODO
+	gob.Register(&ArrayIndex{})  // TODO
+	gob.Register(&StringIndex{}) // TODO
 	gob.Register(&Array{})
 }
 

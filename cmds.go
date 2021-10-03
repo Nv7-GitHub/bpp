@@ -87,6 +87,8 @@ func BuildCmd(args Args) {
 
 		// Build
 		cmd := exec.Command("clang", tmpFile.Name(), "-o", args.Build.Output)
+		cmd.Stderr = os.Stdout
+		cmd.Stdout = os.Stdout
 		err = cmd.Run()
 		handle(err)
 	}
