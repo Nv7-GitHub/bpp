@@ -60,6 +60,26 @@ func (b *builder) addInstruction(instr ir.Instruction) error {
 		b.addCast(i)
 		return nil
 
+	case *ir.Compare:
+		b.addCompare(i)
+		return nil
+
+	case *ir.Jmp:
+		b.addJmp(i)
+		return nil
+
+	case *ir.CondJmp:
+		b.addCondJmp(i)
+		return nil
+
+	case *ir.JmpPoint:
+		b.addJmpPoint()
+		return nil
+
+	case *ir.PHI:
+		b.addPHI(i)
+		return nil
+
 	default:
 		return fmt.Errorf("unknown instruction type: %s", reflect.TypeOf(i).String())
 	}

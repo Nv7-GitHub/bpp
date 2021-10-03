@@ -49,6 +49,9 @@ func (b *builder) stdFn(name string) *ir.Func {
 
 	case "strlen":
 		fn = b.mod.NewFunc("strlen", types.I64, ir.NewParam("src", types.I8Ptr))
+
+	case "strcmp":
+		fn = b.mod.NewFunc("strcmp", types.I32, ir.NewParam("a", types.I8Ptr), ir.NewParam("b", types.I8Ptr))
 	}
 
 	b.stdlib[name] = fn

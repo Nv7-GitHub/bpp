@@ -42,11 +42,11 @@ type Compare struct {
 	Op   parser.Operator
 	Val1 int
 	Val2 int
-	typ  Type
+	Typ  Type
 }
 
 func (c *Compare) Type() Type {
-	return c.typ
+	return c.Typ
 }
 
 func (c *Compare) String() string {
@@ -54,7 +54,7 @@ func (c *Compare) String() string {
 }
 
 func (i *IR) newCompare(op parser.Operator, val1, val2 int, typ Type) int {
-	return i.AddInstruction(&Compare{Op: op, Val1: val1, Val2: val2, typ: typ})
+	return i.AddInstruction(&Compare{Op: op, Val1: val1, Val2: val2, Typ: typ})
 }
 
 func (i *IR) addIf(stmt *parser.IfStmt) (int, error) {
@@ -66,14 +66,14 @@ func (i *IR) addIf(stmt *parser.IfStmt) (int, error) {
 	jmp := i.newCondJmp(cond)
 
 	ifTrue := i.newJmpPoint()
-	ifTrueVal, err := i.AddStmtTop(stmt.Body)
+	ifTrueVal, err := i.AddStmt(stmt.Body)
 	if err != nil {
 		return 0, err
 	}
 	ifTrueEnd := i.newJmp()
 
 	ifFalse := i.newJmpPoint()
-	ifFalseVal, err := i.AddStmtTop(stmt.Else)
+	ifFalseVal, err := i.AddStmt(stmt.Else)
 	if err != nil {
 		return 0, err
 	}
@@ -141,11 +141,11 @@ type PHI struct {
 	Cond     int
 	ValTrue  int
 	ValFalse int
-	typ      Type
+	Typ      Type
 }
 
 func (p *PHI) Type() Type {
-	return p.typ
+	return p.Typ
 }
 
 func (p *PHI) String() string {
@@ -153,5 +153,5 @@ func (p *PHI) String() string {
 }
 
 func (i *IR) newPHI(cond, valTrue, valFalse int, typ Type) int {
-	return i.AddInstruction(&PHI{Cond: cond, ValTrue: valTrue, ValFalse: valFalse, typ: typ})
+	return i.AddInstruction(&PHI{Cond: cond, ValTrue: valTrue, ValFalse: valFalse, Typ: typ})
 }
