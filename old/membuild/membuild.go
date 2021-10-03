@@ -51,9 +51,6 @@ func NewBlankData() Data {
 }
 
 // NewBlankInstruction is a utility function to create an empty, but valid instruction
-func NewBlankInstruction() Instruction {
-	return func(p *Program) (Data, error) { return NewBlankData(), nil }
-}
 
 // ParserDataToData converts parser's Data format to membuild's Data format
 func ParserDataToData(d *parser.Data) Data {

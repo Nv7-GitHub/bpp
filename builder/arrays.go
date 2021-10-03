@@ -32,13 +32,13 @@ func (a *Array) Data(b *builder) value.Value {
 }
 
 func (a *Array) Length(b *builder) value.Value {
-	len := b.block.NewGetElementPtr(arrayType, a.Val, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 1))
-	return b.block.NewLoad(types.I64, len)
+	length := b.block.NewGetElementPtr(arrayType, a.Val, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 1))
+	return b.block.NewLoad(types.I64, length)
 }
 
 func (a *Array) ElemSize(b *builder) value.Value {
-	len := b.block.NewGetElementPtr(arrayType, a.Val, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 2))
-	return b.block.NewLoad(types.I64, len)
+	length := b.block.NewGetElementPtr(arrayType, a.Val, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 2))
+	return b.block.NewLoad(types.I64, length)
 }
 
 func (a *Array) Free(b *builder, index int) {

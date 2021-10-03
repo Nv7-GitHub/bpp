@@ -40,8 +40,8 @@ func (s *String) StringVal(b *builder) value.Value {
 }
 
 func (s *String) Length(b *builder) value.Value {
-	len := b.block.NewGetElementPtr(stringType, s.Val, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 1))
-	return b.block.NewLoad(types.I64, len)
+	length := b.block.NewGetElementPtr(stringType, s.Val, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 1))
+	return b.block.NewLoad(types.I64, length)
 }
 
 func (s *String) Own(b *builder, index int) {
@@ -82,9 +82,9 @@ func (b *builder) addPrint(s *ir.Print) {
 	str := b.registers[s.Val].(*String)
 	strVal := str.StringVal(b)
 
-	len := str.Length(b)
-	cstr := b.block.NewCall(b.stdFn("calloc"), constant.NewInt(types.I64, 0), b.block.NewAdd(len, constant.NewInt(types.I64, 1)))
-	b.block.NewCall(b.stdFn("memcpy"), cstr, strVal, len)
+	length := str.Length(b)
+	cstr := b.block.NewCall(b.stdFn("calloc"), constant.NewInt(types.I64, 0), b.block.NewAdd(length, constant.NewInt(types.I64, 1)))
+	b.block.NewCall(b.stdFn("memcpy"), cstr, strVal, length)
 	b.block.NewCall(b.stdFn("printf"), b.stdV("fmt"), cstr)
 	b.block.NewCall(b.stdFn("free"), cstr)
 }

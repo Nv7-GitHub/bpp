@@ -86,12 +86,4 @@ func (i *IR) SetCondJmpPoint(index int, targetTrue int, targetFalse int) {
 	i.Instructions[index] = jmp
 }
 
-func Indent(val string) string {
-	lines := strings.Split(val, "\n")
-	for i, line := range lines {
-		lines[i] = "\t" + line
-	}
-	return strings.Join(lines, "\n")
-}
-
 type empty struct{}

@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/Nv7-Github/bpp/ir"
+	bppir "github.com/Nv7-Github/bpp/ir"
 	"github.com/Nv7-Github/bpp/parser"
 )
 
@@ -52,12 +52,12 @@ func ParseProg(isTiming bool, filenames []string) *parser.Program {
 	return out
 }
 
-func BuildIR(timing bool, prog *parser.Program) *ir.IR {
+func BuildIR(timing bool, prog *parser.Program) *bppir.IR {
 	var start time.Time
 	if timing {
 		start = time.Now()
 	}
-	ir, err := ir.CreateIR(prog)
+	ir, err := bppir.CreateIR(prog)
 	handle(err)
 	if timing {
 		fmt.Println("Built IR in", time.Since(start))

@@ -63,16 +63,16 @@ func CompileChoose(stm *parser.ChooseStmt, block *ir.Block) (value.Value, *ir.Bl
 		return nil, block, err
 	}
 
-	var len value.Value
+	var length value.Value
 	if v.Type().Equal(types.I8Ptr) {
-		len = block.NewCall(strlen, v)
+		length = block.NewCall(strlen, v)
 	} else {
-		len = constant.NewInt(types.I64, int64(v.Type().(*types.PointerType).ElemType.(*types.ArrayType).Len))
+		length = constant.NewInt(types.I64, int64(v.Type().(*types.PointerType).ElemType.(*types.ArrayType).Len))
 	}
 
 	randval32 := block.NewCall(rand)
 	randval := block.NewZExt(randval32, types.I64)
-	ind := block.NewURem(randval, len)
+	ind := block.NewURem(randval, length)
 
 	out := getIndex(v, ind, block)
 
