@@ -18,11 +18,11 @@ func (r *Runnable) runInstruction(index int) error {
 		return r.runPrint(i)
 
 	case *ir.AllocStatic:
-		r.runAllocStatic(i)
+		r.runAllocStatic()
 		return nil
 
 	case *ir.AllocDynamic:
-		r.runAllocDynamic(i)
+		r.runAllocDynamic()
 		return nil
 
 	case *ir.SetMemory:

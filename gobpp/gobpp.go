@@ -27,7 +27,7 @@ func (p *Program) NodePos(node ast.Node) string {
 }
 
 // Convert converts a parsed Go source code file and returns B++ source code
-func Convert(fset *token.FileSet, filename string, f *ast.File) (string, error) {
+func Convert(fset *token.FileSet, f *ast.File) (string, error) {
 	p := &Program{
 		Fset: fset,
 	}

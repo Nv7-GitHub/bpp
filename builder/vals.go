@@ -34,7 +34,7 @@ func (i *Int) Value() value.Value {
 	return i.Val
 }
 
-func (i *Int) Size(b *builder) value.Value {
+func (i *Int) Size(_ *builder) value.Value {
 	return constant.NewInt(types.I64, 8)
 }
 
@@ -50,7 +50,7 @@ func (f *Float) Value() value.Value {
 	return f.Val
 }
 
-func (f *Float) Size(b *builder) value.Value {
+func (f *Float) Size(_ *builder) value.Value {
 	return constant.NewInt(types.I64, 8)
 }
 

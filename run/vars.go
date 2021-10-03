@@ -2,12 +2,12 @@ package run
 
 import "github.com/Nv7-Github/bpp/ir"
 
-func (r *Runnable) runAllocStatic(i *ir.AllocStatic) {
+func (r *Runnable) runAllocStatic() {
 	r.registers[r.Index] = len(r.vars)
 	r.vars[len(r.vars)] = nil
 }
 
-func (r *Runnable) runAllocDynamic(i *ir.AllocDynamic) {
+func (r *Runnable) runAllocDynamic() {
 	r.registers[r.Index] = len(r.vars)
 	r.vars[len(r.vars)] = nil
 }

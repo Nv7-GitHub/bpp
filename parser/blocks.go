@@ -86,7 +86,7 @@ func (w *WhileBlock) EndSignature() []DataType {
 }
 
 // End parses the ending of a WHILE statement
-func (w *WhileBlock) End(kind string, _ []Statement, statements []Statement) (bool, error) {
+func (w *WhileBlock) End(_ string, _ []Statement, statements []Statement) (bool, error) {
 	w.Body = statements
 	return true, nil
 }

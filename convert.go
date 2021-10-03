@@ -35,7 +35,7 @@ func ConvertCmd(args Args) {
 		start = time.Now()
 	}
 
-	out, err := gobpp.Convert(fset, args.Convert.File, f)
+	out, err := gobpp.Convert(fset, f)
 	handle(err)
 
 	if args.Time {

@@ -8,7 +8,7 @@ import (
 )
 
 // BuildStmt compiles a statement
-func BuildStmt(p *Program, stmt parser.Statement, instructionum ...int) (Instruction, error) {
+func BuildStmt(p *Program, stmt parser.Statement) (Instruction, error) {
 	switch s := stmt.(type) {
 	case *parser.Data:
 		d := ParserDataToData(s)

@@ -37,7 +37,7 @@ func Build(prog *parser.Program) (*Program, error) {
 	}
 	var err error
 	for i, stmt := range prog.Statements {
-		p.Instructions[i], err = BuildStmt(p, stmt, i)
+		p.Instructions[i], err = BuildStmt(p, stmt)
 		if err != nil {
 			return p, err
 		}

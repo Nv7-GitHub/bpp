@@ -109,7 +109,7 @@ func newArrayFromStruct(val value.Value, b *builder, autofree bool) *Array {
 	return arrV
 }
 
-func (a *Array) Size(b *builder) value.Value {
+func (a *Array) Size(_ *builder) value.Value {
 	return constant.NewInt(types.I64, 16)
 }
 

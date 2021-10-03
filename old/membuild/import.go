@@ -7,7 +7,7 @@ func ImportStmt(p *Program, stm *parser.ImportStmt) (Instruction, error) {
 	instrs := make([]Instruction, len(stm.Statements))
 	var err error
 	for i, stmt := range stm.Statements {
-		instrs[i], err = BuildStmt(p, stmt, i)
+		instrs[i], err = BuildStmt(p, stmt)
 		if err != nil {
 			return nil, err
 		}

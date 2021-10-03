@@ -52,7 +52,7 @@ func (s *String) Own(b *builder, index int) {
 	s.owners[index] = empty{}
 }
 
-func (s *String) Size(b *builder) value.Value {
+func (s *String) Size(_ *builder) value.Value {
 	return constant.NewInt(types.I64, 16)
 }
 
