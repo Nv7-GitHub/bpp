@@ -101,6 +101,14 @@ func (r *Runnable) runInstruction(index int) error {
 		r.runPHI(i)
 		return nil
 
+	case *ir.ArrayLength:
+		r.runArrayLength(i)
+		return nil
+
+	case *ir.StringLength:
+		r.runStringLength(i)
+		return nil
+
 	default:
 		return fmt.Errorf("unknown instruction type: %s", reflect.TypeOf(i).String())
 	}

@@ -19,3 +19,13 @@ func (r *Runnable) runStringIndex(i *ir.StringIndex) {
 	str := r.registers[i.Val]
 	r.registers[r.Index] = string(str.(string)[i.Index])
 }
+
+func (r *Runnable) runArrayLength(i *ir.ArrayLength) {
+	str := r.registers[i.Val]
+	r.registers[r.Index] = len(str.([]interface{}))
+}
+
+func (r *Runnable) runStringLength(i *ir.StringLength) {
+	str := r.registers[i.Val]
+	r.registers[r.Index] = len(str.(string))
+}
