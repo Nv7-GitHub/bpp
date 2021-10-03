@@ -30,11 +30,15 @@ func (r *Runnable) runJmp(i *ir.Jmp) {
 }
 
 func (r *Runnable) runRandInt(i *ir.RandInt) {
-	r.registers[r.Index] = rand.Intn(i.Max-i.Min) + i.Min
+	max := r.registers[i.Max].(int)
+	min := r.registers[i.Min].(int)
+	r.registers[r.Index] = rand.Intn(max-min) + min
 }
 
 func (r *Runnable) runRandFloat(i *ir.RandFloat) {
-	r.registers[r.Index] = rand.Float64()*float64(i.Max-i.Min) + float64(i.Min)
+	max := r.registers[i.Max].(float64)
+	min := r.registers[i.Min].(float64)
+	r.registers[r.Index] = rand.Float64()*(max-min) + min
 }
 
 func (r *Runnable) runPHI(i *ir.PHI) {
