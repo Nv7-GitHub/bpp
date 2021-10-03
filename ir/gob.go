@@ -25,10 +25,10 @@ func init() {
 	gob.Register(&CondJmp{})
 	gob.Register(&JmpPoint{})
 	gob.Register(&Compare{})
-	gob.Register(&RandInt{})     // TODO
-	gob.Register(&RandFloat{})   // TODO
-	gob.Register(&ArrayIndex{})  // TODO
-	gob.Register(&StringIndex{}) // TODO
+	gob.Register(&RandInt{})   // TODO
+	gob.Register(&RandFloat{}) // TODO
+	gob.Register(&ArrayIndex{})
+	gob.Register(&StringIndex{})
 	gob.Register(&Array{})
 }
 
