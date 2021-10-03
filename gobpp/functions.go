@@ -35,8 +35,8 @@ func (p *Program) addFuncDecl(fn *ast.FuncDecl) error {
 		fnRetTypes[name] = kind
 	}
 
-	p.WriteString("[FUNCTION ")
-	p.WriteString(name)
+	_, _ = p.WriteString("[FUNCTION ")
+	_, _ = p.WriteString(name)
 
 	for _, arg := range fn.Type.Params.List {
 		var kind string
@@ -52,9 +52,9 @@ func (p *Program) addFuncDecl(fn *ast.FuncDecl) error {
 			return fmt.Errorf("%s: unknown function parameter type: %s", p.NodePos(arg), reflect.TypeOf(arg.Type))
 		}
 
-		fmt.Fprintf(p, " [PARAM %s %s]", arg.Names[0].Name, kind)
+		_, _ = fmt.Fprintf(p, " [PARAM %s %s]", arg.Names[0].Name, kind)
 	}
-	p.WriteString("]\n")
+	_, _ = p.WriteString("]\n")
 
 	err := p.AddBlock(fn.Body.List)
 	if err != nil {
@@ -63,7 +63,7 @@ func (p *Program) addFuncDecl(fn *ast.FuncDecl) error {
 
 	_, exists := hasReturn[name]
 	if !exists {
-		p.WriteString("[RETURN NULL [NULL]]\n")
+		_, _ = p.WriteString("[RETURN NULL [NULL]]\n")
 	}
 	p.FuncName = ""
 	return nil
@@ -77,26 +77,26 @@ func (p *Program) AddBlock(args []ast.Stmt) error {
 		if err != nil {
 			return err
 		}
-		p.WriteString("\n")
+		_, _ = p.WriteString("\n")
 	}
 	return nil
 }
 
 func (p *Program) addReturnStmt(s *ast.ReturnStmt) error {
-	p.WriteString("[RETURN ")
+	_, _ = p.WriteString("[RETURN ")
 	kind, exists := fnRetTypes[p.FuncName]
 	if !exists {
 		return fmt.Errorf("%s: no return type", p.NodePos(s))
 	}
-	p.WriteString(kind)
-	p.WriteString(" ")
+	_, _ = p.WriteString(kind)
+	_, _ = p.WriteString(" ")
 
 	err := p.AddExpr(s.Results[0])
 	if err != nil {
 		return err
 	}
 
-	p.WriteString("]")
+	_, _ = p.WriteString("]")
 
 	hasReturn[p.FuncName] = empty{}
 

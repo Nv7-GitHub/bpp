@@ -5,12 +5,12 @@ import (
 )
 
 func (p *Program) addIfStmt(i *ast.IfStmt) error {
-	p.WriteString("[IFB ")
+	_, _ = p.WriteString("[IFB ")
 	err := p.AddExpr(i.Cond)
 	if err != nil {
 		return err
 	}
-	p.WriteString("]\n")
+	_, _ = p.WriteString("]\n")
 
 	err = p.AddBlock(i.Body.List)
 	if err != nil {
@@ -18,14 +18,14 @@ func (p *Program) addIfStmt(i *ast.IfStmt) error {
 	}
 
 	if i.Else != nil {
-		p.WriteString("[ELSE]\n")
+		_, _ = p.WriteString("[ELSE]\n")
 		err = p.AddBlock(i.Else.(*ast.BlockStmt).List)
 		if err != nil {
 			return err
 		}
 	}
 
-	p.WriteString("[ENDIF]")
+	_, _ = p.WriteString("[ENDIF]")
 	return nil
 }
 
@@ -36,15 +36,15 @@ func (p *Program) addForStmt(stm *ast.ForStmt) error {
 			return err
 		}
 
-		p.WriteString("\n")
+		_, _ = p.WriteString("\n")
 	}
 
-	p.WriteString("[WHILE ")
+	_, _ = p.WriteString("[WHILE ")
 	err := p.AddExpr(stm.Cond)
 	if err != nil {
 		return err
 	}
-	p.WriteString("]\n")
+	_, _ = p.WriteString("]\n")
 
 	err = p.AddBlock(stm.Body.List)
 	if err != nil {
@@ -56,9 +56,9 @@ func (p *Program) addForStmt(stm *ast.ForStmt) error {
 		if err != nil {
 			return err
 		}
-		p.WriteString("\n")
+		_, _ = p.WriteString("\n")
 	}
 
-	p.WriteString("[ENDWHILE]")
+	_, _ = p.WriteString("[ENDWHILE]")
 	return nil
 }

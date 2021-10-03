@@ -54,17 +54,17 @@ func (i *IR) AddInstruction(instr Instruction) int {
 func (i *IR) String() string {
 	out := &strings.Builder{}
 	for fnId, fn := range i.Functions {
-		fmt.Fprintf(out, "%d => %d:\n", fnId, fn.Ret)
+		_, _ = fmt.Fprintf(out, "%d => %d:\n", fnId, fn.Ret)
 		for j, instr := range fn.Instructions {
-			fmt.Fprintf(out, "\t%d: %s\n", j, instr)
+			_, _ = fmt.Fprintf(out, "\t%d: %s\n", j, instr)
 		}
 	}
 	if len(i.Functions) > 0 {
-		fmt.Fprintln(out)
+		_, _ = fmt.Fprintln(out)
 	}
 
 	for i, instr := range i.Instructions {
-		fmt.Fprintf(out, "%d: %s\n", i, instr.String())
+		_, _ = fmt.Fprintf(out, "%d: %s\n", i, instr.String())
 	}
 	return strings.TrimSpace(out.String())
 }

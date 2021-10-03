@@ -20,5 +20,5 @@ func (p *Program) Init() {
 
 // End cleans up a program and adds running code
 func (p *Program) End() {
-	p.WriteString("[MAIN]")
+	_, _ = p.WriteString("[MAIN]")
 }

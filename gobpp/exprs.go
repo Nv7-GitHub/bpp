@@ -14,17 +14,17 @@ func (p *Program) addCallExpr(stm *ast.CallExpr) error {
 		return fn(stm.Args)
 	}
 
-	p.WriteString("[")
-	p.WriteString(strings.ToUpper(name))
+	_, _ = p.WriteString("[")
+	_, _ = p.WriteString(strings.ToUpper(name))
 
 	for _, arg := range stm.Args {
-		p.WriteString(" ")
+		_, _ = p.WriteString(" ")
 		err := p.AddExpr(arg)
 		if err != nil {
 			return err
 		}
 	}
-	p.WriteString("]")
+	_, _ = p.WriteString("]")
 
 	return nil
 }
@@ -32,7 +32,7 @@ func (p *Program) addCallExpr(stm *ast.CallExpr) error {
 func (p *Program) addBasicLit(arg *ast.BasicLit) error {
 	switch arg.Kind {
 	case token.STRING, token.INT, token.FLOAT:
-		p.WriteString(arg.Value)
+		_, _ = p.WriteString(arg.Value)
 		return nil
 
 	default:
@@ -66,62 +66,62 @@ func (p *Program) addBinaryExpr(expr *ast.BinaryExpr) error {
 		op = compMap[expr.Op]
 	}
 
-	p.WriteString("[")
-	p.WriteString(fnName)
-	p.WriteString(" ")
+	_, _ = p.WriteString("[")
+	_, _ = p.WriteString(fnName)
+	_, _ = p.WriteString(" ")
 
 	err := p.AddExpr(expr.X)
 	if err != nil {
 		return err
 	}
 
-	p.WriteString(" ")
-	p.WriteString(op)
-	p.WriteString(" ")
+	_, _ = p.WriteString(" ")
+	_, _ = p.WriteString(op)
+	_, _ = p.WriteString(" ")
 
 	err = p.AddExpr(expr.Y)
 	if err != nil {
 		return err
 	}
 
-	p.WriteString("]")
+	_, _ = p.WriteString("]")
 	return nil
 }
 
 func (p *Program) addIdent(expr *ast.Ident) {
-	fmt.Fprintf(p, "[VAR %s]", expr.Name)
+	_, _ = fmt.Fprintf(p, "[VAR %s]", expr.Name)
 }
 
 func (p *Program) addIndexExpr(expr *ast.IndexExpr) error {
-	p.WriteString("[INDEX ")
+	_, _ = p.WriteString("[INDEX ")
 
 	err := p.AddExpr(expr.X)
 	if err != nil {
 		return err
 	}
 
-	p.WriteString(" ")
+	_, _ = p.WriteString(" ")
 
 	err = p.AddExpr(expr.Index)
 	if err != nil {
 		return err
 	}
 
-	p.WriteString("]")
+	_, _ = p.WriteString("]")
 
 	return nil
 }
 
 func (p *Program) addCompositeLit(expr *ast.CompositeLit) error {
-	p.WriteString("[ARRAY")
+	_, _ = p.WriteString("[ARRAY")
 	for _, elt := range expr.Elts {
-		p.WriteString(" ")
+		_, _ = p.WriteString(" ")
 		err := p.AddExpr(elt)
 		if err != nil {
 			return err
 		}
 	}
 
-	p.WriteString("]")
+	_, _ = p.WriteString("]")
 	return nil
 }

@@ -19,7 +19,7 @@ func (ir *IR) functionPass(stmts []parser.Statement) ([]parser.Statement, error)
 	for i, stm := range stmts {
 		imp, ok := stm.(*parser.ImportStmt)
 		if ok {
-			ir.functionPass(imp.Statements)
+			_, _ = ir.functionPass(imp.Statements)
 		}
 
 		f, ok := stm.(*parser.FunctionBlock)

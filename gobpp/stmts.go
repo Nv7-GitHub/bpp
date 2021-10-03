@@ -17,12 +17,12 @@ func (p *Program) addAssignStmt(stm *ast.AssignStmt) error {
 	r := stm.Rhs[0]
 
 	name := stm.Lhs[0].(*ast.Ident).Name
-	p.WriteString("[DEFINE ")
-	p.WriteString(name)
-	p.WriteString(" ")
+	_, _ = p.WriteString("[DEFINE ")
+	_, _ = p.WriteString(name)
+	_, _ = p.WriteString(" ")
 	if stm.Tok == token.ASSIGN || stm.Tok == token.DEFINE {
-		p.AddExpr(r)
-		p.WriteString("]")
+		_ = p.AddExpr(r)
+		_, _ = p.WriteString("]")
 		return nil
 	}
 
@@ -30,9 +30,9 @@ func (p *Program) addAssignStmt(stm *ast.AssignStmt) error {
 	if !exists {
 		return fmt.Errorf("%s: unknown operation %v", p.NodePos(stm), stm.Tok)
 	}
-	fmt.Fprintf(p, "[MATH [VAR %s] %s ", name, op)
-	p.AddExpr(r)
-	p.WriteString("]]")
+	_, _ = fmt.Fprintf(p, "[MATH [VAR %s] %s ", name, op)
+	_ = p.AddExpr(r)
+	_, _ = p.WriteString("]]")
 	return nil
 }
 
@@ -48,6 +48,6 @@ func (p *Program) addIncDecStmt(i *ast.IncDecStmt) error {
 		return fmt.Errorf("%s: unknown operation %v", p.NodePos(i), i.Tok)
 	}
 
-	fmt.Fprintf(p, "[DEFINE %s [MATH [VAR %s] %s 1]]", name, name, op)
+	_, _ = fmt.Fprintf(p, "[DEFINE %s [MATH [VAR %s] %s 1]]", name, name, op)
 	return nil
 }
