@@ -47,7 +47,7 @@ func (i *IR) addWhile(stmt *parser.WhileBlock) (int, error) {
 	}
 	condJmp := i.newCondJmp(cond)
 
-	body := i.newJmp()
+	body := i.newJmpPoint()
 	for _, stmt := range stmt.Body {
 		if _, err := i.AddStmtTop(stmt); err != nil {
 			return 0, err
