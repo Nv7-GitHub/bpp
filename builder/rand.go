@@ -11,7 +11,8 @@ func (b *builder) addRandInt(s *ir.RandInt) {
 	min := b.registers[s.Min].(*Int).Value()
 	max := b.registers[s.Max].(*Int).Value()
 
-	randV := b.block.NewCall(b.stdFn("rand"))
+	var randV value.Value = b.block.NewCall(b.stdFn("rand"))
+	randV = b.block.NewSExt(randV, types.I64)
 
 	var diff value.Value = b.block.NewSub(max, min)
 	diff = b.block.NewAdd(diff, constant.NewInt(types.I64, 1))
@@ -19,7 +20,7 @@ func (b *builder) addRandInt(s *ir.RandInt) {
 	var out value.Value = b.block.NewSRem(randV, diff)
 	out = b.block.NewAdd(out, min)
 
-	b.registers[b.index] = &Int{Val: b.block.NewSExt(out, types.I64)}
+	b.registers[b.index] = &Int{Val: out}
 }
 
 // Using this method: https://stackoverflow.com/a/64286825/11388343
