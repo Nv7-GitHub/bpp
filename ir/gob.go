@@ -15,7 +15,7 @@ func init() {
 	gob.Register(&SetMemoryDynamic{})
 	gob.Register(&GetMemory{})
 	gob.Register(&GetMemoryDynamic{})
-	gob.Register(&GetArg{}) // TODO
+	gob.Register(&GetArg{})
 	gob.Register(&GetParam{})
 	gob.Register(&Cast{})
 	gob.Register(&Math{})

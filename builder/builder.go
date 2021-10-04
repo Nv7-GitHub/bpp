@@ -20,6 +20,7 @@ type builder struct {
 	ir        *ir.IR
 	stdlib    map[string]*llir.Func
 	stdv      map[string]value.Value
+	args      value.Value
 
 	autofreeCnt int
 	autofree    map[int]DynamicValue
@@ -85,6 +86,11 @@ func (b *builder) build() error {
 	time := b.block.NewCall(b.stdFn("time"), constant.NewNull(types.I64Ptr))
 	b.block.NewCall(b.stdFn("srand"), b.block.NewTrunc(time, types.I32))
 
+	// Store args to global args val
+	args := b.mod.NewGlobalDef("args", constant.NewNull(types.NewPointer(types.I8Ptr)))
+	b.block.NewStore(b.fn.Params[1], args)
+	b.args = args
+
 	for _, instr := range b.ir.Instructions {
 		err := b.addInstruction(instr)
 		if err != nil {
@@ -95,4 +101,20 @@ func (b *builder) build() error {
 	b.cleanup()
 	b.block.NewRet(constant.NewInt(types.I32, 0))
 	return nil
+}
+
+func (b *builder) addGetArg(s *ir.GetArg) {
+	index := b.registers[s.Index].(*Int)
+	ind := b.block.NewAdd(index.Value(), constant.NewInt(types.I64, 1))
+
+	args := b.block.NewLoad(types.NewPointer(types.I8Ptr), b.args)
+	ptr := b.block.NewGetElementPtr(types.I8Ptr, args, ind)
+	str := b.block.NewLoad(types.I8Ptr, ptr)
+
+	length := b.block.NewCall(b.stdFn("strlen"), str)
+	dat := b.block.NewCall(b.stdFn("malloc"), length)
+	b.block.NewCall(b.stdFn("memcpy"), dat, str, length)
+
+	out := newString(b.block, length, dat, b)
+	b.registers[b.index] = out
 }
