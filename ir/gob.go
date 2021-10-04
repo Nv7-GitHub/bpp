@@ -25,8 +25,8 @@ func init() {
 	gob.Register(&CondJmp{})
 	gob.Register(&JmpPoint{})
 	gob.Register(&Compare{})
-	gob.Register(&RandInt{})   // TODO
-	gob.Register(&RandFloat{}) // TODO
+	gob.Register(&RandInt{})
+	gob.Register(&RandFloat{})
 	gob.Register(&ArrayIndex{})
 	gob.Register(&StringIndex{})
 	gob.Register(&ArrayLength{})
