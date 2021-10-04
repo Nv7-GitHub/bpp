@@ -2,7 +2,6 @@ package builder
 
 import (
 	"github.com/Nv7-Github/bpp/ir"
-	llir "github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"
@@ -68,15 +67,15 @@ func (s *String) Size(_ *builder) value.Value {
 	return constant.NewInt(types.I64, 16)
 }
 
-func newString(b *llir.Block, length value.Value, mem value.Value, bld *builder) *String {
-	str := b.NewAlloca(stringType)
-	valPtr := b.NewGetElementPtr(stringType, str, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))
-	b.NewStore(mem, valPtr)
+func newString(length value.Value, mem value.Value, b *builder) *String {
+	str := b.entry.NewAlloca(stringType)
+	valPtr := b.block.NewGetElementPtr(stringType, str, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))
+	b.block.NewStore(mem, valPtr)
 
-	lenPtr := b.NewGetElementPtr(stringType, str, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 1))
-	b.NewStore(length, lenPtr)
+	lenPtr := b.block.NewGetElementPtr(stringType, str, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 1))
+	b.block.NewStore(length, lenPtr)
 
-	return newStringFromStruct(str, bld, true)
+	return newStringFromStruct(str, b, true)
 }
 
 func newStringFromStruct(val value.Value, bld *builder, autofree bool) *String {
@@ -127,7 +126,7 @@ func (b *builder) addConcat(s *ir.Concat) {
 		off = b.block.NewAdd(off, lenV)
 	}
 
-	b.registers[b.index] = newString(b.block, length, out, b)
+	b.registers[b.index] = newString(length, out, b)
 }
 
 func (b *builder) addStringIndex(i *ir.StringIndex) {
@@ -140,7 +139,7 @@ func (b *builder) addStringIndex(i *ir.StringIndex) {
 	ptr := b.block.NewGetElementPtr(types.I8, str, ind.Value())
 	b.block.NewCall(b.stdFn("memcpy"), char, ptr, constant.NewInt(types.I64, 1))
 
-	b.registers[b.index] = newString(b.block, constant.NewInt(types.I64, 1), char, b)
+	b.registers[b.index] = newString(constant.NewInt(types.I64, 1), char, b)
 }
 
 func (b *builder) addStringLength(s *ir.StringLength) {

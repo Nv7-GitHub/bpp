@@ -78,7 +78,7 @@ func (a *Array) AddParent(p Parent) {
 }
 
 func (b *builder) addArray(i *ir.Array) {
-	arr := b.block.NewAlloca(arrayType)
+	arr := b.entry.NewAlloca(arrayType)
 	valPtr := b.block.NewGetElementPtr(arrayType, arr, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))
 
 	firstVal := b.registers[i.Vals[0]].(Value)
@@ -132,10 +132,10 @@ func (b *builder) staticPtr(val Value) value.Value {
 	var mem value.Value
 	switch val.Type() {
 	case ir.INT:
-		mem = b.block.NewAlloca(types.I64)
+		mem = b.entry.NewAlloca(types.I64)
 
 	case ir.FLOAT:
-		mem = b.block.NewAlloca(types.Float)
+		mem = b.entry.NewAlloca(types.Float)
 	}
 	b.block.NewStore(val.Value(), mem)
 	ptr := b.block.NewBitCast(mem, types.I8Ptr)
@@ -165,7 +165,7 @@ func (b *builder) addArrayIndex(s *ir.ArrayIndex) {
 		typ = stringType
 	}
 
-	dat = b.block.NewAlloca(typ)
+	dat = b.entry.NewAlloca(typ)
 
 	dPtr := b.block.NewBitCast(dat, types.I8Ptr)
 	b.block.NewCall(b.stdFn("memcpy"), dPtr, ptr, sz)

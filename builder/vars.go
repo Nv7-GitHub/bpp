@@ -32,10 +32,10 @@ func (b *builder) addAllocStatic(s *ir.AllocStatic) {
 	var mem value.Value
 	switch s.Type() {
 	case ir.INT:
-		mem = b.block.NewAlloca(types.I64)
+		mem = b.entry.NewAlloca(types.I64)
 
 	case ir.FLOAT:
-		mem = b.block.NewAlloca(types.Double)
+		mem = b.entry.NewAlloca(types.Double)
 	}
 
 	b.registers[b.index] = Mem{Val: mem, Type: s.Type()}
@@ -62,10 +62,10 @@ func (b *builder) addAllocDynamic(s *ir.AllocDynamic) {
 	var mem value.Value
 	switch s.Type() {
 	case ir.STRING:
-		mem = b.block.NewAlloca(stringType)
+		mem = b.entry.NewAlloca(stringType)
 
 	case ir.ARRAY:
-		mem = b.block.NewAlloca(arrayType)
+		mem = b.entry.NewAlloca(arrayType)
 	}
 	b.registers[b.index] = &DynamicMem{Val: nil, Type: s.Type(), Mem: mem, Index: b.index, Owners: make(map[int]empty)}
 	b.autofreeMem[b.index] = empty{}

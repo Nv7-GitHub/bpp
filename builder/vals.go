@@ -78,7 +78,7 @@ func (b *builder) addConst(s *ir.Const) error {
 		ptr := b.block.NewGetElementPtr(types.NewArray(uint64(len(str)), types.I8), globVal, constant.NewInt(types.I64, 0), constant.NewInt(types.I64, 0))
 		mem := b.block.NewCall(b.stdFn("malloc"), constant.NewInt(types.I64, int64(len(str))))
 		b.block.NewCall(b.stdFn("memcpy"), mem, ptr, constant.NewInt(types.I64, int64(len(str))))
-		b.registers[b.index] = newString(b.block, constant.NewInt(types.I64, int64(len(str))), mem, b)
+		b.registers[b.index] = newString(constant.NewInt(types.I64, int64(len(str))), mem, b)
 		return nil
 
 	default:
@@ -100,7 +100,7 @@ func (b *builder) addCast(s *ir.Cast) {
 			newV := b.block.NewCall(b.stdFn("malloc"), length)
 			b.block.NewCall(b.stdFn("memcpy"), newV, res, length)
 
-			str := newString(b.block, length, newV, b)
+			str := newString(length, newV, b)
 			b.registers[b.index] = str
 			b.block.NewCall(b.stdFn("free"), res) // Free sprintf output
 
@@ -121,7 +121,7 @@ func (b *builder) addCast(s *ir.Cast) {
 			newV := b.block.NewCall(b.stdFn("malloc"), length)
 			b.block.NewCall(b.stdFn("memcpy"), newV, res, length)
 
-			str := newString(b.block, length, newV, b)
+			str := newString(length, newV, b)
 			b.registers[b.index] = str
 			b.block.NewCall(b.stdFn("free"), res) // Free gcvt output
 

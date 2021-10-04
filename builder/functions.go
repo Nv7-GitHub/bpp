@@ -25,7 +25,9 @@ func (b *builder) addFn(index int) error {
 		pars[i] = llir.NewParam(parName, fnTypeMap[parType])
 	}
 	irfn := b.mod.NewFunc(fmt.Sprintf("fn%d", index), fnTypeMap[fn.RetType], pars...)
-	b.block = irfn.NewBlock("")
+	entry := irfn.NewBlock("entry")
+	blk := irfn.NewBlock("")
+	b.block = blk
 	b.params = pars
 	b.parTypes = fn.ParTypes
 	b.fns[index] = irfn
@@ -50,6 +52,8 @@ func (b *builder) addFn(index int) error {
 		b.block.NewRet(ret.Value())
 	}
 
+	entry.NewBr(blk)
+
 	return nil
 }
 
@@ -71,7 +75,7 @@ func (b *builder) addGetParam(i *ir.GetParam) error {
 		out = &Float{Val: b.params[i.Index]}
 
 	case ir.STRING:
-		mem := b.block.NewAlloca(stringType)
+		mem := b.entry.NewAlloca(stringType)
 		par := b.params[i.Index]
 
 		ptr := b.block.NewGetElementPtr(stringType, mem, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))
@@ -111,7 +115,7 @@ func (b *builder) addFunctionCall(i *ir.FunctionCall) error {
 		out = &Int{Val: ret}
 
 	case ir.STRING:
-		mem := b.block.NewAlloca(stringType)
+		mem := b.entry.NewAlloca(stringType)
 
 		ptr := b.block.NewGetElementPtr(stringType, mem, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))
 		val := b.block.NewExtractValue(ret, 0)

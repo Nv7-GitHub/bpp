@@ -12,6 +12,7 @@ type builder struct {
 	mod   *llir.Module
 	fn    *llir.Func
 	block *llir.Block
+	entry *llir.Block
 
 	tmpCount int
 	index    int
@@ -78,9 +79,11 @@ func (b *builder) build() error {
 	// Set up main func
 	b.setup(len(b.ir.Instructions))
 	fn := b.mod.NewFunc("main", types.I32, llir.NewParam("argc", types.I32), llir.NewParam("argv", types.NewPointer(types.I8Ptr)))
+	entry := fn.NewBlock("entry")
 	blk := fn.NewBlock("")
 	b.fn = fn
 	b.block = blk
+	b.entry = entry
 
 	// Seed rand
 	time := b.block.NewCall(b.stdFn("time"), constant.NewNull(types.I64Ptr))
@@ -100,6 +103,7 @@ func (b *builder) build() error {
 	}
 	b.cleanup()
 	b.block.NewRet(constant.NewInt(types.I32, 0))
+	b.entry.NewBr(blk)
 	return nil
 }
 
@@ -115,6 +119,6 @@ func (b *builder) addGetArg(s *ir.GetArg) {
 	dat := b.block.NewCall(b.stdFn("malloc"), length)
 	b.block.NewCall(b.stdFn("memcpy"), dat, str, length)
 
-	out := newString(b.block, length, dat, b)
+	out := newString(length, dat, b)
 	b.registers[b.index] = out
 }
