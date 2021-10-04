@@ -19,7 +19,7 @@ func (b *builder) addRandInt(s *ir.RandInt) {
 	var out value.Value = b.block.NewSRem(randV, diff)
 	out = b.block.NewAdd(out, min)
 
-	b.registers[b.index] = &Int{Val: out}
+	b.registers[b.index] = &Int{Val: b.block.NewSExt(out, types.I64)}
 }
 
 // Using this method: https://stackoverflow.com/a/64286825/11388343

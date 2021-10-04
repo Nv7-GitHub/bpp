@@ -39,7 +39,9 @@ func (i *IR) addIfB(stmt *parser.IfBlock) (int, error) {
 }
 
 func (i *IR) addWhile(stmt *parser.WhileBlock) (int, error) {
+	jmp := i.newJmp()
 	start := i.newJmpPoint()
+	i.SetJmpPoint(jmp, start)
 
 	cond, err := i.AddStmt(stmt.Condition)
 	if err != nil {
