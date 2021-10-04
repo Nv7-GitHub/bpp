@@ -81,6 +81,10 @@ func (b *builder) build() error {
 	b.fn = fn
 	b.block = blk
 
+	// Seed rand
+	time := b.block.NewCall(b.stdFn("time"), constant.NewNull(types.I64Ptr))
+	b.block.NewCall(b.stdFn("srand"), b.block.NewTrunc(time, types.I32))
+
 	for _, instr := range b.ir.Instructions {
 		err := b.addInstruction(instr)
 		if err != nil {

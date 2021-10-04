@@ -63,6 +63,12 @@ func (b *builder) stdFn(name string) *ir.Func {
 
 	case "fabs":
 		fn = b.mod.NewFunc("fabs", types.Double, ir.NewParam("input", types.Double))
+
+	case "time":
+		fn = b.mod.NewFunc("time", types.I64, ir.NewParam("time", types.I64Ptr))
+
+	case "srand":
+		fn = b.mod.NewFunc("srand", types.Void, ir.NewParam("seed", types.I32))
 	}
 
 	b.stdlib[name] = fn
