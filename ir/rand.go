@@ -63,6 +63,14 @@ func (i *IR) addRandom(stmt *parser.RandomStmt) (int, error) {
 		return 0, err
 	}
 
+	if i.GetInstruction(min).Type() != FLOAT {
+		min = i.newCast(min, FLOAT)
+	}
+
+	if i.GetInstruction(max).Type() != FLOAT {
+		max = i.newCast(max, FLOAT)
+	}
+
 	return i.newRandfloat(min, max), nil
 }
 
@@ -75,6 +83,14 @@ func (i *IR) addRandint(stmt *parser.RandintStmt) (int, error) {
 	max, err := i.AddStmt(stmt.Upper)
 	if err != nil {
 		return 0, err
+	}
+
+	if i.GetInstruction(min).Type() != INT {
+		min = i.newCast(min, INT)
+	}
+
+	if i.GetInstruction(max).Type() != INT {
+		max = i.newCast(max, INT)
 	}
 
 	return i.newRandint(min, max), nil
