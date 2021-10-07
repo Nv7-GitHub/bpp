@@ -64,7 +64,7 @@ func (b *builder) cleanup(end bool) {
 		for ind := range b.autofreeMem {
 			mem := b.registers[ind].(*DynamicMem)
 			if len(mem.Owners) == 0 {
-				mem.Val.Free(b, mem.Index)
+				mem.getVal(b).Free(b, mem.Index)
 			}
 		}
 	}

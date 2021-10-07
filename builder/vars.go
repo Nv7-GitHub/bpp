@@ -74,7 +74,8 @@ func (b *builder) addAllocDynamic(s *ir.AllocDynamic) {
 func (b *builder) addSetMemoryDynamic(s *ir.SetMemoryDynamic) {
 	mem := b.registers[s.Mem].(*DynamicMem)
 	if mem.Val != nil {
-		mem.Val.Free(b, mem.Index)
+		val := mem.getVal(b)
+		val.Free(b, mem.Index)
 	}
 
 	val := b.registers[s.Value].(DynamicValue)
@@ -91,14 +92,20 @@ func (b *builder) addSetMemoryDynamic(s *ir.SetMemoryDynamic) {
 	b.registers[mem.Index] = mem
 }
 
-func (b *builder) addGetMemoryDynamic(s *ir.GetMemoryDynamic) {
-	mem := b.registers[s.Mem].(*DynamicMem)
-	switch mem.Type {
+func (m *DynamicMem) getVal(b *builder) DynamicValue {
+	var val DynamicValue
+	switch m.Type {
 	case ir.STRING:
-		b.registers[b.index] = newStringFromStruct(mem.Mem, b, false)
+		val = newStringFromStruct(m.Mem, b, false)
 
 	case ir.ARRAY:
-		b.registers[b.index] = newArrayFromStruct(mem.Mem, b, mem.Val.(*Array).toFree, mem.Val.(*Array).ValTyp, false)
+		val = newArrayFromStruct(m.Mem, b, m.Val.(*Array).toFree, m.Val.(*Array).ValTyp, false)
 	}
+	return val
+}
+
+func (b *builder) addGetMemoryDynamic(s *ir.GetMemoryDynamic) {
+	mem := b.registers[s.Mem].(*DynamicMem)
+	b.registers[b.index] = mem.getVal(b)
 	b.registers[b.index].(DynamicValue).AddParent(mem)
 }
