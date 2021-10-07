@@ -32,6 +32,9 @@ func (s *String) Free(b *builder, owner int) {
 	delete(s.owners, owner)
 	if len(s.owners) == 0 {
 		b.block.NewCall(b.stdFn("free"), s.StringVal(b))
+		if s.freeind != -1 {
+			delete(b.autofree, s.freeind)
+		}
 	}
 	if s.parent != nil {
 		s.parent.Free(owner)
@@ -89,15 +92,19 @@ func newStringFromStruct(val value.Value, bld *builder, autofree bool) *String {
 	return v
 }
 
-func (b *builder) addPrint(s *ir.Print) {
-	str := b.registers[s.Val].(*String)
-	strVal := str.StringVal(b)
+func (s *String) print(b *builder) {
+	strVal := s.StringVal(b)
+	length := s.Length(b)
 
-	length := str.Length(b)
 	cstr := b.block.NewCall(b.stdFn("calloc"), constant.NewInt(types.I64, 0), b.block.NewAdd(length, constant.NewInt(types.I64, 1)))
 	b.block.NewCall(b.stdFn("memcpy"), cstr, strVal, length)
 	b.block.NewCall(b.stdFn("printf"), b.stdV("fmt"), cstr)
 	b.block.NewCall(b.stdFn("free"), cstr)
+}
+
+func (b *builder) addPrint(s *ir.Print) {
+	str := b.registers[s.Val].(*String)
+	str.print(b)
 }
 
 func (b *builder) addConcat(s *ir.Concat) {

@@ -45,10 +45,10 @@ func (b *builder) addFn(index int) error {
 	_, ok := ret.(DynamicValue)
 	if ok {
 		ret.(DynamicValue).Own(b, -1)
-		b.cleanup()
+		b.cleanup(true)
 		b.block.NewRet(b.block.NewLoad(stringType, ret.Value())) // String is only dynamic value returnable, so can assume
 	} else {
-		b.cleanup()
+		b.cleanup(true)
 		b.block.NewRet(ret.Value())
 	}
 

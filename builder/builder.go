@@ -56,14 +56,16 @@ func Build(ir *ir.IR) (string, error) {
 }
 
 // CALL THIS BEFORE JUMPS
-func (b *builder) cleanup() {
+func (b *builder) cleanup(end bool) {
 	for _, val := range b.autofree {
 		val.Free(b, -1)
 	}
-	for ind := range b.autofreeMem {
-		mem := b.registers[ind].(*DynamicMem)
-		if len(mem.Owners) == 0 {
-			mem.Val.Free(b, mem.Index)
+	if end {
+		for ind := range b.autofreeMem {
+			mem := b.registers[ind].(*DynamicMem)
+			if len(mem.Owners) == 0 {
+				mem.Val.Free(b, mem.Index)
+			}
 		}
 	}
 }
@@ -101,7 +103,7 @@ func (b *builder) build() error {
 		}
 		b.index++
 	}
-	b.cleanup()
+	b.cleanup(true)
 	b.block.NewRet(constant.NewInt(types.I32, 0))
 	b.entry.NewBr(blk)
 	return nil
