@@ -19,7 +19,7 @@ func (b *builder) addJmp(s *ir.Jmp) {
 	b.checkJmpPoint(s.Target)
 
 	blk := b.registers[s.Target].(*llir.Block)
-	b.cleanup(false) // Jumping above, requires cleaning up memory
+	b.cleanup(false)
 	b.block.NewBr(blk)
 }
 
