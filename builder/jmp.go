@@ -19,9 +19,7 @@ func (b *builder) addJmp(s *ir.Jmp) {
 	b.checkJmpPoint(s.Target)
 
 	blk := b.registers[s.Target].(*llir.Block)
-	if s.Target < b.index {
-		b.cleanup(false) // Jumping above, requires cleaning up memory
-	}
+	b.cleanup(false) // Jumping above, requires cleaning up memory
 	b.block.NewBr(blk)
 }
 
