@@ -1,6 +1,8 @@
 package builder
 
 import (
+	"fmt"
+
 	"github.com/Nv7-Github/bpp/ir"
 	llir "github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
@@ -10,7 +12,7 @@ import (
 
 func (b *builder) checkJmpPoint(target int) {
 	if b.registers[target] == nil {
-		newBlock := b.fn.NewBlock("")
+		newBlock := b.fn.NewBlock(fmt.Sprintf("ir_%d", target))
 		b.registers[target] = newBlock
 	}
 }
