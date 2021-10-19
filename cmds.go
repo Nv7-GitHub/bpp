@@ -55,11 +55,7 @@ func BuildCmd(args Args) {
 	handle(err)
 
 	if args.Time {
-		fmt.Println("Built LLVM in", time.Since(start))
-	}
-
-	if args.Time {
-		start = time.Now()
+		fmt.Println("Created LLVM in", time.Since(start))
 	}
 
 	if args.Build.LLVM {
@@ -74,7 +70,11 @@ func BuildCmd(args Args) {
 		_, err = out.WriteString(llvm)
 		handle(err)
 	} else {
-		tmpFile, err := os.CreateTemp("", "")
+		if args.Time {
+			start = time.Now()
+		}
+
+		tmpFile, err := os.CreateTemp("", "*.ll")
 		handle(err)
 		defer tmpFile.Close()
 
@@ -86,14 +86,14 @@ func BuildCmd(args Args) {
 		}
 
 		// Build
-		cmd := exec.Command("clang", tmpFile.Name(), "-o", args.Build.Output)
+		cmd := exec.Command("clang", tmpFile.Name(), "-o", args.Build.Output, "-O2")
 		cmd.Stderr = os.Stdout
 		cmd.Stdout = os.Stdout
 		err = cmd.Run()
 		handle(err)
-	}
 
-	if args.Time {
-		fmt.Println("Created output in", time.Since(start))
+		if args.Time {
+			fmt.Println("Built LLVM in", time.Since(start))
+		}
 	}
 }
