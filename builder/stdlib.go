@@ -83,7 +83,7 @@ func (b *builder) stdV(name string) value.Value {
 
 	switch name {
 	case "fmt":
-		b.newStdval("fmt", "%s\n")
+		b.newStdval("fmt", "%.*s\n")
 	case "intfmt":
 		b.newStdval("intfmt", "%d")
 	case "ptrfmt":

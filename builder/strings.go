@@ -95,11 +95,7 @@ func newStringFromStruct(val value.Value, bld *builder, autofree bool) *String {
 func (s *String) print(b *builder) {
 	strVal := s.StringVal(b)
 	length := s.Length(b)
-
-	cstr := b.block.NewCall(b.stdFn("calloc"), constant.NewInt(types.I64, 0), b.block.NewAdd(length, constant.NewInt(types.I64, 1)))
-	b.block.NewCall(b.stdFn("memcpy"), cstr, strVal, length)
-	b.block.NewCall(b.stdFn("printf"), b.stdV("fmt"), cstr)
-	b.block.NewCall(b.stdFn("free"), cstr)
+	b.block.NewCall(b.stdFn("printf"), b.stdV("fmt"), length, strVal)
 }
 
 func (b *builder) addPrint(s *ir.Print) {
