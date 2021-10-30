@@ -1,6 +1,8 @@
 package run
 
-import "github.com/Nv7-Github/bpp/ir"
+import (
+	"github.com/Nv7-Github/bpp/ir"
+)
 
 func (r *Runnable) runArray(i *ir.Array) {
 	arr := make([]interface{}, len(i.Vals))
@@ -12,12 +14,14 @@ func (r *Runnable) runArray(i *ir.Array) {
 
 func (r *Runnable) runArrayIndex(i *ir.ArrayIndex) {
 	arr := r.registers[i.Array]
-	r.registers[r.Index] = arr.([]interface{})[i.Index]
+	ind := r.registers[i.Index].(int)
+	r.registers[r.Index] = arr.([]interface{})[ind]
 }
 
 func (r *Runnable) runStringIndex(i *ir.StringIndex) {
 	str := r.registers[i.Val]
-	r.registers[r.Index] = string(str.(string)[i.Index])
+	ind := r.registers[i.Index].(int)
+	r.registers[r.Index] = string(str.(string)[ind])
 }
 
 func (r *Runnable) runArrayLength(i *ir.ArrayLength) {
