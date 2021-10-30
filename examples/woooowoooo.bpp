@@ -1,3 +1,3 @@
 [DEFINE wo "woooowoooo"]
-[DEFINE w [CONCAT [CHOOSECHAR [VAR wo]] [CHOOSECHAR [VAR wo]] [CHOOSECHAR [VAR wo]] [CHOOSECHAR [VAR wo]] [CHOOSECHAR [VAR wo]] [CHOOSECHAR [VAR wo]] [CHOOSECHAR [VAR wo]] [CHOOSECHAR [VAR wo]] [CHOOSECHAR [VAR wo]] [CHOOSECHAR [VAR wo]]]]
+[DEFINE w [CONCAT [CHOOSE [VAR wo]] [CHOOSE [VAR wo]] [CHOOSE [VAR wo]] [CHOOSE [VAR wo]] [CHOOSE [VAR wo]] [CHOOSE [VAR wo]] [CHOOSE [VAR wo]] [CHOOSE [VAR wo]] [CHOOSE [VAR wo]] [CHOOSE [VAR wo]]]]
 [CONCAT "You got **" [VAR w] "**. " [IF [COMPARE w = wo] "Congratulations, you got woooowoooo!" "Get "woooowoooo" to win."]]
