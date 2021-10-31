@@ -43,6 +43,7 @@ func ParseCode(code string, pos *Pos) ([]Statement, error) {
 					}
 					argVals = append(argVals, argV...)
 				}
+				fnName = strings.TrimSpace(fnName)
 				stmt, err := GetStatement(fnName, argVals)
 				if err != nil {
 					return nil, err

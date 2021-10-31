@@ -3,16 +3,13 @@ package parser
 import "testing"
 
 func TestParseCode(t *testing.T) {
-	code := `[LOOP 
-	10 [DEFINE i 
-	
-				[MATH [
-					
-				VAR i] + 1]
-				
-				
-				] [VAR 
-				
-	i]]`
+	code := `[DEFINE l "etaoinshrdlucmfwypvbgkjqxz"]
+	[DEFINE x [POW 26 0.5]]
+	[INDEX
+	  [VAR l]
+	  [FLOOR
+		[POW [RANDOM 0 [VAR x]] 2]
+	  ]
+	]`
 	ParseCode(code, NewPos("test.bpp"))
 }
