@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/Nv7-Github/bpp/parser"
+	"github.com/Nv7-Github/bpp/old/parser"
 )
 
 // ChooseStmt compiles a CHOOSE statement

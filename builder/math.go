@@ -2,7 +2,7 @@ package builder
 
 import (
 	"github.com/Nv7-Github/bpp/ir"
-	"github.com/Nv7-Github/bpp/parser"
+	"github.com/Nv7-Github/bpp/old/parser"
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/types"
 	"github.com/llir/llvm/ir/value"

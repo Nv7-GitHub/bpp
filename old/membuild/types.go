@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/Nv7-Github/bpp/parser"
+	"github.com/Nv7-Github/bpp/old/parser"
 )
 
 // TypeCastStmt compiles a type-cast statement

@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Nv7-Github/bpp/parser"
+	"github.com/Nv7-Github/bpp/old/parser"
 )
 
 type Concat struct {

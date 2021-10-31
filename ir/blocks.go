@@ -1,6 +1,6 @@
 package ir
 
-import "github.com/Nv7-Github/bpp/parser"
+import "github.com/Nv7-Github/bpp/old/parser"
 
 func (i *IR) addIfB(stmt *parser.IfBlock) (int, error) {
 	cond, err := i.AddStmt(stmt.Condition)

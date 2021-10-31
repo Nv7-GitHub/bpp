@@ -1,7 +1,7 @@
 package membuild
 
 import (
-	"github.com/Nv7-Github/bpp/parser"
+	"github.com/Nv7-Github/bpp/old/parser"
 )
 
 // IfBlock compiles an if block (IFB)

@@ -2,7 +2,7 @@
 package membuild
 
 import (
-	"github.com/Nv7-Github/bpp/parser"
+	"github.com/Nv7-Github/bpp/old/parser"
 )
 
 // Builds the program from an AST to an array of functions, which can then be executed really quickly and multiple times

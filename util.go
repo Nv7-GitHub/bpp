@@ -6,7 +6,7 @@ import (
 	"time"
 
 	bppir "github.com/Nv7-Github/bpp/ir"
-	"github.com/Nv7-Github/bpp/parser"
+	"github.com/Nv7-Github/bpp/old/parser"
 )
 
 // ParseProg parses a Go program

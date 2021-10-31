@@ -4,7 +4,7 @@ import (
 	"math"
 
 	"github.com/Nv7-Github/bpp/ir"
-	"github.com/Nv7-Github/bpp/parser"
+	"github.com/Nv7-Github/bpp/old/parser"
 )
 
 func (r *Runnable) runMath(i *ir.Math) {

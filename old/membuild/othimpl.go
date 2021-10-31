@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"strings"
 
-	"github.com/Nv7-Github/bpp/parser"
+	"github.com/Nv7-Github/bpp/old/parser"
 )
 
 // RandintStmt compiles a RANDINT statement

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/Nv7-Github/bpp/parser"
+	"github.com/Nv7-Github/bpp/old/parser"
 )
 
 // MathStmt compiles a MATH statement

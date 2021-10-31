@@ -3,7 +3,7 @@ package ir
 import (
 	"fmt"
 
-	"github.com/Nv7-Github/bpp/parser"
+	"github.com/Nv7-Github/bpp/old/parser"
 )
 
 var comparisonTiers = map[Type]int{NULL: 0, ARRAY: 1, INT: 2, FLOAT: 3, STRING: 4}

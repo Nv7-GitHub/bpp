@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/Nv7-Github/bpp/builder"
-	"github.com/Nv7-Github/bpp/parser"
+	"github.com/Nv7-Github/bpp/old/parser"
 	"github.com/Nv7-Github/bpp/run"
 )
 

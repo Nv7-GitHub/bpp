@@ -13,7 +13,7 @@ import (
 
 	"github.com/Nv7-Github/bpp/old/compiler"
 	"github.com/Nv7-Github/bpp/old/membuild"
-	"github.com/Nv7-Github/bpp/parser"
+	"github.com/Nv7-Github/bpp/old/parser"
 )
 
 // CompileCmd implements the "compile" sub-command

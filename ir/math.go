@@ -3,7 +3,7 @@ package ir
 import (
 	"fmt"
 
-	"github.com/Nv7-Github/bpp/parser"
+	"github.com/Nv7-Github/bpp/old/parser"
 )
 
 func (i *IR) addMath(stmt *parser.MathStmt) (int, error) {
