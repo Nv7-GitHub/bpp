@@ -44,7 +44,7 @@ func ParseCode(code string, pos *Pos) ([]Statement, error) {
 					argVals = append(argVals, argV...)
 				}
 				fnName = strings.TrimSpace(fnName)
-				stmt, err := GetStatement(fnName, argVals)
+				stmt, err := GetStatement(fnName, argVals, pos)
 				if err != nil {
 					return nil, err
 				}
@@ -98,7 +98,7 @@ func ParseCode(code string, pos *Pos) ([]Statement, error) {
 	}
 
 	if len(stmts) == 0 {
-		return []Statement{GetConst(code)}, nil
+		return []Statement{GetConst(code, pos)}, nil
 	}
 	return stmts, nil
 }

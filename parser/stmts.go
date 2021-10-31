@@ -1,10 +1,12 @@
 package parser
 
-import "fmt"
-
-func GetStatement(fnName string, args []Statement) (Statement, error) {
-	fmt.Println("GET STATEMENT:", fnName)
-
+func GetStatement(fnName string, args []Statement, pos *Pos) (Statement, error) {
+	parser, exists := parsers[fnName]
+	if !exists {
+		return nil, pos.NewError("unknown function: %s", fnName)
+	}
+	// TODO: Do something with parser
+	// NOTE: Match types
 	return nil, nil
 }
 

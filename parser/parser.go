@@ -2,6 +2,25 @@ package parser
 
 import "fmt"
 
+var parsers map[string]Parser
+
+type Parser struct {
+	Parse  func(params []Statement, prog *Program, pos *Pos) (Statement, error)
+	Params []Type
+}
+
+func NewBasicStmt(pos *Pos) *BasicStmt {
+	return &BasicStmt{Position: pos}
+}
+
+type BasicStmt struct {
+	Position *Pos
+}
+
+func (b *BasicStmt) Pos() *Pos {
+	return b.Position
+}
+
 type Function struct {
 	Statements []Statement
 	Args       []Argument
@@ -21,6 +40,7 @@ type Program struct {
 
 type Statement interface {
 	Type() Type
+	Pos() *Pos
 }
 
 type Pos struct {
@@ -32,7 +52,7 @@ func (p *Pos) String() string {
 	return fmt.Sprintf("%s:%d", p.File, p.Line)
 }
 
-func (p *Pos) NewError(formatter string, options []interface{}) error {
+func (p *Pos) NewError(formatter string, options ...interface{}) error {
 	return fmt.Errorf("%v: "+formatter, append([]interface{}{p}, options...)...)
 }
 
@@ -46,4 +66,9 @@ func (p *Pos) Duplicate() *Pos {
 
 func NewPos(file string) *Pos {
 	return &Pos{0, file}
+}
+
+func init() {
+	parsers = make(map[string]Parser)
+	addVariableParsers()
 }
