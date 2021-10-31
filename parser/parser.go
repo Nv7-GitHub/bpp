@@ -2,20 +2,25 @@ package parser
 
 import "fmt"
 
-type Type int
+type Function struct {
+	Statements []Statement
+	Args       []Argument
+	RetType    Type
+}
 
-const (
-	INT Type = iota
-	FLOAT
-	STRING
-	ARRAY
-	NULL
-	VARIADIC
-	STATEMENT
-)
+type Argument struct {
+	Type Type
+	Name string
+}
+
+type Program struct {
+	Functions  map[string]*Function
+	VarTypes   map[string]Type
+	Statements []Statement
+}
 
 type Statement interface {
-	Type()
+	Type() Type
 }
 
 type Pos struct {
