@@ -1,15 +1,18 @@
 package parser
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/davecgh/go-spew/spew"
+)
 
 func TestParseCode(t *testing.T) {
-	code := `[DEFINE l "etaoinshrdlucmfwypvbgkjqxz"]
-	[DEFINE x [POW 26 0.5]]
-	[INDEX
-	  [VAR l]
-	  [FLOOR
-		[POW [RANDOM 0 [VAR x]] 2]
-	  ]
-	]`
-	ParseCode(code, NewPos("test.bpp"))
+	code := `[DEFINE l "etaoinshrdlucmfwypvbgkjqxz"]`
+	prog := NewProgram()
+	err := prog.Parse(code, "main.bpp")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	spew.Dump(prog)
 }

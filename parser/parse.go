@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-func ParseCode(code string, pos *Pos) ([]Statement, error) {
+func ParseCode(code string, pos *Pos, prog *Program) ([]Statement, error) {
 	code = strings.TrimSpace(code)
 	if len(code) == 0 {
 		return make([]Statement, 0), nil
@@ -37,14 +37,14 @@ func ParseCode(code string, pos *Pos) ([]Statement, error) {
 
 				argVals := make([]Statement, 0)
 				for _, arg := range args {
-					argV, err := ParseCode(arg, pos)
+					argV, err := ParseCode(arg, pos, prog)
 					if err != nil {
 						return nil, err
 					}
 					argVals = append(argVals, argV...)
 				}
 				fnName = strings.TrimSpace(fnName)
-				stmt, err := GetStatement(fnName, argVals, pos)
+				stmt, err := GetStatement(fnName, argVals, prog, pos)
 				if err != nil {
 					return nil, err
 				}

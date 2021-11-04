@@ -26,6 +26,9 @@ func (b BasicType) BasicType() BasicType {
 }
 
 func (b BasicType) Equal(t Type) bool {
+	if b == STATEMENT {
+		return true
+	}
 	return b == t.BasicType()
 }
 

@@ -38,6 +38,22 @@ type Program struct {
 	Statements []Statement
 }
 
+func NewProgram() *Program {
+	return &Program{
+		Functions: make(map[string]*Function),
+		VarTypes:  make(map[string]Type),
+	}
+}
+
+func (p *Program) Parse(code string, filename string) error {
+	built, err := ParseCode(code, NewPos(filename), p)
+	if err != nil {
+		return err
+	}
+	p.Statements = built
+	return nil
+}
+
 type Statement interface {
 	Type() Type
 	Pos() *Pos
@@ -49,7 +65,7 @@ type Pos struct {
 }
 
 func (p *Pos) String() string {
-	return fmt.Sprintf("%s:%d", p.File, p.Line)
+	return fmt.Sprintf("%s:%d", p.File, p.Line+1)
 }
 
 func (p *Pos) NewError(formatter string, options ...interface{}) error {

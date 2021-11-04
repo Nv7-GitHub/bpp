@@ -5,11 +5,10 @@ type DefineStmt struct {
 
 	Val      Statement
 	Variable string
-	Typ      Type
 }
 
 func (d *DefineStmt) Type() Type {
-	return d.Typ
+	return NULL
 }
 
 func addVariableParsers() {
