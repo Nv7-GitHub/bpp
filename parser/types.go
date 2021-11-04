@@ -14,7 +14,6 @@ const (
 	INT BasicType = iota
 	FLOAT
 	STRING
-	IDENTIFIER
 	ARRAY
 	NULL
 	VARIADIC
@@ -33,12 +32,11 @@ func (b BasicType) Equal(t Type) bool {
 }
 
 var typeNames = map[BasicType]string{
-	INT:        "int",
-	FLOAT:      "float",
-	STRING:     "string",
-	IDENTIFIER: "ident",
-	ARRAY:      "array",
-	NULL:       "null",
+	INT:    "int",
+	FLOAT:  "float",
+	STRING: "string",
+	ARRAY:  "array",
+	NULL:   "null",
 }
 
 func (b BasicType) String() string {

@@ -25,5 +25,5 @@ func GetConst(text string, pos *Pos) Statement {
 	if text[0] == '"' && text[len(text)-1] == '"' {
 		return &Const{BasicStmt: NewBasicStmt(pos), Val: text[1 : len(text)-1], Typ: STRING}
 	}
-	return &Const{BasicStmt: NewBasicStmt(pos), Val: text, Typ: IDENTIFIER}
+	return &Const{BasicStmt: NewBasicStmt(pos), Val: text, Typ: STRING}
 }
