@@ -26,7 +26,7 @@ func MatchTypes(a []Statement, b []Type, pos *Pos) error {
 			return pos.NewError("expected %d arguments, got %d", len(b), len(a))
 		}
 		for i, par := range a {
-			if !par.Type().Equal(b[i]) {
+			if !b[i].Equal(par.Type()) {
 				return pos.NewError("expected type %s, got %s in argument %d", b[i].String(), par.Type().String(), i+1)
 			}
 		}

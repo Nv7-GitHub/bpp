@@ -1,6 +1,9 @@
 package parser
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Type interface {
 	BasicType() BasicType
@@ -60,4 +63,41 @@ func (a *Array) Equal(t Type) bool {
 
 func (a *Array) String() string {
 	return fmt.Sprintf("Array<%s>", a.BasicType().String())
+}
+
+type MultiType struct {
+	Types []Type
+}
+
+func NewMultiType(types ...Type) *MultiType {
+	m := &MultiType{
+		Types: types,
+	}
+	return m
+}
+
+func (m *MultiType) Equal(t Type) bool {
+	for _, typ := range m.Types {
+		if typ.Equal(t) {
+			return true
+		}
+	}
+	return false
+}
+
+func (m *MultiType) BasicType() BasicType {
+	return STATEMENT
+}
+
+func (m *MultiType) String() string {
+	out := &strings.Builder{}
+	out.WriteString("MultiType<")
+	for i, typ := range m.Types {
+		out.WriteString(typ.String())
+		if i != len(m.Types)-1 {
+			out.WriteString(", ")
+		}
+	}
+	out.WriteString(">")
+	return out.String()
 }
