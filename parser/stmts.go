@@ -35,7 +35,7 @@ func MatchTypes(a []Statement, b []Type, pos *Pos) error {
 
 	// it is variadic
 	if len(a) < len(b) {
-		return pos.NewError("expected at least %d arguments, got %d", len(b), len(a))
+		return pos.NewError("expected at least %d arguments, got %d", len(b)-variadiccnt, len(a))
 	}
 	// TODO: Figure this out
 	return nil
