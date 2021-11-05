@@ -90,4 +90,5 @@ func init() {
 	addMathStmts()
 	addConditionals()
 	addManipStmts()
+	addConstStmts()
 }

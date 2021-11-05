@@ -27,3 +27,35 @@ func GetConst(text string, pos *Pos) Statement {
 	}
 	return &Const{BasicStmt: NewBasicStmt(pos), Val: text, Typ: STRING}
 }
+
+type ArrayStmt struct {
+	*BasicStmt
+
+	Vals []Statement
+	Typ  *Array
+}
+
+func (a *ArrayStmt) Type() Type { return a.Typ }
+
+func addConstStmts() {
+	parsers["ARRAY"] = Parser{
+		Params: []Type{STATEMENT, VARIADIC},
+		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+			// Type check
+			if len(params) > 1 {
+				firstTyp := params[0].Type()
+				for i, par := range params[1:] {
+					if par.Type() != firstTyp {
+						return nil, pos.NewError("element %d of array does not match type %s", i+1, firstTyp.String())
+					}
+				}
+			}
+
+			return &ArrayStmt{
+				BasicStmt: NewBasicStmt(pos),
+				Vals:      params,
+				Typ:       &Array{ValType: params[0].Type()},
+			}, nil
+		},
+	}
+}
