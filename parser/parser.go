@@ -88,4 +88,5 @@ func init() {
 	parsers = make(map[string]Parser)
 	addVariableParsers()
 	addMathStmts()
+	addConditionals()
 }

@@ -7,7 +7,7 @@ import (
 )
 
 func TestParseCode(t *testing.T) {
-	code := `[MATH 1 + 1]`
+	code := `[DEFINE a [COMPARE 1 = 1.1]]`
 	prog := NewProgram()
 	err := prog.Parse(code, "main.bpp")
 	if err != nil {
