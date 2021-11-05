@@ -37,6 +37,14 @@ type ArrayStmt struct {
 
 func (a *ArrayStmt) Type() Type { return a.Typ }
 
+type ArgsStmt struct {
+	*BasicStmt
+
+	Index Statement
+}
+
+func (a *ArgsStmt) Type() Type { return STRING }
+
 func addConstStmts() {
 	parsers["ARRAY"] = Parser{
 		Params: []Type{STATEMENT, VARIADIC},
@@ -55,6 +63,17 @@ func addConstStmts() {
 				BasicStmt: NewBasicStmt(pos),
 				Vals:      params,
 				Typ:       &Array{ValType: params[0].Type()},
+			}, nil
+		},
+	}
+
+	parsers["ARGS"] = Parser{
+		Params: []Type{INT},
+		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+			return &ArgsStmt{
+				BasicStmt: NewBasicStmt(pos),
+
+				Index: params[0],
 			}, nil
 		},
 	}
