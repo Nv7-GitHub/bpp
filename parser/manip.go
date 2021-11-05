@@ -20,6 +20,19 @@ func addManipStmts() {
 		},
 	}
 
+	parsers["INDEX"] = Parser{
+		Params: []Type{NewMultiType(STRING, ARRAY), INT},
+		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+			return &IndexStmt{
+				BasicStmt: NewBasicStmt(pos),
+
+				Val:      params[0],
+				Index:    params[1],
+				IsString: params[0].Type().Equal(STRING),
+			}, nil
+		},
+	}
+
 	// Type casts
 	parsers["INT"] = Parser{
 		Params: []Type{NewMultiType(FLOAT, STRING)},
@@ -39,6 +52,21 @@ func addManipStmts() {
 			return NewTypeCastStmt(pos, params[0], STRING), nil
 		},
 	}
+}
+
+type IndexStmt struct {
+	*BasicStmt
+
+	Val      Statement
+	Index    Statement
+	IsString bool
+}
+
+func (i *IndexStmt) Type() Type {
+	if i.IsString {
+		return STRING
+	}
+	return ARRAY
 }
 
 type TypeCastStmt struct {
