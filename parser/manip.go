@@ -33,6 +33,17 @@ func addManipStmts() {
 		},
 	}
 
+	parsers["LENGTH"] = Parser{
+		Params: []Type{NewMultiType(STRING, ARRAY), INT},
+		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+			return &LengthStmt{
+				BasicStmt: NewBasicStmt(pos),
+
+				Val: params[0],
+			}, nil
+		},
+	}
+
 	// Type casts
 	parsers["INT"] = Parser{
 		Params: []Type{NewMultiType(FLOAT, STRING)},
@@ -68,6 +79,14 @@ func (i *IndexStmt) Type() Type {
 	}
 	return ARRAY
 }
+
+type LengthStmt struct {
+	*BasicStmt
+
+	Val Statement
+}
+
+func (l *LengthStmt) Type() Type { return INT }
 
 type TypeCastStmt struct {
 	*BasicStmt
