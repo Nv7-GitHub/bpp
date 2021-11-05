@@ -44,6 +44,17 @@ func addManipStmts() {
 		},
 	}
 
+	parsers["CHOOSE"] = Parser{
+		Params: []Type{NewMultiType(STRING, ARRAY), INT},
+		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+			return &ChooseStmt{
+				BasicStmt: NewBasicStmt(pos),
+
+				Val: params[0],
+			}, nil
+		},
+	}
+
 	// Type casts
 	parsers["INT"] = Parser{
 		Params: []Type{NewMultiType(FLOAT, STRING)},
@@ -104,4 +115,17 @@ func NewTypeCastStmt(pos *Pos, val Statement, newTyp Type) *TypeCastStmt {
 		Val:    val,
 		NewTyp: newTyp,
 	}
+}
+
+type ChooseStmt struct {
+	*BasicStmt
+
+	Val Statement
+}
+
+func (c *ChooseStmt) Type() Type {
+	if c.Val.Type().Equal(STRING) {
+		return STRING
+	}
+	return c.Val.Type().(*Array).ValType
 }

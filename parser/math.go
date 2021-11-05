@@ -65,4 +65,45 @@ func addMathStmts() {
 			}, nil
 		},
 	}
+
+	parsers["RANDOM"] = Parser{
+		Params: []Type{FLOAT, FLOAT},
+		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+			return &RandomStmt{
+				BasicStmt: NewBasicStmt(pos),
+
+				Min: params[0],
+				Max: params[1],
+			}, nil
+		},
+	}
+	parsers["RANDINT"] = Parser{
+		Params: []Type{INT, INT},
+		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+			return &RandintStmt{
+				BasicStmt: NewBasicStmt(pos),
+
+				Min: params[0],
+				Max: params[1],
+			}, nil
+		},
+	}
 }
+
+type RandomStmt struct {
+	*BasicStmt
+
+	Min Statement
+	Max Statement
+}
+
+func (r *RandomStmt) Type() Type { return FLOAT }
+
+type RandintStmt struct {
+	*BasicStmt
+
+	Min Statement
+	Max Statement
+}
+
+func (r *RandintStmt) Type() Type { return INT }
