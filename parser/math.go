@@ -88,6 +88,26 @@ func addMathStmts() {
 			}, nil
 		},
 	}
+
+	// Math Functions
+	parsers["ROUND"] = Parser{
+		Params: []Type{FLOAT},
+		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+			return NewMathFunction(pos, params[0], MathFunctionRound, INT), nil
+		},
+	}
+	parsers["CEIL"] = Parser{
+		Params: []Type{FLOAT},
+		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+			return NewMathFunction(pos, params[0], MathFunctionCeil, INT), nil
+		},
+	}
+	parsers["FLOOR"] = Parser{
+		Params: []Type{FLOAT},
+		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+			return NewMathFunction(pos, params[0], MathFunctionFloor, INT), nil
+		},
+	}
 }
 
 type RandomStmt struct {
@@ -107,3 +127,33 @@ type RandintStmt struct {
 }
 
 func (r *RandintStmt) Type() Type { return INT }
+
+type MathFunction int
+
+const (
+	MathFunctionRound MathFunction = iota
+	MathFunctionCeil
+	MathFunctionFloor
+)
+
+type MathFunctionStmt struct {
+	*BasicStmt
+
+	Func   MathFunction
+	Val    Statement
+	OutTyp Type
+}
+
+func (m *MathFunctionStmt) Type() Type {
+	return m.OutTyp
+}
+
+func NewMathFunction(pos *Pos, val Statement, fn MathFunction, outTyp Type) *MathFunctionStmt {
+	return &MathFunctionStmt{
+		BasicStmt: NewBasicStmt(pos),
+
+		Func:   fn,
+		Val:    val,
+		OutTyp: outTyp,
+	}
+}
