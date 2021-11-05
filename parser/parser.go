@@ -89,4 +89,5 @@ func init() {
 	addVariableParsers()
 	addMathStmts()
 	addConditionals()
+	addManipStmts()
 }
