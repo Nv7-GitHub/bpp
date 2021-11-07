@@ -33,6 +33,36 @@ func (c *CompareStmt) Type() Type {
 	return INT
 }
 
+func getCommonType(typ1, typ2 Type, pos *Pos) (Type, error) {
+	var outTyp Type
+	if typ1.Equal(INT) || typ1.Equal(FLOAT) {
+		if typ2.Equal(INT) || typ2.Equal(FLOAT) {
+			if typ1.Equal(typ2) {
+				outTyp = typ1
+			} else {
+				outTyp = FLOAT // if not equal, one is a float
+			}
+		} else { // if one is a number and the other isn't
+			return nil, pos.NewError("can only compare numbers")
+		}
+	} else if typ1.Equal(STRING) {
+		if typ2.Equal(STRING) {
+			outTyp = STRING
+		} else {
+			return nil, pos.NewError("can only compare strings to strings")
+		}
+	} else if typ1.Equal(ARRAY) {
+		if typ2.Equal(typ1) {
+			outTyp = typ1
+		} else {
+			return nil, pos.NewError("can only compare arrays to arrays")
+		}
+	} else {
+		return nil, pos.NewError("unknown type comparison")
+	}
+	return outTyp, nil
+}
+
 func addConditionals() {
 	parsers["COMPARE"] = Parser{
 		Params: []Type{STATEMENT, STRING, STATEMENT},
@@ -49,32 +79,9 @@ func addConditionals() {
 			var outTyp Type
 			typ1 := params[0].Type()
 			typ2 := params[2].Type()
-
-			// Numbers
-			if typ1.Equal(INT) || typ1.Equal(FLOAT) {
-				if typ2.Equal(INT) || typ2.Equal(FLOAT) {
-					if typ1.Equal(typ2) {
-						outTyp = typ1
-					} else {
-						outTyp = FLOAT // if not equal, one is a float
-					}
-				} else { // if one is a number and the other isn't
-					return nil, pos.NewError("can only compare numbers")
-				}
-			} else if typ1.Equal(STRING) {
-				if typ2.Equal(STRING) {
-					outTyp = STRING
-				} else {
-					return nil, pos.NewError("can only compare strings to strings")
-				}
-			} else if typ1.Equal(ARRAY) {
-				if typ2.Equal(typ1) {
-					outTyp = typ1
-				} else {
-					return nil, pos.NewError("can only compare arrays to arrays")
-				}
-			} else {
-				return nil, pos.NewError("unknown type comparison")
+			outTyp, err := getCommonType(typ1, typ2, pos)
+			if err != nil {
+				return nil, err
 			}
 
 			return &CompareStmt{
