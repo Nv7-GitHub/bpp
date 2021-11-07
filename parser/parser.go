@@ -91,4 +91,5 @@ func init() {
 	addConditionals()
 	addManipStmts()
 	addConstStmts()
+	addLoops()
 }
