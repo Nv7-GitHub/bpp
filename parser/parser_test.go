@@ -13,7 +13,15 @@ func TestParseCode(t *testing.T) {
 	[VAR i]
 		[DEFINE i [MATH [VAR i] + 1]]]
 		
-		[IF [COMPARE 1 = 1] [STRING [VAR i]] "hi"]`
+		[IF 
+			[COMPARE 1 = 1] 
+			[BLOCK 
+				[VAR i] 
+				"ok cool"
+			] 
+			
+			"hi"
+		]`
 	prog := NewProgram()
 	err := prog.Parse(code, "main.bpp")
 	if err != nil {
