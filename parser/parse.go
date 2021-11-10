@@ -51,7 +51,7 @@ func (p *Program) ParseCode(code string, pos *Pos) ([]Statement, error) {
 				// Parse args recursively
 				argVals := make([]Statement, 0)
 				for _, arg := range args {
-					argV, err := p.ParseCode(arg, pos)
+					argV, err := p.ParseCode(arg, pos.Duplicate())
 					if err != nil {
 						return nil, err
 					}
