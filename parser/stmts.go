@@ -1,6 +1,6 @@
 package parser
 
-func GetStatement(fnName string, args []Statement, prog *Program, pos *Pos) (Statement, error) {
+func (p *Program) GetStatement(fnName string, args []Statement, pos *Pos) (Statement, error) {
 	parser, exists := parsers[fnName]
 	if !exists {
 		return nil, pos.NewError("unknown function: %s", fnName)
@@ -9,7 +9,7 @@ func GetStatement(fnName string, args []Statement, prog *Program, pos *Pos) (Sta
 	if err != nil {
 		return nil, err
 	}
-	return parser.Parse(args, prog, pos)
+	return parser.Parse(args, p, pos)
 }
 
 func MatchTypes(a []Statement, b []Type, pos *Pos) error {
@@ -34,7 +34,7 @@ func MatchTypes(a []Statement, b []Type, pos *Pos) error {
 	}
 
 	// it is variadic
-	if len(a) < len(b) {
+	if len(a) < len(b)-variadiccnt {
 		return pos.NewError("expected at least %d arguments, got %d", len(b)-variadiccnt, len(a))
 	}
 	// TODO: Figure this out

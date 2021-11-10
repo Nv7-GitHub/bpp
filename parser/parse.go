@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-func ParseCode(code string, pos *Pos, prog *Program) ([]Statement, error) {
+func (p *Program) ParseCode(code string, pos *Pos) ([]Statement, error) {
 	code = strings.TrimSpace(code)
 	if len(code) == 0 {
 		return make([]Statement, 0), nil
@@ -35,18 +35,37 @@ func ParseCode(code string, pos *Pos, prog *Program) ([]Statement, error) {
 				// Add last arg
 				args = append(args, arg)
 
-				argVals := make([]Statement, 0)
-				for _, arg := range args {
-					argV, err := ParseCode(arg, pos, prog)
+				// Fn Name
+				fnName = strings.TrimSpace(fnName)
+				// FUNCTION OPEN
+				if fnName == "FUNCTION" {
+					if len(args) < 1 {
+						return nil, pos.NewError("function name not specified")
+					}
+					err := p.BeginFunction(args[0], pos)
 					if err != nil {
 						return nil, err
 					}
+				}
+
+				// Parse args recursively
+				argVals := make([]Statement, 0)
+				for _, arg := range args {
+					argV, err := p.ParseCode(arg, pos)
+					if err != nil {
+						return nil, err
+					}
+					if argV == nil {
+						return nil, pos.NewError("expected argument")
+					}
 					argVals = append(argVals, argV...)
 				}
-				fnName = strings.TrimSpace(fnName)
-				stmt, err := GetStatement(fnName, argVals, prog, pos)
+				stmt, err := p.GetStatement(fnName, argVals, pos)
 				if err != nil {
 					return nil, err
+				}
+				if fnName == "FUNCTION" {
+					return nil, nil // Function def doesn't return
 				}
 				stmts = append(stmts, stmt)
 

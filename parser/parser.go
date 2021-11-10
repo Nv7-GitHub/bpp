@@ -22,20 +22,27 @@ func (b *BasicStmt) Pos() *Pos {
 }
 
 type Function struct {
-	Statements []Statement
-	Args       []Argument
-	RetType    Type
-}
+	Name    string
+	Params  []FunctionParam
+	RetType Type
 
-type Argument struct {
-	Type Type
-	Name string
+	Statements []Statement
 }
 
 type Program struct {
 	Functions  map[string]*Function
 	VarTypes   map[string]Type
 	Statements []Statement
+
+	// Functions
+	InFunction  bool
+	FuncName    string
+	OldVarTypes map[string]Type
+}
+
+type FunctionParam struct {
+	Name string
+	Type Type
 }
 
 func NewProgram() *Program {
@@ -46,7 +53,7 @@ func NewProgram() *Program {
 }
 
 func (p *Program) Parse(code string, filename string) error {
-	built, err := ParseCode(code, NewPos(filename), p)
+	built, err := p.ParseCode(code, NewPos(filename))
 	if err != nil {
 		return err
 	}
@@ -92,4 +99,5 @@ func init() {
 	addManipStmts()
 	addConstStmts()
 	addLoops()
+	addFunctionStmts()
 }
