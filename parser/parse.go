@@ -64,10 +64,9 @@ func (p *Program) ParseCode(code string, pos *Pos) ([]Statement, error) {
 				if err != nil {
 					return nil, err
 				}
-				if fnName == "FUNCTION" {
-					return nil, nil // Function def doesn't return
+				if fnName != "FUNCTION" {
+					stmts = append(stmts, stmt)
 				}
-				stmts = append(stmts, stmt)
 
 				inFnName = true
 				fnName = ""

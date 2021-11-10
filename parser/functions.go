@@ -46,6 +46,16 @@ type ReturnStmt struct {
 
 func (r *ReturnStmt) Type() Type { return r.Val.Type() }
 
+type FunctionCallStmt struct {
+	*BasicStmt
+
+	FnName  string
+	Params  []Statement
+	RetType Type
+}
+
+func (f *FunctionCallStmt) Type() Type { return f.RetType }
+
 func addFunctionStmts() {
 	parsers["PARAM"] = Parser{
 		Params: []Type{STRING, STRING},
@@ -135,6 +145,8 @@ func addFunctionStmts() {
 			// Save function
 			prog.Functions[prog.FuncName].Statements = blk.Body
 			prog.VarTypes = prog.OldVarTypes
+			prog.InFunction = false
+			prog.FuncName = ""
 
 			return nil, nil
 		},

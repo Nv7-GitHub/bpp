@@ -9,7 +9,9 @@ import (
 func TestParseCode(t *testing.T) {
 	code := `[FUNCTION ADD [PARAM a INT] [PARAM b INT] [RETURNS INT] [BLOCK
 		[RETURN [MATH [VAR a] + [VAR b]]]
-	]]`
+	]]
+	
+	[ADD 1 2]`
 	prog := NewProgram()
 	err := prog.Parse(code, "main.bpp")
 	if err != nil {

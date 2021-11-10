@@ -3,6 +3,26 @@ package parser
 func (p *Program) GetStatement(fnName string, args []Statement, pos *Pos) (Statement, error) {
 	parser, exists := parsers[fnName]
 	if !exists {
+		// Function call?
+		_, exists := p.Functions[fnName]
+		if exists {
+			// Function call!
+			fn := p.Functions[fnName]
+			// Check types
+			parTypes := make([]Type, len(fn.Params))
+			for i, par := range fn.Params {
+				parTypes[i] = par.Type
+			}
+			err := MatchTypes(args, parTypes, pos)
+			if err != nil {
+				return nil, err
+			}
+			return &FunctionCallStmt{
+				FnName:  fnName,
+				Params:  args,
+				RetType: fn.RetType,
+			}, nil
+		}
 		return nil, pos.NewError("unknown function: %s", fnName)
 	}
 	err := MatchTypes(args, parser.Params, pos)
