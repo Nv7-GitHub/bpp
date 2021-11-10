@@ -29,10 +29,16 @@ type Function struct {
 	Statements []Statement
 }
 
+type empty struct{}
+
 type Program struct {
 	Functions  map[string]*Function
 	VarTypes   map[string]Type
 	Statements []Statement
+
+	// Multifile
+	Files map[string]string
+	Added map[string]empty
 
 	// Functions
 	InFunction  bool
@@ -45,23 +51,11 @@ type FunctionParam struct {
 	Type Type
 }
 
-func Parse(code string, filename string) (*Program, error) {
-	prog := &Program{
-		Functions: make(map[string]*Function),
-		VarTypes:  make(map[string]Type),
-	}
-	built, err := prog.ParseCode(code, NewPos(filename))
-	if err != nil {
-		return nil, err
-	}
-	prog.Statements = built
-	prog.Close()
-	return prog, nil
-}
-
 func (p *Program) Close() {
 	p.VarTypes = nil
 	p.OldVarTypes = nil
+	p.Files = nil
+	p.Added = nil
 }
 
 type Statement interface {
@@ -103,4 +97,5 @@ func init() {
 	addConstStmts()
 	addLoops()
 	addFunctionStmts()
+	addMultifileParser()
 }
