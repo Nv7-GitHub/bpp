@@ -12,8 +12,7 @@ func TestParseCode(t *testing.T) {
 	]]
 	
 	[ADD 1 2]`
-	prog := NewProgram()
-	err := prog.Parse(code, "main.bpp")
+	prog, err := Parse(code, "main.bpp")
 	if err != nil {
 		t.Fatal(err)
 	}

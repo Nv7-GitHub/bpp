@@ -45,20 +45,23 @@ type FunctionParam struct {
 	Type Type
 }
 
-func NewProgram() *Program {
-	return &Program{
+func Parse(code string, filename string) (*Program, error) {
+	prog := &Program{
 		Functions: make(map[string]*Function),
 		VarTypes:  make(map[string]Type),
 	}
+	built, err := prog.ParseCode(code, NewPos(filename))
+	if err != nil {
+		return nil, err
+	}
+	prog.Statements = built
+	prog.Close()
+	return prog, nil
 }
 
-func (p *Program) Parse(code string, filename string) error {
-	built, err := p.ParseCode(code, NewPos(filename))
-	if err != nil {
-		return err
-	}
-	p.Statements = built
-	return nil
+func (p *Program) Close() {
+	p.VarTypes = nil
+	p.OldVarTypes = nil
 }
 
 type Statement interface {
