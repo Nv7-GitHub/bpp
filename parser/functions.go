@@ -56,6 +56,16 @@ type FunctionCallStmt struct {
 
 func (f *FunctionCallStmt) Type() Type { return f.RetType }
 
+type ExternalCallStmt struct {
+	*BasicStmt
+
+	FnName  string
+	Params  []Statement
+	RetType Type
+}
+
+func (e *ExternalCallStmt) Type() Type { return e.RetType }
+
 func addFunctionStmts() {
 	parsers["PARAM"] = Parser{
 		Params: []Type{STRING, STRING},
@@ -195,9 +205,7 @@ func ParseTypeString(typName string, pos *Pos) (Type, error) {
 			if err != nil {
 				return nil, err
 			}
-			typ = &Array{
-				ValType: typ,
-			}
+			typ = NewArrayType(typ)
 		} else {
 			return nil, pos.NewError("unknown type \"%s\"", typName)
 		}

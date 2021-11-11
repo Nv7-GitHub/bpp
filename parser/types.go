@@ -61,8 +61,14 @@ func (a *Array) Equal(t Type) bool {
 	return a.ValType.Equal(t.(*Array).ValType)
 }
 
+func NewArrayType(valTyp Type) *Array {
+	return &Array{
+		ValType: valTyp,
+	}
+}
+
 func (a *Array) String() string {
-	return fmt.Sprintf("Array<%s>", a.BasicType().String())
+	return fmt.Sprintf("Array<%s>", a.ValType.String())
 }
 
 type MultiType struct {

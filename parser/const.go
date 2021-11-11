@@ -62,7 +62,7 @@ func addConstStmts() {
 			return &ArrayStmt{
 				BasicStmt: NewBasicStmt(pos),
 				Vals:      params,
-				Typ:       &Array{ValType: params[0].Type()},
+				Typ:       NewArrayType(params[0].Type()),
 			}, nil
 		},
 	}

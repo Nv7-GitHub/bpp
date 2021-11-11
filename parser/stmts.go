@@ -23,6 +23,22 @@ func (p *Program) GetStatement(fnName string, args []Statement, pos *Pos) (State
 				RetType: fn.RetType,
 			}, nil
 		}
+
+		// Not function call, external function call?
+		extFn, exists := p.ExternalFunctions[fnName]
+		if exists {
+			// External function call!
+			err := MatchTypes(args, extFn.ParTypes, pos)
+			if err != nil {
+				return nil, err
+			}
+
+			return &ExternalCallStmt{
+				FnName:  fnName,
+				Params:  args,
+				RetType: extFn.RetType,
+			}, nil
+		}
 		return nil, pos.NewError("unknown function: %s", fnName)
 	}
 	err := MatchTypes(args, parser.Params, pos)

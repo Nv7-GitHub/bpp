@@ -3,27 +3,20 @@ package parser
 import "fmt"
 
 func Parse(code string, filename string) (*Program, error) {
-	prog := &Program{
-		Functions: make(map[string]*Function),
-		VarTypes:  make(map[string]Type),
-		Files:     map[string]string{filename: code},
-		Added:     map[string]empty{filename: {}},
-	}
-	built, err := prog.ParseCode(code, NewPos(filename))
-	if err != nil {
-		return nil, err
-	}
-	prog.Statements = built
-	prog.Close()
-	return prog, nil
+	return ParseComplex(map[string]string{filename: code}, filename, make(map[string]ExternalFunction))
 }
 
 func ParseMultifile(files map[string]string, entryFile string) (*Program, error) {
+	return ParseComplex(files, entryFile, make(map[string]ExternalFunction))
+}
+
+func ParseComplex(files map[string]string, entryFile string, externalFuncs map[string]ExternalFunction) (*Program, error) {
 	prog := &Program{
-		Functions: make(map[string]*Function),
-		VarTypes:  make(map[string]Type),
-		Files:     files,
-		Added:     map[string]empty{entryFile: {}},
+		Functions:         make(map[string]*Function),
+		VarTypes:          make(map[string]Type),
+		ExternalFunctions: externalFuncs,
+		Files:             files,
+		Added:             map[string]empty{entryFile: {}},
 	}
 	code, exists := files[entryFile]
 	if !exists {

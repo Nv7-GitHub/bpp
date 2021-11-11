@@ -29,12 +29,18 @@ type Function struct {
 	Statements []Statement
 }
 
+type ExternalFunction struct {
+	ParTypes []Type
+	RetType  Type
+}
+
 type empty struct{}
 
 type Program struct {
-	Functions  map[string]*Function
-	VarTypes   map[string]Type
-	Statements []Statement
+	Functions         map[string]*Function
+	ExternalFunctions map[string]ExternalFunction
+	VarTypes          map[string]Type
+	Statements        []Statement
 
 	// Multifile
 	Files map[string]string
