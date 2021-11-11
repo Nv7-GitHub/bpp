@@ -3,7 +3,7 @@ package run
 import (
 	"math"
 
-	"github.com/Nv7-Github/bpp/ir"
+	"github.com/Nv7-Github/bpp/old/ir"
 	"github.com/Nv7-Github/bpp/old/parser"
 )
 

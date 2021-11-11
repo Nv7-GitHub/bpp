@@ -1,7 +1,7 @@
 package run
 
 import (
-	"github.com/Nv7-Github/bpp/ir"
+	"github.com/Nv7-Github/bpp/old/ir"
 )
 
 func (r *Runnable) runArray(i *ir.Array) {

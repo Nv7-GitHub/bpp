@@ -4,7 +4,7 @@ import (
 	"errors"
 	"math/rand"
 
-	"github.com/Nv7-Github/bpp/ir"
+	"github.com/Nv7-Github/bpp/old/ir"
 )
 
 func (r *Runnable) runGetArg(i *ir.GetArg) error {

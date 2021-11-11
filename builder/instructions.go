@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/Nv7-Github/bpp/ir"
+	"github.com/Nv7-Github/bpp/old/ir"
 )
 
 func (b *builder) addInstruction(instr ir.Instruction) error {

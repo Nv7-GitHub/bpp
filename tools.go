@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/Nv7-Github/bpp/ir"
+	"github.com/Nv7-Github/bpp/old/ir"
 )
 
 func processTools(args Args) {

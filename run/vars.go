@@ -1,6 +1,6 @@
 package run
 
-import "github.com/Nv7-Github/bpp/ir"
+import "github.com/Nv7-Github/bpp/old/ir"
 
 func (r *Runnable) runAllocStatic() {
 	r.registers[r.Index] = len(r.vars)

@@ -3,7 +3,7 @@ package run
 import (
 	"io"
 
-	"github.com/Nv7-Github/bpp/ir"
+	"github.com/Nv7-Github/bpp/old/ir"
 )
 
 type Runnable struct {
