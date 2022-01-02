@@ -1,0 +1,20 @@
+# Functions
+[FUNCTION ADD [PARAM a INT] [PARAM b INT] [RETURNS INT] [BLOCK 
+	[RETURN [MATH [VAR a] + [VAR b]]]
+]]
+[ADD 1 2]
+
+# Loops
+[DEFINE i 1]
+[WHILE [COMPARE [VAR i] < 10] [BLOCK 
+	[VAR i]
+	[DEFINE i [MATH [VAR i] + 1]]
+]]
+
+# Ifs
+[IF [COMPARE 1 = 1] "Hi" "Hello"]
+[IF [COMPARE 1 = 1] [BLOCK 
+	"Hi"
+] [BLOCK 
+	"Hello"
+]]
