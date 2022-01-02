@@ -7,7 +7,7 @@ import (
 	"github.com/Nv7-Github/bpp/types"
 )
 
-func (p *Program) BeginFunction(name string, pos *Pos) error {
+func (p *Program) BeginFunction(name string, pos *types.Pos) error {
 	if p.InFunction {
 		return pos.NewError("nested functions aren't allowed")
 	}
@@ -71,7 +71,7 @@ func (e *ExternalCallStmt) Type() types.Type { return e.RetType }
 func addFunctionStmts() {
 	parsers["PARAM"] = Parser{
 		Params: []types.Type{types.STRING, types.STRING},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			// Check if in param section
 			if !prog.InFunction || prog.Functions[prog.FuncName].RetType != nil {
 				return nil, pos.NewError("misplaced PARAM statement")
@@ -107,7 +107,7 @@ func addFunctionStmts() {
 
 	parsers["RETURNS"] = Parser{
 		Params: []types.Type{types.STRING},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			// Check if in param section
 			if !prog.InFunction || prog.Functions[prog.FuncName].RetType != nil {
 				return nil, pos.NewError("misplaced RETURNS statement")
@@ -130,7 +130,7 @@ func addFunctionStmts() {
 
 	parsers["FUNCTION"] = Parser{
 		Params: []types.Type{types.STRING, types.NULL, types.VARIADIC, types.STATEMENT},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			// Get rid of name
 			params = params[1:]
 
@@ -166,7 +166,7 @@ func addFunctionStmts() {
 
 	parsers["RETURN"] = Parser{
 		Params: []types.Type{types.STATEMENT},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			// Check if in right section
 			if !prog.InFunction {
 				return nil, pos.NewError("RETURN must be in function")
@@ -189,7 +189,7 @@ func addFunctionStmts() {
 	}
 }
 
-func ParseTypeString(typName string, pos *Pos) (types.Type, error) {
+func ParseTypeString(typName string, pos *types.Pos) (types.Type, error) {
 	// Check if basic type
 	var typ types.Type
 	var ok bool

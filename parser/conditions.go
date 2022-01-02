@@ -35,7 +35,7 @@ func (c *CompareStmt) Type() types.Type {
 	return types.INT
 }
 
-func getCommonType(typ1, typ2 types.Type, pos *Pos) (types.Type, error) {
+func getCommonType(typ1, typ2 types.Type, pos *types.Pos) (types.Type, error) {
 	var outTyp types.Type
 	if typ1.Equal(types.INT) || typ1.Equal(types.FLOAT) {
 		if typ2.Equal(types.INT) || typ2.Equal(types.FLOAT) {
@@ -68,7 +68,7 @@ func getCommonType(typ1, typ2 types.Type, pos *Pos) (types.Type, error) {
 func addConditionals() {
 	parsers["COMPARE"] = Parser{
 		Params: []types.Type{types.STATEMENT, types.STRING, types.STATEMENT},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			opV, ok := params[1].(*Const)
 			if !ok {
 				return nil, pos.NewError("compare operation must be constant")

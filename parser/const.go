@@ -17,7 +17,7 @@ func (c *Const) Type() types.Type {
 	return c.Typ
 }
 
-func GetConst(text string, pos *Pos) Statement {
+func GetConst(text string, pos *types.Pos) Statement {
 	intV, err := strconv.Atoi(text)
 	if err == nil {
 		return &Const{BasicStmt: NewBasicStmt(pos), Val: intV, Typ: types.INT}
@@ -52,7 +52,7 @@ func (a *ArgsStmt) Type() types.Type { return types.STRING }
 func addConstStmts() {
 	parsers["ARRAY"] = Parser{
 		Params: []types.Type{types.STATEMENT, types.VARIADIC},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			// Type check
 			if len(params) > 1 {
 				firstTyp := params[0].Type()
@@ -73,7 +73,7 @@ func addConstStmts() {
 
 	parsers["ARGS"] = Parser{
 		Params: []types.Type{types.INT},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return &ArgsStmt{
 				BasicStmt: NewBasicStmt(pos),
 

@@ -27,7 +27,7 @@ func (v *VarStmt) Type() types.Type {
 func addVariableParsers() {
 	parsers["DEFINE"] = Parser{
 		Params: []types.Type{types.STRING, types.STATEMENT},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			var stmt DefineStmt
 			stmt.BasicStmt = NewBasicStmt(pos)
 			_, ok := params[0].(*Const)
@@ -50,7 +50,7 @@ func addVariableParsers() {
 
 	parsers["VAR"] = Parser{
 		Params: []types.Type{types.STRING},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			name, ok := params[0].(*Const)
 			if !ok {
 				return nil, pos.NewError("variable names must be constants")

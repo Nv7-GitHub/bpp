@@ -2,7 +2,7 @@ package parser
 
 import "github.com/Nv7-Github/bpp/types"
 
-func (p *Program) GetStatement(fnName string, args []Statement, pos *Pos) (Statement, error) {
+func (p *Program) GetStatement(fnName string, args []Statement, pos *types.Pos) (Statement, error) {
 	parser, exists := parsers[fnName]
 	if !exists {
 		// Function call?
@@ -50,7 +50,7 @@ func (p *Program) GetStatement(fnName string, args []Statement, pos *Pos) (State
 	return parser.Parse(args, p, pos)
 }
 
-func MatchTypes(a []Statement, b []types.Type, pos *Pos) error {
+func MatchTypes(a []Statement, b []types.Type, pos *types.Pos) error {
 	variadiccnt := 0
 	for _, val := range b {
 		if val.Equal(types.VARIADIC) {

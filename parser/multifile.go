@@ -26,7 +26,7 @@ func ParseComplex(files map[string]string, entryFile string, externalFuncs map[s
 	if !exists {
 		return nil, fmt.Errorf("entry file \"%s\" doesn't exist", entryFile)
 	}
-	built, err := prog.ParseCode(code, NewPos(entryFile))
+	built, err := prog.ParseCode(code, types.NewPos(entryFile))
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func ParseComplex(files map[string]string, entryFile string, externalFuncs map[s
 func addMultifileParser() {
 	parsers["IMPORT"] = Parser{
 		Params: []types.Type{types.STRING},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			filenameConst, ok := params[0].(*Const)
 			if !ok {
 				return nil, pos.NewError("filename must be constant")
@@ -55,7 +55,7 @@ func addMultifileParser() {
 				return nil, pos.NewError("no such file \"%s\"", file)
 			}
 
-			built, err := prog.ParseCode(code, NewPos(file)) // This will add all functions and variables to the program on a global level
+			built, err := prog.ParseCode(code, types.NewPos(file)) // This will add all functions and variables to the program on a global level
 			if err != nil {
 				return nil, err
 			}

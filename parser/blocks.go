@@ -27,7 +27,7 @@ func (w *WhileStmt) Type() types.Type {
 func addLoops() {
 	parsers["REPEAT"] = Parser{
 		Params: []types.Type{types.INT, types.STATEMENT, types.VARIADIC},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return &RepeatStmt{
 				BasicStmt: NewBasicStmt(pos),
 
@@ -39,7 +39,7 @@ func addLoops() {
 
 	parsers["WHILE"] = Parser{
 		Params: []types.Type{types.INT, types.STATEMENT, types.VARIADIC},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return &WhileStmt{
 				BasicStmt: NewBasicStmt(pos),
 
@@ -51,7 +51,7 @@ func addLoops() {
 
 	parsers["BLOCK"] = Parser{
 		Params: []types.Type{types.STATEMENT, types.VARIADIC},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return &BlockStmt{
 				BasicStmt: NewBasicStmt(pos),
 
@@ -62,7 +62,7 @@ func addLoops() {
 
 	parsers["IF"] = Parser{
 		Params: []types.Type{types.INT, types.STATEMENT, types.STATEMENT},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			var par1blk []Statement
 			var par2blk []Statement
 			// Check if par1 is block

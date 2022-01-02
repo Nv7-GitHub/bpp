@@ -2,9 +2,11 @@ package parser
 
 import (
 	"strings"
+
+	"github.com/Nv7-Github/bpp/types"
 )
 
-func (p *Program) ParseCode(code string, pos *Pos) ([]Statement, error) {
+func (p *Program) ParseCode(code string, pos *types.Pos) ([]Statement, error) {
 	code = strings.TrimSpace(code)
 	if len(code) == 0 {
 		return make([]Statement, 0), nil

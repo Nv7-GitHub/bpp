@@ -13,7 +13,7 @@ func (c *ConcatStmt) Type() types.Type { return types.STRING }
 func addManipStmts() {
 	parsers["CONCAT"] = Parser{
 		Params: []types.Type{types.STRING, types.VARIADIC},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return &ConcatStmt{
 				BasicStmt: NewBasicStmt(pos),
 
@@ -24,7 +24,7 @@ func addManipStmts() {
 
 	parsers["INDEX"] = Parser{
 		Params: []types.Type{types.NewMultiType(types.STRING, types.ARRAY), types.INT},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return &IndexStmt{
 				BasicStmt: NewBasicStmt(pos),
 
@@ -37,7 +37,7 @@ func addManipStmts() {
 
 	parsers["LENGTH"] = Parser{
 		Params: []types.Type{types.NewMultiType(types.STRING, types.ARRAY), types.INT},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return &LengthStmt{
 				BasicStmt: NewBasicStmt(pos),
 
@@ -48,7 +48,7 @@ func addManipStmts() {
 
 	parsers["CHOOSE"] = Parser{
 		Params: []types.Type{types.NewMultiType(types.STRING, types.ARRAY), types.INT},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return &ChooseStmt{
 				BasicStmt: NewBasicStmt(pos),
 
@@ -60,19 +60,19 @@ func addManipStmts() {
 	// Type casts
 	parsers["INT"] = Parser{
 		Params: []types.Type{types.NewMultiType(types.FLOAT, types.STRING)},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return NewTypeCastStmt(pos, params[0], types.INT), nil
 		},
 	}
 	parsers["FLOAT"] = Parser{
 		Params: []types.Type{types.NewMultiType(types.INT, types.STRING)},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return NewTypeCastStmt(pos, params[0], types.FLOAT), nil
 		},
 	}
 	parsers["STRING"] = Parser{
 		Params: []types.Type{types.NewMultiType(types.INT, types.FLOAT)},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return NewTypeCastStmt(pos, params[0], types.STRING), nil
 		},
 	}
@@ -110,7 +110,7 @@ type TypeCastStmt struct {
 
 func (t *TypeCastStmt) Type() types.Type { return t.NewTyp }
 
-func NewTypeCastStmt(pos *Pos, val Statement, newTyp types.Type) *TypeCastStmt {
+func NewTypeCastStmt(pos *types.Pos, val Statement, newTyp types.Type) *TypeCastStmt {
 	return &TypeCastStmt{
 		BasicStmt: NewBasicStmt(pos),
 

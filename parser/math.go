@@ -38,7 +38,7 @@ func (m *MathStmt) Type() types.Type {
 func addMathStmts() {
 	parsers["MATH"] = Parser{
 		Params: []types.Type{types.NewMultiType(types.INT, types.FLOAT), types.STRING, types.NewMultiType(types.INT, types.FLOAT)},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			var outType types.Type
 			t1 := params[0].Type()
 			t2 := params[2].Type()
@@ -70,7 +70,7 @@ func addMathStmts() {
 
 	parsers["RANDOM"] = Parser{
 		Params: []types.Type{types.FLOAT, types.FLOAT},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return &RandomStmt{
 				BasicStmt: NewBasicStmt(pos),
 
@@ -81,7 +81,7 @@ func addMathStmts() {
 	}
 	parsers["RANDINT"] = Parser{
 		Params: []types.Type{types.INT, types.INT},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return &RandintStmt{
 				BasicStmt: NewBasicStmt(pos),
 
@@ -94,19 +94,19 @@ func addMathStmts() {
 	// Math Functions
 	parsers["ROUND"] = Parser{
 		Params: []types.Type{types.FLOAT},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return NewMathFunction(pos, params[0], MathFunctionRound, types.INT), nil
 		},
 	}
 	parsers["CEIL"] = Parser{
 		Params: []types.Type{types.FLOAT},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return NewMathFunction(pos, params[0], MathFunctionCeil, types.INT), nil
 		},
 	}
 	parsers["FLOOR"] = Parser{
 		Params: []types.Type{types.FLOAT},
-		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
+		Parse: func(params []Statement, prog *Program, pos *types.Pos) (Statement, error) {
 			return NewMathFunction(pos, params[0], MathFunctionFloor, types.INT), nil
 		},
 	}
@@ -150,7 +150,7 @@ func (m *MathFunctionStmt) Type() types.Type {
 	return m.OutTyp
 }
 
-func NewMathFunction(pos *Pos, val Statement, fn MathFunction, outTyp types.Type) *MathFunctionStmt {
+func NewMathFunction(pos *types.Pos, val Statement, fn MathFunction, outTyp types.Type) *MathFunctionStmt {
 	return &MathFunctionStmt{
 		BasicStmt: NewBasicStmt(pos),
 
