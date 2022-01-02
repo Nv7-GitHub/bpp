@@ -1,6 +1,8 @@
 package ir
 
+import "github.com/Nv7-Github/bpp/types"
+
 type Instruction interface {
 	String() string
-	Type() Type
+	Type() types.Type
 }
