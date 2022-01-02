@@ -2,30 +2,19 @@ package parser
 
 import "github.com/Nv7-Github/bpp/types"
 
-type MathOp int
-
-const (
-	MathOpAdd MathOp = iota
-	MathOpSub
-	MathOpMul
-	MathOpDiv
-	MathOpMod
-	MathOpPow
-)
-
-var mathOpNames = map[string]MathOp{
-	"+": MathOpAdd,
-	"-": MathOpSub,
-	"*": MathOpMul,
-	"/": MathOpDiv,
-	"%": MathOpMod,
-	"^": MathOpPow,
+var mathOpNames = map[string]types.MathOp{
+	"+": types.MathOpAdd,
+	"-": types.MathOpSub,
+	"*": types.MathOpMul,
+	"/": types.MathOpDiv,
+	"%": types.MathOpMod,
+	"^": types.MathOpPow,
 }
 
 type MathStmt struct {
 	*BasicStmt
 
-	Op     MathOp
+	Op     types.MathOp
 	Val1   Statement
 	Val2   Statement
 	OutTyp types.Type // If parameter type not this, cast to this

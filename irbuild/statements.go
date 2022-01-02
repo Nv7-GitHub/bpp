@@ -10,6 +10,12 @@ func (i *IRBuilder) AddStmt(stmt parser.Statement) (int, error) {
 	case *parser.DefineStmt:
 		return i.addDefine(s)
 
+	case *parser.VarStmt:
+		return i.addVar(s)
+
+	case *parser.MathStmt:
+		return i.addMath(s)
+
 	default:
 		return 0, stmt.Pos().NewError("unknown statement type: %T", s)
 	}

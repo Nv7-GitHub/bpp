@@ -41,3 +41,14 @@ func (i *IRBuilder) addDefine(s *parser.DefineStmt) (int, error) {
 	}
 	return i.NewSetMemory(v.Mem, valind), nil
 }
+
+func (i *IRBuilder) addVar(s *parser.VarStmt) (int, error) {
+	val, exists := i.vars[s.Variable]
+	if !exists {
+		return 0, s.Pos().NewError("unknown variable: %s", s.Variable)
+	}
+	if isDynamic(val.Typ) {
+		return i.NewGetMemoryDynamic(val.Mem), nil
+	}
+	return i.NewGetMemory(val.Mem), nil
+}
