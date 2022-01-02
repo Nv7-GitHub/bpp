@@ -1,41 +1,45 @@
 package parser
 
-import "strconv"
+import (
+	"strconv"
+
+	"github.com/Nv7-Github/bpp/types"
+)
 
 type Const struct {
 	*BasicStmt
 
 	Val interface{}
-	Typ BasicType
+	Typ types.BasicType
 }
 
-func (c *Const) Type() Type {
+func (c *Const) Type() types.Type {
 	return c.Typ
 }
 
 func GetConst(text string, pos *Pos) Statement {
 	intV, err := strconv.Atoi(text)
 	if err == nil {
-		return &Const{BasicStmt: NewBasicStmt(pos), Val: intV, Typ: INT}
+		return &Const{BasicStmt: NewBasicStmt(pos), Val: intV, Typ: types.INT}
 	}
 	floatV, err := strconv.ParseFloat(text, 64)
 	if err == nil {
-		return &Const{BasicStmt: NewBasicStmt(pos), Val: floatV, Typ: FLOAT}
+		return &Const{BasicStmt: NewBasicStmt(pos), Val: floatV, Typ: types.FLOAT}
 	}
 	if text[0] == '"' && text[len(text)-1] == '"' {
-		return &Const{BasicStmt: NewBasicStmt(pos), Val: text[1 : len(text)-1], Typ: STRING}
+		return &Const{BasicStmt: NewBasicStmt(pos), Val: text[1 : len(text)-1], Typ: types.STRING}
 	}
-	return &Const{BasicStmt: NewBasicStmt(pos), Val: text, Typ: STRING}
+	return &Const{BasicStmt: NewBasicStmt(pos), Val: text, Typ: types.STRING}
 }
 
 type ArrayStmt struct {
 	*BasicStmt
 
 	Vals []Statement
-	Typ  *Array
+	Typ  *types.Array
 }
 
-func (a *ArrayStmt) Type() Type { return a.Typ }
+func (a *ArrayStmt) Type() types.Type { return a.Typ }
 
 type ArgsStmt struct {
 	*BasicStmt
@@ -43,11 +47,11 @@ type ArgsStmt struct {
 	Index Statement
 }
 
-func (a *ArgsStmt) Type() Type { return STRING }
+func (a *ArgsStmt) Type() types.Type { return types.STRING }
 
 func addConstStmts() {
 	parsers["ARRAY"] = Parser{
-		Params: []Type{STATEMENT, VARIADIC},
+		Params: []types.Type{types.STATEMENT, types.VARIADIC},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			// Type check
 			if len(params) > 1 {
@@ -62,13 +66,13 @@ func addConstStmts() {
 			return &ArrayStmt{
 				BasicStmt: NewBasicStmt(pos),
 				Vals:      params,
-				Typ:       NewArrayType(params[0].Type()),
+				Typ:       types.NewArrayType(params[0].Type()),
 			}, nil
 		},
 	}
 
 	parsers["ARGS"] = Parser{
-		Params: []Type{INT},
+		Params: []types.Type{types.INT},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			return &ArgsStmt{
 				BasicStmt: NewBasicStmt(pos),

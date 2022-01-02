@@ -1,5 +1,7 @@
 package parser
 
+import "github.com/Nv7-Github/bpp/types"
+
 type CompareOp int
 
 const (
@@ -26,32 +28,32 @@ type CompareStmt struct {
 	Op        CompareOp
 	Val1      Statement
 	Val2      Statement
-	MutualTyp Type
+	MutualTyp types.Type
 }
 
-func (c *CompareStmt) Type() Type {
-	return INT
+func (c *CompareStmt) Type() types.Type {
+	return types.INT
 }
 
-func getCommonType(typ1, typ2 Type, pos *Pos) (Type, error) {
-	var outTyp Type
-	if typ1.Equal(INT) || typ1.Equal(FLOAT) {
-		if typ2.Equal(INT) || typ2.Equal(FLOAT) {
+func getCommonType(typ1, typ2 types.Type, pos *Pos) (types.Type, error) {
+	var outTyp types.Type
+	if typ1.Equal(types.INT) || typ1.Equal(types.FLOAT) {
+		if typ2.Equal(types.INT) || typ2.Equal(types.FLOAT) {
 			if typ1.Equal(typ2) {
 				outTyp = typ1
 			} else {
-				outTyp = FLOAT // if not equal, one is a float
+				outTyp = types.FLOAT // if not equal, one is a float
 			}
 		} else { // if one is a number and the other isn't
 			return nil, pos.NewError("can only compare numbers")
 		}
-	} else if typ1.Equal(STRING) {
-		if typ2.Equal(STRING) {
-			outTyp = STRING
+	} else if typ1.Equal(types.STRING) {
+		if typ2.Equal(types.STRING) {
+			outTyp = types.STRING
 		} else {
 			return nil, pos.NewError("can only compare strings to strings")
 		}
-	} else if typ1.Equal(ARRAY) {
+	} else if typ1.Equal(types.ARRAY) {
 		if typ2.Equal(typ1) {
 			outTyp = typ1
 		} else {
@@ -65,7 +67,7 @@ func getCommonType(typ1, typ2 Type, pos *Pos) (Type, error) {
 
 func addConditionals() {
 	parsers["COMPARE"] = Parser{
-		Params: []Type{STATEMENT, STRING, STATEMENT},
+		Params: []types.Type{types.STATEMENT, types.STRING, types.STATEMENT},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			opV, ok := params[1].(*Const)
 			if !ok {
@@ -76,7 +78,7 @@ func addConditionals() {
 				return nil, pos.NewError("unknown compare operation \"%s\"", opV.Val.(string))
 			}
 
-			var outTyp Type
+			var outTyp types.Type
 			typ1 := params[0].Type()
 			typ2 := params[2].Type()
 			outTyp, err := getCommonType(typ1, typ2, pos)

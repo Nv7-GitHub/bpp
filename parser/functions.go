@@ -3,6 +3,8 @@ package parser
 import (
 	"regexp"
 	"strings"
+
+	"github.com/Nv7-Github/bpp/types"
 )
 
 func (p *Program) BeginFunction(name string, pos *Pos) error {
@@ -13,7 +15,7 @@ func (p *Program) BeginFunction(name string, pos *Pos) error {
 	p.InFunction = true
 	p.FuncName = name
 	p.OldVarTypes = p.VarTypes
-	p.VarTypes = make(map[string]Type)
+	p.VarTypes = make(map[string]types.Type)
 	p.Functions[name] = &Function{
 		Name:   name,
 		Params: make([]FunctionParam, 0),
@@ -22,21 +24,21 @@ func (p *Program) BeginFunction(name string, pos *Pos) error {
 	return nil
 }
 
-var paramTypeNames = map[string]BasicType{
-	"INT":    INT,
-	"FLOAT":  FLOAT,
-	"STRING": STRING,
+var paramTypeNames = map[string]types.BasicType{
+	"INT":    types.INT,
+	"FLOAT":  types.FLOAT,
+	"STRING": types.STRING,
 }
 
 var arrayTypeNameParser = regexp.MustCompile(`^ARRAY\{(.+)\}$`)
 
 type ParamStmt struct{ *BasicStmt }
 
-func (p *ParamStmt) Type() Type { return NULL }
+func (p *ParamStmt) Type() types.Type { return types.NULL }
 
 type RetTypeStmt struct{ *BasicStmt }
 
-func (r *RetTypeStmt) Type() Type { return NULL }
+func (r *RetTypeStmt) Type() types.Type { return types.NULL }
 
 type ReturnStmt struct {
 	*BasicStmt
@@ -44,31 +46,31 @@ type ReturnStmt struct {
 	Val Statement
 }
 
-func (r *ReturnStmt) Type() Type { return r.Val.Type() }
+func (r *ReturnStmt) Type() types.Type { return r.Val.Type() }
 
 type FunctionCallStmt struct {
 	*BasicStmt
 
 	FnName  string
 	Params  []Statement
-	RetType Type
+	RetType types.Type
 }
 
-func (f *FunctionCallStmt) Type() Type { return f.RetType }
+func (f *FunctionCallStmt) Type() types.Type { return f.RetType }
 
 type ExternalCallStmt struct {
 	*BasicStmt
 
 	FnName  string
 	Params  []Statement
-	RetType Type
+	RetType types.Type
 }
 
-func (e *ExternalCallStmt) Type() Type { return e.RetType }
+func (e *ExternalCallStmt) Type() types.Type { return e.RetType }
 
 func addFunctionStmts() {
 	parsers["PARAM"] = Parser{
-		Params: []Type{STRING, STRING},
+		Params: []types.Type{types.STRING, types.STRING},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			// Check if in param section
 			if !prog.InFunction || prog.Functions[prog.FuncName].RetType != nil {
@@ -104,7 +106,7 @@ func addFunctionStmts() {
 	}
 
 	parsers["RETURNS"] = Parser{
-		Params: []Type{STRING},
+		Params: []types.Type{types.STRING},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			// Check if in param section
 			if !prog.InFunction || prog.Functions[prog.FuncName].RetType != nil {
@@ -127,7 +129,7 @@ func addFunctionStmts() {
 	}
 
 	parsers["FUNCTION"] = Parser{
-		Params: []Type{STRING, NULL, VARIADIC, STATEMENT},
+		Params: []types.Type{types.STRING, types.NULL, types.VARIADIC, types.STATEMENT},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			// Get rid of name
 			params = params[1:]
@@ -163,7 +165,7 @@ func addFunctionStmts() {
 	}
 
 	parsers["RETURN"] = Parser{
-		Params: []Type{STATEMENT},
+		Params: []types.Type{types.STATEMENT},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			// Check if in right section
 			if !prog.InFunction {
@@ -187,9 +189,9 @@ func addFunctionStmts() {
 	}
 }
 
-func ParseTypeString(typName string, pos *Pos) (Type, error) {
+func ParseTypeString(typName string, pos *Pos) (types.Type, error) {
 	// Check if basic type
-	var typ Type
+	var typ types.Type
 	var ok bool
 	typ, ok = paramTypeNames[typName]
 	if !ok {
@@ -205,7 +207,7 @@ func ParseTypeString(typName string, pos *Pos) (Type, error) {
 			if err != nil {
 				return nil, err
 			}
-			typ = NewArrayType(typ)
+			typ = types.NewArrayType(typ)
 		} else {
 			return nil, pos.NewError("unknown type \"%s\"", typName)
 		}

@@ -1,12 +1,16 @@
 package parser
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/Nv7-Github/bpp/types"
+)
 
 var parsers map[string]Parser
 
 type Parser struct {
 	Parse  func(params []Statement, prog *Program, pos *Pos) (Statement, error)
-	Params []Type
+	Params []types.Type
 }
 
 func NewBasicStmt(pos *Pos) *BasicStmt {
@@ -24,14 +28,14 @@ func (b *BasicStmt) Pos() *Pos {
 type Function struct {
 	Name    string
 	Params  []FunctionParam
-	RetType Type
+	RetType types.Type
 
 	Statements []Statement
 }
 
 type ExternalFunction struct {
-	ParTypes []Type
-	RetType  Type
+	ParTypes []types.Type
+	RetType  types.Type
 }
 
 type empty struct{}
@@ -39,7 +43,7 @@ type empty struct{}
 type Program struct {
 	Functions         map[string]*Function
 	ExternalFunctions map[string]ExternalFunction
-	VarTypes          map[string]Type
+	VarTypes          map[string]types.Type
 	Statements        []Statement
 
 	// Multifile
@@ -49,12 +53,12 @@ type Program struct {
 	// Functions
 	InFunction  bool
 	FuncName    string
-	OldVarTypes map[string]Type
+	OldVarTypes map[string]types.Type
 }
 
 type FunctionParam struct {
 	Name string
-	Type Type
+	Type types.Type
 }
 
 func (p *Program) Close() {
@@ -65,7 +69,7 @@ func (p *Program) Close() {
 }
 
 type Statement interface {
-	Type() Type
+	Type() types.Type
 	Pos() *Pos
 }
 

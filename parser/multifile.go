@@ -1,6 +1,10 @@
 package parser
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/Nv7-Github/bpp/types"
+)
 
 func Parse(code string, filename string) (*Program, error) {
 	return ParseComplex(map[string]string{filename: code}, filename, make(map[string]ExternalFunction))
@@ -13,7 +17,7 @@ func ParseMultifile(files map[string]string, entryFile string) (*Program, error)
 func ParseComplex(files map[string]string, entryFile string, externalFuncs map[string]ExternalFunction) (*Program, error) {
 	prog := &Program{
 		Functions:         make(map[string]*Function),
-		VarTypes:          make(map[string]Type),
+		VarTypes:          make(map[string]types.Type),
 		ExternalFunctions: externalFuncs,
 		Files:             files,
 		Added:             map[string]empty{entryFile: {}},
@@ -33,7 +37,7 @@ func ParseComplex(files map[string]string, entryFile string, externalFuncs map[s
 
 func addMultifileParser() {
 	parsers["IMPORT"] = Parser{
-		Params: []Type{STRING},
+		Params: []types.Type{types.STRING},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			filenameConst, ok := params[0].(*Const)
 			if !ok {

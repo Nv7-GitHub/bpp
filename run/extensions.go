@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/Nv7-Github/bpp/parser"
+	"github.com/Nv7-Github/bpp/types"
 )
 
 type ExtensionGroup []*Extension
@@ -23,10 +24,10 @@ func (e ExtensionGroup) BuildForParser() map[string]parser.ExternalFunction {
 type Extension struct {
 	Name     string
 	Fn       reflect.Value // reflect.FuncOf
-	ParTypes []parser.Type
+	ParTypes []types.Type
 
 	ReturnsVal bool
-	RetType    parser.Type
+	RetType    types.Type
 }
 
 func (e *Extension) Call(vals []interface{}) (interface{}, error) {
@@ -53,11 +54,11 @@ func NewExtension(fnObj interface{}, name string) (*Extension, error) {
 	// Get par types
 	fnTyp := fn.Type()
 	parCnt := fnTyp.NumIn()
-	parTypes := make([]parser.Type, parCnt)
+	parTypes := make([]types.Type, parCnt)
 	var err error
 
 	for i := 0; i < parCnt; i++ {
-		parTypes[i], err = getParserType(fnTyp.In(i))
+		parTypes[i], err = getType(fnTyp.In(i))
 		if err != nil {
 			return nil, err
 		}
@@ -66,12 +67,12 @@ func NewExtension(fnObj interface{}, name string) (*Extension, error) {
 	// Get ret type
 	numOut := fnTyp.NumOut()
 	hasRet := numOut > 0
-	var retType parser.Type = nil
+	var retType types.Type = nil
 
 	if hasRet && numOut > 1 {
 		return nil, fmt.Errorf("extension cannot return multiple values")
 	} else if hasRet {
-		retType, err = getParserType(fnTyp.Out(0))
+		retType, err = getType(fnTyp.Out(0))
 		if err != nil {
 			return nil, err
 		}
@@ -86,24 +87,24 @@ func NewExtension(fnObj interface{}, name string) (*Extension, error) {
 	}, nil
 }
 
-var typMap = map[reflect.Kind]parser.BasicType{
-	reflect.Int:     parser.INT,
-	reflect.Float64: parser.FLOAT,
-	reflect.String:  parser.STRING,
+var typMap = map[reflect.Kind]types.BasicType{
+	reflect.Int:     types.INT,
+	reflect.Float64: types.FLOAT,
+	reflect.String:  types.STRING,
 }
 
-func getParserType(typ reflect.Type) (parser.Type, error) {
+func getType(typ reflect.Type) (types.Type, error) {
 	basicTyp, exists := typMap[typ.Kind()]
 	if exists {
 		return basicTyp, nil
 	}
 
 	if typ.Kind() == reflect.Slice {
-		valTyp, err := getParserType(typ.Elem())
+		valTyp, err := getType(typ.Elem())
 		if err != nil {
 			return nil, err
 		}
-		return parser.NewArrayType(valTyp), nil
+		return types.NewArrayType(valTyp), nil
 	}
 
 	return nil, fmt.Errorf("unknown type \"%s\"", typ.String())

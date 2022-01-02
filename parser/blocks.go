@@ -1,5 +1,7 @@
 package parser
 
+import "github.com/Nv7-Github/bpp/types"
+
 type RepeatStmt struct {
 	*BasicStmt
 
@@ -7,8 +9,8 @@ type RepeatStmt struct {
 	Body  []Statement
 }
 
-func (r *RepeatStmt) Type() Type {
-	return NULL
+func (r *RepeatStmt) Type() types.Type {
+	return types.NULL
 }
 
 type WhileStmt struct {
@@ -18,13 +20,13 @@ type WhileStmt struct {
 	Body      []Statement
 }
 
-func (w *WhileStmt) Type() Type {
-	return NULL
+func (w *WhileStmt) Type() types.Type {
+	return types.NULL
 }
 
 func addLoops() {
 	parsers["REPEAT"] = Parser{
-		Params: []Type{INT, STATEMENT, VARIADIC},
+		Params: []types.Type{types.INT, types.STATEMENT, types.VARIADIC},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			return &RepeatStmt{
 				BasicStmt: NewBasicStmt(pos),
@@ -36,7 +38,7 @@ func addLoops() {
 	}
 
 	parsers["WHILE"] = Parser{
-		Params: []Type{INT, STATEMENT, VARIADIC},
+		Params: []types.Type{types.INT, types.STATEMENT, types.VARIADIC},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			return &WhileStmt{
 				BasicStmt: NewBasicStmt(pos),
@@ -48,7 +50,7 @@ func addLoops() {
 	}
 
 	parsers["BLOCK"] = Parser{
-		Params: []Type{STATEMENT, VARIADIC},
+		Params: []types.Type{types.STATEMENT, types.VARIADIC},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			return &BlockStmt{
 				BasicStmt: NewBasicStmt(pos),
@@ -59,7 +61,7 @@ func addLoops() {
 	}
 
 	parsers["IF"] = Parser{
-		Params: []Type{INT, STATEMENT, STATEMENT},
+		Params: []types.Type{types.INT, types.STATEMENT, types.STATEMENT},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			var par1blk []Statement
 			var par2blk []Statement
@@ -122,8 +124,8 @@ type BlockStmt struct {
 	Body []Statement
 }
 
-func (b *BlockStmt) Type() Type {
-	return NULL
+func (b *BlockStmt) Type() types.Type {
+	return types.NULL
 }
 
 type IfStmt struct {
@@ -134,8 +136,8 @@ type IfStmt struct {
 	Else      []Statement
 }
 
-func (i *IfStmt) Type() Type {
-	return NULL
+func (i *IfStmt) Type() types.Type {
+	return types.NULL
 }
 
 type IfTernary struct {
@@ -144,9 +146,9 @@ type IfTernary struct {
 	Condition Statement
 	Body      Statement
 	Else      Statement
-	OutTyp    Type
+	OutTyp    types.Type
 }
 
-func (i *IfTernary) Type() Type {
+func (i *IfTernary) Type() types.Type {
 	return i.OutTyp
 }

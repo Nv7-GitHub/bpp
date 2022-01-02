@@ -1,5 +1,7 @@
 package parser
 
+import "github.com/Nv7-Github/bpp/types"
+
 type MathOp int
 
 const (
@@ -26,24 +28,24 @@ type MathStmt struct {
 	Op     MathOp
 	Val1   Statement
 	Val2   Statement
-	OutTyp Type // If parameter type not this, cast to this
+	OutTyp types.Type // If parameter type not this, cast to this
 }
 
-func (m *MathStmt) Type() Type {
+func (m *MathStmt) Type() types.Type {
 	return m.OutTyp
 }
 
 func addMathStmts() {
 	parsers["MATH"] = Parser{
-		Params: []Type{NewMultiType(INT, FLOAT), STRING, NewMultiType(INT, FLOAT)},
+		Params: []types.Type{types.NewMultiType(types.INT, types.FLOAT), types.STRING, types.NewMultiType(types.INT, types.FLOAT)},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
-			var outType Type
+			var outType types.Type
 			t1 := params[0].Type()
 			t2 := params[2].Type()
 			if t1.Equal(t2) {
 				outType = t1
 			} else {
-				outType = FLOAT // If they arent equal, then one is a FLOAT
+				outType = types.FLOAT // If they arent equal, then one is a FLOAT
 			}
 
 			op, ok := params[1].(*Const)
@@ -67,7 +69,7 @@ func addMathStmts() {
 	}
 
 	parsers["RANDOM"] = Parser{
-		Params: []Type{FLOAT, FLOAT},
+		Params: []types.Type{types.FLOAT, types.FLOAT},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			return &RandomStmt{
 				BasicStmt: NewBasicStmt(pos),
@@ -78,7 +80,7 @@ func addMathStmts() {
 		},
 	}
 	parsers["RANDINT"] = Parser{
-		Params: []Type{INT, INT},
+		Params: []types.Type{types.INT, types.INT},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			return &RandintStmt{
 				BasicStmt: NewBasicStmt(pos),
@@ -91,21 +93,21 @@ func addMathStmts() {
 
 	// Math Functions
 	parsers["ROUND"] = Parser{
-		Params: []Type{FLOAT},
+		Params: []types.Type{types.FLOAT},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
-			return NewMathFunction(pos, params[0], MathFunctionRound, INT), nil
+			return NewMathFunction(pos, params[0], MathFunctionRound, types.INT), nil
 		},
 	}
 	parsers["CEIL"] = Parser{
-		Params: []Type{FLOAT},
+		Params: []types.Type{types.FLOAT},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
-			return NewMathFunction(pos, params[0], MathFunctionCeil, INT), nil
+			return NewMathFunction(pos, params[0], MathFunctionCeil, types.INT), nil
 		},
 	}
 	parsers["FLOOR"] = Parser{
-		Params: []Type{FLOAT},
+		Params: []types.Type{types.FLOAT},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
-			return NewMathFunction(pos, params[0], MathFunctionFloor, INT), nil
+			return NewMathFunction(pos, params[0], MathFunctionFloor, types.INT), nil
 		},
 	}
 }
@@ -117,7 +119,7 @@ type RandomStmt struct {
 	Max Statement
 }
 
-func (r *RandomStmt) Type() Type { return FLOAT }
+func (r *RandomStmt) Type() types.Type { return types.FLOAT }
 
 type RandintStmt struct {
 	*BasicStmt
@@ -126,7 +128,7 @@ type RandintStmt struct {
 	Max Statement
 }
 
-func (r *RandintStmt) Type() Type { return INT }
+func (r *RandintStmt) Type() types.Type { return types.INT }
 
 type MathFunction int
 
@@ -141,14 +143,14 @@ type MathFunctionStmt struct {
 
 	Func   MathFunction
 	Val    Statement
-	OutTyp Type
+	OutTyp types.Type
 }
 
-func (m *MathFunctionStmt) Type() Type {
+func (m *MathFunctionStmt) Type() types.Type {
 	return m.OutTyp
 }
 
-func NewMathFunction(pos *Pos, val Statement, fn MathFunction, outTyp Type) *MathFunctionStmt {
+func NewMathFunction(pos *Pos, val Statement, fn MathFunction, outTyp types.Type) *MathFunctionStmt {
 	return &MathFunctionStmt{
 		BasicStmt: NewBasicStmt(pos),
 

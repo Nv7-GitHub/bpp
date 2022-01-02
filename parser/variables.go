@@ -1,5 +1,7 @@
 package parser
 
+import "github.com/Nv7-Github/bpp/types"
+
 type DefineStmt struct {
 	*BasicStmt
 
@@ -7,24 +9,24 @@ type DefineStmt struct {
 	Variable string
 }
 
-func (d *DefineStmt) Type() Type {
-	return NULL
+func (d *DefineStmt) Type() types.Type {
+	return types.NULL
 }
 
 type VarStmt struct {
 	*BasicStmt
 
 	Variable string
-	Typ      Type
+	Typ      types.Type
 }
 
-func (v *VarStmt) Type() Type {
+func (v *VarStmt) Type() types.Type {
 	return v.Typ
 }
 
 func addVariableParsers() {
 	parsers["DEFINE"] = Parser{
-		Params: []Type{STRING, STATEMENT},
+		Params: []types.Type{types.STRING, types.STATEMENT},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			var stmt DefineStmt
 			stmt.BasicStmt = NewBasicStmt(pos)
@@ -47,7 +49,7 @@ func addVariableParsers() {
 	}
 
 	parsers["VAR"] = Parser{
-		Params: []Type{STRING},
+		Params: []types.Type{types.STRING},
 		Parse: func(params []Statement, prog *Program, pos *Pos) (Statement, error) {
 			name, ok := params[0].(*Const)
 			if !ok {
