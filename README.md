@@ -1,3 +1,5 @@
+# Use [B#](https://github.com/b-Development-Team/bsharp) instead!
+
 # B++
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/Nv7-Github/bpp.svg)](https://pkg.go.dev/github.com/Nv7-Github/bpp)
